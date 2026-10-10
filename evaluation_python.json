@@ -1,0 +1,734 @@
+{
+  "timestamp_utc": "2026-09-25T16:21:22.835715+00:00",
+  "python_version": "3.13.1 (tags/v3.13.1:0671451, Dec  3 2024, 19:06:28) [MSC v.1942 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "target": "Python",
+  "rule_table_version": "1.0",
+  "llm_configuration": {
+    "configured": false,
+    "provider": "OpenAI-compatible endpoint",
+    "model": "",
+    "endpoint_set": false,
+    "key_set": false,
+    "api_mode": "auto",
+    "prompt_version": "legacy-modernizer-llm-v2",
+    "timeout_seconds": 45.0,
+    "max_retries": 2
+  },
+  "benchmark": {
+    "target": "Python",
+    "total": 8,
+    "passed": 8,
+    "failed": 0,
+    "success_rate_percent": 100.0,
+    "cases": [
+      {
+        "language": "COBOL",
+        "case": "arithmetic",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "rule_coverage": 50.0,
+        "generated_lines": 4
+      },
+      {
+        "language": "COBOL",
+        "case": "conditional",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "rule_coverage": 75.0,
+        "generated_lines": 5
+      },
+      {
+        "language": "FORTRAN",
+        "case": "loop",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "rule_coverage": 50.0,
+        "generated_lines": 2
+      },
+      {
+        "language": "FORTRAN",
+        "case": "conditional",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "rule_coverage": 75.0,
+        "generated_lines": 5
+      },
+      {
+        "language": "Pascal",
+        "case": "arithmetic",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "rule_coverage": 50.0,
+        "generated_lines": 4
+      },
+      {
+        "language": "Pascal",
+        "case": "loop",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "rule_coverage": 50.0,
+        "generated_lines": 2
+      },
+      {
+        "language": "BASIC",
+        "case": "arithmetic",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "rule_coverage": 50.0,
+        "generated_lines": 3
+      },
+      {
+        "language": "BASIC",
+        "case": "loop",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "rule_coverage": 50.0,
+        "generated_lines": 2
+      }
+    ]
+  },
+  "experiment": {
+    "target": "Python",
+    "repeats": 1,
+    "rule_only": {
+      "target": "rule_only",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "success_rate_percent": 100.0,
+      "unsupported_constructs": 0,
+      "validation_failures": 0,
+      "fallback_frequency_percent": 0.0,
+      "metrics": {
+        "llm_calls": 0,
+        "llm_latency_ms": [],
+        "median_llm_latency_ms": null,
+        "mean_llm_latency_ms": null,
+        "llm_cost_usd": 0.0,
+        "fallback_frequency_percent": 0.0,
+        "validation_failures": 0
+      },
+      "by_language": {
+        "COBOL": {
+          "total": 2,
+          "passed": 2,
+          "failed": 0,
+          "unsupported_constructs": 0,
+          "validation_failures": 0,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "success_rate_percent": 100.0,
+          "fallback_frequency_percent": 0.0,
+          "median_llm_latency_ms": null,
+          "mean_llm_latency_ms": null,
+          "llm_cost_usd": 0.0
+        },
+        "FORTRAN": {
+          "total": 2,
+          "passed": 2,
+          "failed": 0,
+          "unsupported_constructs": 0,
+          "validation_failures": 0,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "success_rate_percent": 100.0,
+          "fallback_frequency_percent": 0.0,
+          "median_llm_latency_ms": null,
+          "mean_llm_latency_ms": null,
+          "llm_cost_usd": 0.0
+        },
+        "Pascal": {
+          "total": 2,
+          "passed": 2,
+          "failed": 0,
+          "unsupported_constructs": 0,
+          "validation_failures": 0,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "success_rate_percent": 100.0,
+          "fallback_frequency_percent": 0.0,
+          "median_llm_latency_ms": null,
+          "mean_llm_latency_ms": null,
+          "llm_cost_usd": 0.0
+        },
+        "BASIC": {
+          "total": 2,
+          "passed": 2,
+          "failed": 0,
+          "unsupported_constructs": 0,
+          "validation_failures": 0,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "success_rate_percent": 100.0,
+          "fallback_frequency_percent": 0.0,
+          "median_llm_latency_ms": null,
+          "mean_llm_latency_ms": null,
+          "llm_cost_usd": 0.0
+        }
+      },
+      "by_construct": {
+        "arithmetic": {
+          "language": "BASIC",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "validation_failures": 0
+        },
+        "conditional": {
+          "language": "FORTRAN",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "validation_failures": 0
+        },
+        "loop": {
+          "language": "BASIC",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "validation_failures": 0
+        }
+      },
+      "cases": [
+        {
+          "language": "COBOL",
+          "case": "arithmetic",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "rule_coverage": 50.0,
+          "generated_lines": 4,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": 0.0,
+          "validation_failures": 0
+        },
+        {
+          "language": "COBOL",
+          "case": "conditional",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "rule_coverage": 75.0,
+          "generated_lines": 5,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": 0.0,
+          "validation_failures": 0
+        },
+        {
+          "language": "FORTRAN",
+          "case": "loop",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "rule_coverage": 50.0,
+          "generated_lines": 2,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": 0.0,
+          "validation_failures": 0
+        },
+        {
+          "language": "FORTRAN",
+          "case": "conditional",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "rule_coverage": 75.0,
+          "generated_lines": 5,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": 0.0,
+          "validation_failures": 0
+        },
+        {
+          "language": "Pascal",
+          "case": "arithmetic",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "rule_coverage": 50.0,
+          "generated_lines": 4,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": 0.0,
+          "validation_failures": 0
+        },
+        {
+          "language": "Pascal",
+          "case": "loop",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "rule_coverage": 50.0,
+          "generated_lines": 2,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": 0.0,
+          "validation_failures": 0
+        },
+        {
+          "language": "BASIC",
+          "case": "arithmetic",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "rule_coverage": 50.0,
+          "generated_lines": 3,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": 0.0,
+          "validation_failures": 0
+        },
+        {
+          "language": "BASIC",
+          "case": "loop",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "rule_coverage": 50.0,
+          "generated_lines": 2,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": 0.0,
+          "validation_failures": 0
+        }
+      ]
+    },
+    "hybrid": {
+      "target": "hybrid",
+      "total": 8,
+      "passed": 8,
+      "failed": 0,
+      "success_rate_percent": 100.0,
+      "unsupported_constructs": 0,
+      "validation_failures": 0,
+      "fallback_frequency_percent": 0.0,
+      "metrics": {
+        "llm_calls": 0,
+        "llm_latency_ms": [],
+        "median_llm_latency_ms": null,
+        "mean_llm_latency_ms": null,
+        "llm_cost_usd": 0.0,
+        "fallback_frequency_percent": 0.0,
+        "validation_failures": 0
+      },
+      "by_language": {
+        "COBOL": {
+          "total": 2,
+          "passed": 2,
+          "failed": 0,
+          "unsupported_constructs": 0,
+          "validation_failures": 0,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "success_rate_percent": 100.0,
+          "fallback_frequency_percent": 0.0,
+          "median_llm_latency_ms": null,
+          "mean_llm_latency_ms": null,
+          "llm_cost_usd": 0.0
+        },
+        "FORTRAN": {
+          "total": 2,
+          "passed": 2,
+          "failed": 0,
+          "unsupported_constructs": 0,
+          "validation_failures": 0,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "success_rate_percent": 100.0,
+          "fallback_frequency_percent": 0.0,
+          "median_llm_latency_ms": null,
+          "mean_llm_latency_ms": null,
+          "llm_cost_usd": 0.0
+        },
+        "Pascal": {
+          "total": 2,
+          "passed": 2,
+          "failed": 0,
+          "unsupported_constructs": 0,
+          "validation_failures": 0,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "success_rate_percent": 100.0,
+          "fallback_frequency_percent": 0.0,
+          "median_llm_latency_ms": null,
+          "mean_llm_latency_ms": null,
+          "llm_cost_usd": 0.0
+        },
+        "BASIC": {
+          "total": 2,
+          "passed": 2,
+          "failed": 0,
+          "unsupported_constructs": 0,
+          "validation_failures": 0,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "success_rate_percent": 100.0,
+          "fallback_frequency_percent": 0.0,
+          "median_llm_latency_ms": null,
+          "mean_llm_latency_ms": null,
+          "llm_cost_usd": 0.0
+        }
+      },
+      "by_construct": {
+        "arithmetic": {
+          "language": "BASIC",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "validation_failures": 0
+        },
+        "conditional": {
+          "language": "FORTRAN",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "validation_failures": 0
+        },
+        "loop": {
+          "language": "BASIC",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "validation_failures": 0
+        }
+      },
+      "cases": [
+        {
+          "language": "COBOL",
+          "case": "arithmetic",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "rule_coverage": 50.0,
+          "generated_lines": 4,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": 0.0,
+          "validation_failures": 0
+        },
+        {
+          "language": "COBOL",
+          "case": "conditional",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "rule_coverage": 75.0,
+          "generated_lines": 5,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": 0.0,
+          "validation_failures": 0
+        },
+        {
+          "language": "FORTRAN",
+          "case": "loop",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "rule_coverage": 50.0,
+          "generated_lines": 2,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": 0.0,
+          "validation_failures": 0
+        },
+        {
+          "language": "FORTRAN",
+          "case": "conditional",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "rule_coverage": 75.0,
+          "generated_lines": 5,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": 0.0,
+          "validation_failures": 0
+        },
+        {
+          "language": "Pascal",
+          "case": "arithmetic",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "rule_coverage": 50.0,
+          "generated_lines": 4,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": 0.0,
+          "validation_failures": 0
+        },
+        {
+          "language": "Pascal",
+          "case": "loop",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "rule_coverage": 50.0,
+          "generated_lines": 2,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": 0.0,
+          "validation_failures": 0
+        },
+        {
+          "language": "BASIC",
+          "case": "arithmetic",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "rule_coverage": 50.0,
+          "generated_lines": 3,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": 0.0,
+          "validation_failures": 0
+        },
+        {
+          "language": "BASIC",
+          "case": "loop",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "rule_coverage": 50.0,
+          "generated_lines": 2,
+          "llm_calls": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": 0.0,
+          "validation_failures": 0
+        }
+      ]
+    },
+    "summary": {
+      "by_language": {
+        "COBOL": {
+          "rule_only": {
+            "total": 2,
+            "passed": 2,
+            "failed": 0,
+            "unsupported_constructs": 0,
+            "validation_failures": 0,
+            "llm_calls": 0,
+            "llm_latency_ms": [],
+            "success_rate_percent": 100.0,
+            "fallback_frequency_percent": 0.0,
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "llm_cost_usd": 0.0
+          },
+          "hybrid": {
+            "total": 2,
+            "passed": 2,
+            "failed": 0,
+            "unsupported_constructs": 0,
+            "validation_failures": 0,
+            "llm_calls": 0,
+            "llm_latency_ms": [],
+            "success_rate_percent": 100.0,
+            "fallback_frequency_percent": 0.0,
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "llm_cost_usd": 0.0
+          }
+        },
+        "FORTRAN": {
+          "rule_only": {
+            "total": 2,
+            "passed": 2,
+            "failed": 0,
+            "unsupported_constructs": 0,
+            "validation_failures": 0,
+            "llm_calls": 0,
+            "llm_latency_ms": [],
+            "success_rate_percent": 100.0,
+            "fallback_frequency_percent": 0.0,
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "llm_cost_usd": 0.0
+          },
+          "hybrid": {
+            "total": 2,
+            "passed": 2,
+            "failed": 0,
+            "unsupported_constructs": 0,
+            "validation_failures": 0,
+            "llm_calls": 0,
+            "llm_latency_ms": [],
+            "success_rate_percent": 100.0,
+            "fallback_frequency_percent": 0.0,
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "llm_cost_usd": 0.0
+          }
+        },
+        "Pascal": {
+          "rule_only": {
+            "total": 2,
+            "passed": 2,
+            "failed": 0,
+            "unsupported_constructs": 0,
+            "validation_failures": 0,
+            "llm_calls": 0,
+            "llm_latency_ms": [],
+            "success_rate_percent": 100.0,
+            "fallback_frequency_percent": 0.0,
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "llm_cost_usd": 0.0
+          },
+          "hybrid": {
+            "total": 2,
+            "passed": 2,
+            "failed": 0,
+            "unsupported_constructs": 0,
+            "validation_failures": 0,
+            "llm_calls": 0,
+            "llm_latency_ms": [],
+            "success_rate_percent": 100.0,
+            "fallback_frequency_percent": 0.0,
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "llm_cost_usd": 0.0
+          }
+        },
+        "BASIC": {
+          "rule_only": {
+            "total": 2,
+            "passed": 2,
+            "failed": 0,
+            "unsupported_constructs": 0,
+            "validation_failures": 0,
+            "llm_calls": 0,
+            "llm_latency_ms": [],
+            "success_rate_percent": 100.0,
+            "fallback_frequency_percent": 0.0,
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "llm_cost_usd": 0.0
+          },
+          "hybrid": {
+            "total": 2,
+            "passed": 2,
+            "failed": 0,
+            "unsupported_constructs": 0,
+            "validation_failures": 0,
+            "llm_calls": 0,
+            "llm_latency_ms": [],
+            "success_rate_percent": 100.0,
+            "fallback_frequency_percent": 0.0,
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "llm_cost_usd": 0.0
+          }
+        }
+      },
+      "by_construct": {
+        "arithmetic": {
+          "rule_only": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "llm_calls": 0,
+            "llm_latency_ms": [],
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "llm_calls": 0,
+            "llm_latency_ms": [],
+            "validation_failures": 0
+          }
+        },
+        "conditional": {
+          "rule_only": {
+            "language": "FORTRAN",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "llm_calls": 0,
+            "llm_latency_ms": [],
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "FORTRAN",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "llm_calls": 0,
+            "llm_latency_ms": [],
+            "validation_failures": 0
+          }
+        },
+        "loop": {
+          "rule_only": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "llm_calls": 0,
+            "llm_latency_ms": [],
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "llm_calls": 0,
+            "llm_latency_ms": [],
+            "validation_failures": 0
+          }
+        }
+      },
+      "overall": {
+        "rule_only_success_rate_percent": 100.0,
+        "hybrid_success_rate_percent": 100.0,
+        "delta_success_rate_percent": 0.0
+      }
+    }
+  }
+}
