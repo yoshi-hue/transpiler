@@ -28,19 +28,19 @@ source code → semantic contract → risk-aware validation → learned rules �
 
 ## Configure a real external model
 
-Copy `.env.example` to your own local environment configuration. Do **not** commit the API key.
+Copy `.env.example` to `.env` and replace `LLM_API_KEY` with your Gemini API key. Do **not** commit the API key.
 
-For direct OpenAI usage, use:
+The default configuration uses Google's OpenAI-compatible Gemini endpoint:
 
 ```text
-LLM_API_URL=https://api.openai.com/v1/chat/completions
+LLM_API_URL=https://generativelanguage.googleapis.com/v1beta/openai/chat/completions
 LLM_API_MODE=chat
-LLM_PROVIDER=OpenAI
-LLM_MODEL=gpt-4o-mini
-LLM_API_KEY=<your OpenAI secret key>
+LLM_PROVIDER=Google Gemini
+LLM_MODEL=gemini-2.5-flash
+LLM_API_KEY=<your Gemini API key>
 ```
 
-The server also accepts OpenAI Responses endpoints by setting `LLM_API_MODE=responses` and using the provider's `/v1/responses` URL.
+OpenAI-compatible endpoints are also supported. The server accepts OpenAI Responses endpoints by setting `LLM_API_MODE=responses` and using the provider's `/v1/responses` URL.
 
 If your provider requires extra headers, set `LLM_EXTRA_HEADERS` as JSON, for example:
 

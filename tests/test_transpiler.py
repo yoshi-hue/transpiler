@@ -165,3 +165,10 @@ def test_llm_status_rejects_placeholder_credentials(monkeypatch):
     status = fallback_status()
     assert status['configured'] is False
     assert status['key_set'] is False
+
+
+def test_llm_fallback_sends_configured_key_as_bearer_token(monkeypatch):
+    monkeypatch.setenv('LLM_API_KEY', 'gemini-test-key')
+    from backend.llm_fallback import _headers
+
+    assert _headers()['Authorization'] == 'Bearer gemini-test-key'

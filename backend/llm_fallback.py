@@ -8,13 +8,14 @@ translation output.
 Supports both:
   * OpenAI Responses API (recommended)
   * OpenAI-compatible chat-completions endpoints
+    (including Google's Gemini OpenAI compatibility endpoint)
 
 Configuration is environment-based so API keys never enter the browser UI:
   LLM_API_URL=https://api.openai.com/v1/responses
   LLM_MODEL=<model id>
   LLM_API_KEY=<secret>
   LLM_API_MODE=responses   # or chat
-  LLM_PROVIDER=OpenAI
+  LLM_PROVIDER=OpenAI-compatible endpoint
 """
 import hashlib
 import json

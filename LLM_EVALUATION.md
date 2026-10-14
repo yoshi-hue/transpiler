@@ -6,6 +6,16 @@ The LLM component is an experimental translation assistant, not an oracle. A con
 
 Set `LLM_API_URL`, `LLM_API_MODE`, `LLM_MODEL`, and `LLM_API_KEY` in the server environment. Do not put the key in HTML, JavaScript, Git, or screenshots.
 
+For Google Gemini, use its OpenAI-compatible chat endpoint:
+
+```text
+LLM_API_URL=https://generativelanguage.googleapis.com/v1beta/openai/chat/completions
+LLM_API_MODE=chat
+LLM_PROVIDER=Google Gemini
+LLM_MODEL=gemini-2.5-flash
+LLM_API_KEY=<your Gemini API key>
+```
+
 For an OpenAI Responses API deployment, use an endpoint ending in `/v1/responses` and `LLM_API_MODE=responses`.
 
 ## 2. Establish a deterministic baseline
