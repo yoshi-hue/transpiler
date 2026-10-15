@@ -242,6 +242,7 @@ pre{height:220px;padding:14px;overflow:auto;white-space:pre-wrap}
   </main>
 </div>
 
+<script src="./config.js"></script>
 <script>
 const examples={
 COBOL:`       IDENTIFICATION DIVISION.
@@ -332,6 +333,9 @@ end.`,
   'Python-like':`x = 1
 raise UnsupportedOperation("requires scoped fallback")`};
 const $=id=>document.getElementById(id);
+const API_BASE_URL=(window.TRANSPILER_API_BASE_URL||'').replace(/\/+$/,'');
+const apiUrl=path=>`${API_BASE_URL}${path}`;
+const BACKEND_ERROR_MESSAGE='Could not connect to the backend. Configure its public URL in frontend/config.js and deploy the FastAPI backend separately.';
 let latestTranslation=null;
 let latestExperiment=null;
 function loadExample(){ $('sourceCode').value=examples[$('source').value]; translateCode(); }
@@ -341,7 +345,7 @@ $('source').addEventListener('change',loadExample);
 async function translateCode(){
  const status=$('status'); status.textContent='Translating...'; status.className='status';
  try{
-  const response=await fetch('/transpile',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:$('sourceCode').value,source_language:$('source').value,target_language:$('target').value})});
+  const response=await fetch(apiUrl('/transpile'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:$('sourceCode').value,source_language:$('source').value,target_language:$('target').value})});
   const data=await response.json();
   if(!data.ok){status.textContent=data.error;status.className='status fail';return;}
   $('javascript').textContent=data.javascript;
@@ -375,7 +379,7 @@ async function translateCode(){
       : `Held for review: validation status is ${v.status}. The generated output is evidence, not an accepted translation.`;
   status.textContent=(data.language_support?data.language_support.source+' subset → '+data.language_support.target+'. ':'')+(v.message||'Translation complete.');
   status.className='status '+(v.status==='passed'?'pass':v.status==='failed'?'fail':'neutral');
- }catch(error){status.textContent='Could not connect to the backend. Start the FastAPI server first.';status.className='status fail';}
+ }catch(error){status.textContent=BACKEND_ERROR_MESSAGE;status.className='status fail';}
 }
 function downloadText(filename,content,type){
  const blob=new Blob([content],{type}); const url=URL.createObjectURL(blob); const link=document.createElement('a');
@@ -393,29 +397,29 @@ function downloadProvenance(){
 async function testLLM(){
   const status=$('status'); status.textContent='Testing the configured external LLM...'; status.className='status';
   try{
-    const r=await fetch('/llm/test',{method:'POST'}); const d=await r.json();
+    const r=await fetch(apiUrl('/llm/test'),{method:'POST'}); const d=await r.json();
     if(d.ok){ status.textContent=`Live LLM request completed (${d.model || 'configured model'}) in ${d.latency_ms ?? '—'} ms. Request ${d.request_id || '—'}.`; status.className='status pass'; }
     else { status.textContent=d.error || d.message || 'LLM test failed.'; status.className='status fail'; }
     $('fallbackDetails').textContent=JSON.stringify(d,null,2);
-  }catch(e){ status.textContent='Could not reach the backend.'; status.className='status fail'; }
+  }catch(e){ status.textContent=BACKEND_ERROR_MESSAGE; status.className='status fail'; }
 }
 async function runBenchmark(){
   const box=$('benchmarkDetails'); box.textContent='Running benchmark...';
   try{
-    const r=await fetch('/benchmark?target='+encodeURIComponent($('target').value));
+    const r=await fetch(apiUrl('/benchmark?target='+encodeURIComponent($('target').value)));
     const d=await r.json();
     $('benchmarkSuccess').textContent=(d.success_rate_percent ?? 0)+'%';
     $('benchmarkCases').textContent=d.total ?? '—';
     $('benchmarkPassed').textContent=d.passed ?? '—';
     $('benchmarkFailed').textContent=d.failed ?? '—';
     box.textContent=JSON.stringify({target:d.target,total:d.total,passed:d.passed,failed:d.failed,cases:d.cases},null,2);
-  }catch(e){box.textContent='Could not run benchmark. Start the FastAPI server first.';}
+  }catch(e){box.textContent=BACKEND_ERROR_MESSAGE;}
 }
 async function runExperiment(){
  const box=$('experimentDetails'); box.textContent='Running controlled rule-only vs hybrid experiment...';
  try{
   const repeats=$('experimentRepeats').value;
-  const r=await fetch('/experiment?target='+encodeURIComponent($('target').value)+'&repeats='+repeats); const d=await r.json();
+  const r=await fetch(apiUrl('/experiment?target='+encodeURIComponent($('target').value)+'&repeats='+repeats)); const d=await r.json();
   if(!d.ok){box.textContent=d.error||'Experiment failed.';return;}
   latestExperiment=d;
   const overall=d.summary.overall; const hybrid=d.hybrid; const languages=d.summary.by_language||{};
@@ -425,7 +429,7 @@ async function runExperiment(){
   $('experimentFallback').textContent=hybrid.fallback_frequency_percent+'%';
   $('experimentLanguages').innerHTML=Object.entries(languages).map(([language,value])=>`<tr><td>${language}</td><td>${value.rule_only.success_rate_percent}%</td><td>${value.hybrid.success_rate_percent}%</td><td>${value.hybrid.llm_calls||0}</td></tr>`).join('');
   box.textContent=JSON.stringify({benchmark_version:d.benchmark_version,target:d.target,repeats:d.repeats,summary:d.summary,rule_only:d.rule_only.metrics,hybrid:d.hybrid.metrics},null,2);
- }catch(e){box.textContent='Could not run experiment. Start the FastAPI server first.';}
+ }catch(e){box.textContent=BACKEND_ERROR_MESSAGE;}
 }
 function downloadExperimentCsv(){
  if(!latestExperiment){ $('experimentDetails').textContent='Run the experiment before downloading CSV.'; return; }

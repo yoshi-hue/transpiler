@@ -61,6 +61,18 @@ Open `http://127.0.0.1:8000`.
 
 Node.js is required for JavaScript target execution; Python 3 is required for the Python target.
 
+## Deploy as a live website with GitHub Pages
+
+The repository includes a GitHub Actions workflow that publishes the static frontend from `frontend/` whenever you push to `main` or `master`. In the repository's **Settings → Pages**, set the build and deployment source to **GitHub Actions**. After the workflow succeeds, the site will be available at `https://yoshi-hue.github.io/transpiler/`.
+
+GitHub Pages only hosts static files; it cannot run this project's Python/FastAPI backend. To enable translation, benchmarks, experiments, and LLM checks on the published site:
+
+1. Deploy the FastAPI app (`backend.main:app`) to a Python-capable host.
+2. Set `LLM_API_KEY` and any other LLM settings as environment variables on that host if you want LLM fallback. Never put the key in the frontend or GitHub Pages.
+3. Set `window.TRANSPILER_API_BASE_URL` in [`frontend/config.js`](./frontend/config.js) to the backend's public origin (for example, `https://your-backend.example.com`), then push the change. Do not include an API path or trailing slash.
+
+The frontend and backend can still be run together locally using the instructions above; leave the API URL empty in `frontend/config.js` in that case.
+
 ## Evaluation
 
 Run the in-project benchmark from the UI or:

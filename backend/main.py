@@ -14,12 +14,15 @@ load_dotenv(Path(__file__).resolve().parent.parent / '.env')
 app=FastAPI(title='Multi-Language Legacy Code Modernizer Prototype')
 app.add_middleware(CORSMiddleware,allow_origins=['*'],allow_credentials=True,allow_methods=['*'],allow_headers=['*'])
 FRONTEND=Path(__file__).resolve().parent.parent/'frontend'/'index.html'
+FRONTEND_CONFIG=FRONTEND.parent/'config.js'
 class TranspileRequest(BaseModel):
     code:str
     source_language:str='Python-like'
     target_language:str='JavaScript'
 @app.get('/')
 def home(): return FileResponse(FRONTEND)
+@app.get('/config.js')
+def frontend_config(): return FileResponse(FRONTEND_CONFIG, media_type='application/javascript')
 @app.get('/languages')
 def languages(): return {'languages':LANGUAGES,'subsets':SUBSETS,'targets':TARGETS}
 @app.get('/benchmark')
