@@ -22,6 +22,38 @@ Use the following seven numbered main headings, in this order, matching the supp
 
 Use useful subheadings inside these sections. Keep the report academically readable and specific to the actual code. Do not add claims, results, screenshots, authors, institutional details, or citations that were not provided or verified.
 
+### Required report length and page plan
+
+The completed report must be **25–30 pages total**. Aim for about **27 pages**, counting the title page, table of contents, main text, figures/tables, references, and appendices. Follow any institution-specified paper size, margins, font, line spacing, and citation style; do not manipulate formatting or add filler to reach the page count. Use this allocation as a guide and adjust within the total:
+
+| Report component | Target pages | What to include |
+|---|---:|---|
+| Title page and table of contents | 2 | Project title and only verified author/course/supervisor details; contents with page numbers. Leave clearly marked placeholders for missing personal or institutional details. |
+| 1. Abstract | 1 | A concise abstract, keywords, and the scope/evidence caveat. |
+| 2. Introduction | 3–4 | Context, motivation, problem statement, objectives, scope, research questions, and report organization. |
+| 3. Novelty in Project | 3–4 | Contribution versus prior work, design rationale, what is an engineering contribution versus established novelty, and a concise related-work comparison table based on verified sources. |
+| 4. Proposed Work | 4–5 | Proposed/current architecture, workflow, component status, algorithms or pseudocode, design choices, and future hypotheses. Distinguish implemented flow from presentation-only or planned flow. |
+| 5. Implementation & Screenshots | 9–11 | Technology and repository structure, language subsets, compiler pipeline, LLM boundary, validation, UI/API, benchmark and corpus protocol, a worked example, genuine screenshots, reproducibility, results, and threats to validity. |
+| 6. Conclusion | 1–2 | Summary of verified accomplishments, evidence limits, and prioritized future work. |
+| 7. Project Repository Link, references, and appendices | 3–4 | Verified repository/commit link, complete references, and concise supporting appendices such as test commands, manifest schema, additional result tables, or glossary. |
+
+The ranges are planning guidance, not permission to repeat material. Keep all seven required numbered headings in their original order. Place references and supporting material under section 7 or in clearly labeled appendices while retaining that heading. If a school template defines the page-count convention differently, prioritize the template and state which front matter/back matter is included in the count.
+
+To reach the required length with useful content, specifically develop:
+
+1. **A precise problem definition:** intended users, migration workflow pain points, project objectives, in-scope/out-of-scope behavior, and measurable research questions.
+2. **A related-work discussion:** compare the project with verified compiler/transpiler and LLM-assisted code translation literature. Use a table with source, approach, language/task scope, validation method, and the carefully stated distinction from this prototype. Do not invent sources or assert novelty from absence of a search.
+3. **An architecture and data-flow description:** provide a labeled diagram and a step-by-step account of tokenization, parsing, normalized IR, deterministic lowering, optional LLM candidate generation, target execution, and validation. Mark each component with its implementation status and explain where the actual system stops short of the proposed presentation.
+4. **A language-subset comparison:** use a table for each source language showing dialect/subset, implemented constructs, explicit exclusions, target support, and representative test case. Derive it from `data/supported_subset.json` and verify against the implementation.
+5. **A worked translation case study:** show a short, repository-authored source example, its relevant parsed/IR representation, generated target code, execution output, validation result, and what this example does and does not establish. Choose one example that actually runs; do not invent an output or claim a general result from one case.
+6. **Implementation detail:** explain important modules and responsibilities, API/UI surfaces, run setup, error/unsupported-syntax behavior, rule catalogue semantics, and how the corpus tool works. Use a concise module table and small code excerpts only when they clarify the implementation; cite file paths and symbols accurately.
+7. **Evaluation methodology and results:** state benchmark composition, inclusion/provenance, expected outcomes, oracle sources, target/runtime versions, commands, date, denominators, metrics, and exact current results. Include tables for aggregate results, per-language results, per-construct results, and expected-unsupported recognition when the current output supports them. If a breakdown or measure is unavailable, say so rather than fabricate it.
+8. **A limitations and threats-to-validity analysis:** discuss subset size, small/project-authored benchmark, task-derived rather than independent legacy programs, source-interpreter dependence, limited oracle independence, lack of integrated LLM candidates, metadata-only mechanisms, missing true full-stack ablation, licensing, and external validity. Explain how each limitation affects interpretation.
+9. **A reproducibility and ethics/data-provenance subsection:** provide safe run/test commands, identify which files contain examples and metadata, explain source attribution, deduplication and split grouping, and describe licensing review. Never place credentials, private data, or unapproved third-party code in the report or repository.
+10. **A future-work roadmap:** prioritize concrete work with dependencies and evaluation criteria, including integrating fallback candidates only behind validation, obtaining and auditing the corpus, securing rights and independent oracles, expanding test diversity, adding real ablation switches, and reporting confidence intervals.
+
+Use figures, tables, and appendices to explain evidence—not to pad pages. Every screenshot must be captured from the actual running application, every graph must be generated from measured results, and every code/output example must match the repository. If required evidence is unavailable, include a clearly marked placeholder or “not measured” note and list it among missing author inputs.
+
 ### Project facts to use and verify against the repository
 
 - The project is a prototype, not a full compiler or full-language migration product.
