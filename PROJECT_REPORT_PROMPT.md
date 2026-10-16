@@ -150,6 +150,21 @@ Describe only verified implementation details. Include:
 - the corpus manifest and CodeNet audit workflow, with licensing and oracle caveats
 - limitations and threats to validity
 
+#### Evidence snapshot already collected
+
+Use [`data/project_report_evidence.json`](./data/project_report_evidence.json) as the auditable evidence snapshot for the current report draft. It records the run timestamp, source commit, commands, Python/Node versions, every benchmark case status, supported-versus-unsupported outcome counts, gold-output comparisons, LLM experiment summary, and test result. Cite the artifact in the report and make it available with the project materials.
+
+For the snapshot generated on **2026-10-16** from source commit `08bf1367f34c581d04360c570318331269510c10`, the recorded results are:
+
+- **Benchmark:** 23/24 end-to-end cases passed (95.8%). One case was `not_run` because its COBOL `PERFORM` syntax is intentionally outside the implemented subset. Do not call that case a successful translation.
+- **Expected outcomes:** 24/24 matched (100%): all 23 expected-translatable cases passed; the one expected-unsupported case was recognized. Report this separately from the end-to-end pass rate.
+- **Independent expected-output comparison:** 23/23 available expected-output checks matched. This is a separate measure and does not make the source-interpreter comparison an independent oracle.
+- **LLM comparison:** rule-only and hybrid variants each recorded 23/24 end-to-end passes, zero configured LLM cases, zero LLM calls, zero generated candidates, and zero accepted candidates. This run therefore did **not** exercise the LLM and provides **no evidence for or against an LLM improvement**; it is not a meaningful test of fallback efficacy.
+- **Automated tests:** 29 tests passed. This is the software test-suite result, not the benchmark sample size or translation success count.
+- **Environment:** Python 3.13.1 and Node.js v24.20.0, targeting JavaScript.
+
+Do not replace these counts with “8/8.” The 8/8 figure is not the current complete benchmark result. When results are rerun after code or environment changes, regenerate the evidence snapshot, note its new date and source commit, and use the new artifact rather than silently carrying forward these historical numbers.
+
 Before stating numerical benchmark results, run the current benchmark and tests, record the date, command, target runtime versions, and output artifact, then transcribe the values exactly. Report denominators and separate:
 
 - expected-translatable cases from expected-unsupported cases
