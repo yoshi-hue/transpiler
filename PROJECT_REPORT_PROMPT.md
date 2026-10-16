@@ -60,6 +60,7 @@ Use figures, tables, and appendices to explain evidence—not to pad pages. Ever
 - Implemented source-language subsets are documented in `data/supported_subset.json`: COBOL, FORTRAN, Pascal, BASIC, and a project-specific Python-like grammar. JavaScript and Python are target backends for the implemented subsets.
 - The legacy-language pipeline has tokenization/parsing, normalized intermediate representation (IR), deterministic rule-first code generation, and executable validation. Describe only implementation details verified in the code.
 - The LLM is an optional, scoped fallback for unsupported constructs. It can generate suggestions/candidates, but generated fallback code is not integrated into the final generated target program or automatically accepted. Do not say that the model completes or repairs end-to-end translations.
+- One project objective is to investigate whether an LLM fallback can improve handling of constructs not covered by deterministic rules, while keeping proposed output subject to validation. This is an objective and testable hypothesis, not a demonstrated result: the current evidence run had zero configured LLM cases and zero calls, and candidate output is not integrated into generated target programs.
 - The project includes contract, risk, failure-diagnosis, and learned-rule metadata. These are prototype/reporting mechanisms; they do not currently change generation or acceptance decisions and are not validated causal improvements.
 - The validation compares output from the project’s limited source interpreter with execution of generated target code. This is empirical I/O checking, not a formal equivalence proof; the source interpreter is not an independent oracle.
 - The descriptive rules catalogue and `/rules` endpoint support inspection/reporting. Catalogue size or labels are not executable rule coverage and must not be used as proof of language coverage.
@@ -111,6 +112,9 @@ Explain:
 - the practical motivation and risks of modernizing legacy programs
 - the distinction between syntax conversion and behavior preservation
 - the problem statement and project objectives
+- include this explicit objective: **investigate whether scoped LLM fallback can improve correct handling of unsupported-by-rules constructs without reducing reliability or bypassing validation**
+- frame the corresponding hypothesis as untested: for cases where the deterministic translator reports unsupported constructs, a configured and properly integrated fallback, gated by independent validation, may increase the proportion of cases translated correctly compared with a rule-only baseline
+- state that the current prototype/evidence does not test this improvement: the recorded run made zero LLM calls, and generated suggestions are not inserted into target output
 - the declared source and target scope
 - the report’s organization, if useful
 
@@ -136,7 +140,7 @@ Describe the proposed workflow from source input through parsing, IR, determinis
 - planned extensions
 - hypotheses that still need testing
 
-Include research questions or hypotheses that can be tested, such as whether rule-first translation improves inspectability or whether a validated fallback can improve outcomes. Do not write these as established findings. Explain a future fair evaluation: fixed model/prompt/runtime, larger independently sourced corpus, independent output oracles, repository/task-level splits, deduplication, per-language and per-construct metrics, and rule-only versus hybrid versus a genuinely toggled full-system ablation.
+Include research questions or hypotheses that can be tested, such as whether rule-first translation improves inspectability or whether a validated LLM fallback improves correct handling of constructs outside deterministic coverage. Make the latter a central project objective/hypothesis, not a result. A fair future test must use a configured, fixed model and prompt, integrate candidate output only behind an explicit validation/acceptance gate, compare paired rule-only and hybrid runs on the same independently sourced cases, and report how many unsupported cases become correctly translated, rejected, or remain unsupported. Use independent output oracles, repository/task-level splits, deduplication, per-language and per-construct metrics, and a genuinely toggled full-system ablation where applicable. Do not claim improvement from candidate-generation counts, an unconfigured run, or source-interpreter/target agreement alone.
 
 #### 5. Implementation & Screenshots
 
