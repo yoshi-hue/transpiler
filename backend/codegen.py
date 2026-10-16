@@ -6,6 +6,8 @@ class CodeGenerator:
         self.lines = []
         self.indent = 0
         self.rules_used = []
+        self.declared_names = [set()]
+        self.declaration_depth = [0]
 
     def emit(self, text=''):
         self.lines.append('    ' * self.indent + text)
@@ -22,7 +24,10 @@ class CodeGenerator:
     def statement(self, n):
         if isinstance(n, Assignment):
             self.rule('assignment -> let')
-            self.emit(f'let {n.name} = {self.expr(n.value)};')
+            declared = self.declared_names[-1]
+            prefix = '' if n.name in declared else ('var ' if self.declaration_depth[-1] else 'let ')
+            declared.add(n.name)
+            self.emit(f'{prefix}{n.name} = {self.expr(n.value)};')
         elif isinstance(n, PrintStatement):
             self.rule('print -> console.log')
             self.emit(f'console.log({self.expr(n.expression)});')
@@ -38,8 +43,12 @@ class CodeGenerator:
             self.rule('block nesting -> JavaScript braces and indentation')
             self.emit(f'function {n.name}({", ".join(n.params)}) {{')
             self.indent += 1
+            self.declared_names.append(set(n.params))
+            self.declaration_depth.append(0)
             for s in n.body:
                 self.statement(s)
+            self.declaration_depth.pop()
+            self.declared_names.pop()
             self.indent -= 1
             self.emit('}')
         elif isinstance(n, IfStatement):
@@ -47,20 +56,26 @@ class CodeGenerator:
             self.rule('block nesting -> JavaScript braces and indentation')
             self.emit(f'if ({self.expr(n.condition)}) {{')
             self.indent += 1
+            self.declaration_depth[-1] += 1
             for s in n.body:
                 self.statement(s)
+            self.declaration_depth[-1] -= 1
             self.indent -= 1
             for cond, body in n.elifs:
                 self.emit(f'}} else if ({self.expr(cond)}) {{')
                 self.indent += 1
+                self.declaration_depth[-1] += 1
                 for s in body:
                     self.statement(s)
+                self.declaration_depth[-1] -= 1
                 self.indent -= 1
             if n.else_body:
                 self.emit('} else {')
                 self.indent += 1
+                self.declaration_depth[-1] += 1
                 for s in n.else_body:
                     self.statement(s)
+                self.declaration_depth[-1] -= 1
                 self.indent -= 1
             self.emit('}')
         elif isinstance(n, WhileStatement):
@@ -68,8 +83,10 @@ class CodeGenerator:
             self.rule('block nesting -> JavaScript braces and indentation')
             self.emit(f'while ({self.expr(n.condition)}) {{')
             self.indent += 1
+            self.declaration_depth[-1] += 1
             for s in n.body:
                 self.statement(s)
+            self.declaration_depth[-1] -= 1
             self.indent -= 1
             self.emit('}')
         else:

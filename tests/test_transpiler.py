@@ -1,6 +1,7 @@
 from backend.benchmark import render_experiment_report, run_experiment
 from backend.transpiler import transpile
-from backend.main import experiment
+from backend.main import experiment, rules_report
+from backend.validator import compare
 
 
 def test_basic_translation():
@@ -8,6 +9,15 @@ def test_basic_translation():
     assert 'let x = 10;' in result['javascript']
     assert 'console.log(x);' in result['javascript']
     assert result['validation']['status'] in ('passed', 'not_run')
+
+
+def test_validation_accepts_equivalent_numeric_and_boolean_output():
+    target = {'available': True, 'ok': True, 'output': '4', 'error': ''}
+    assert compare('4.0', target)['status'] == 'passed'
+    assert compare('4.1', target)['status'] == 'failed'
+    assert compare('value 4.0', target)['status'] == 'failed'
+    assert compare('True', {**target, 'output': 'true'})['status'] == 'passed'
+    assert compare('False', {**target, 'output': 'true'})['status'] == 'failed'
 
 
 def test_shared_ir_exposes_graph_metadata_and_expression_rules():
@@ -18,7 +28,10 @@ def test_shared_ir_exposes_graph_metadata_and_expression_rules():
     assert ir['edge_count'] == len(ir['edges'])
     assert ir['scopes'] == ['global']
     assert 'arithmetic/comparison expression -> JavaScript operator' in result['rules_used']
-    assert result['rule_coverage']['rules_available'] >= 12
+    assert result['rule_coverage']['source_units'] == 2
+    assert result['rule_coverage']['translated_units'] == 2
+    assert result['rule_coverage']['coverage_percent'] == 100.0
+    assert 'coverage_breakdown' in result['rule_coverage']
 
 
 def test_control_flow():
@@ -31,6 +44,20 @@ def test_function():
     result = transpile('def add(a, b):\n    return a + b\n\nprint(add(2, 3))\n')
     assert 'function add(a, b)' in result['javascript']
     assert 'return (a + b);' in result['javascript']
+
+
+def test_python_like_reassignment_in_control_flow_and_function_parameters():
+    loop_result = transpile('i = 0\nwhile i < 2:\n    print(i)\n    i = i + 1\n')
+    assert loop_result['validation']['status'] == 'passed'
+    assert loop_result['javascript'].count('let i =') == 1
+
+    branch_result = transpile('if True:\n    x = 1\nprint(x)\n')
+    assert branch_result['validation']['status'] == 'passed'
+    assert 'var x = 1;' in branch_result['javascript']
+
+    parameter_result = transpile('def increment(value):\n    value = value + 1\n    return value\n\nprint(increment(1))\n')
+    assert parameter_result['validation']['status'] == 'passed'
+    assert 'let value =' not in parameter_result['javascript']
 
 
 def test_legacy_language_validation():
@@ -51,6 +78,26 @@ def test_legacy_python_target():
     result = transpile('10 LET A = 2\n20 FOR I = 1 TO 3\n30 PRINT I\n40 NEXT I\n50 END', 'BASIC', 'Python')
     assert 'for I in range(1, (3 + 1)):' in result['javascript']
     assert result['validation']['status'] == 'passed'
+
+
+def test_pascal_and_basic_equality_conditions_translate_to_python():
+    examples = {
+        'Pascal': 'program demo;\nvar a: integer;\nbegin\na := 0;\nif a = 0 then writeln("ok") else writeln("bad");\nend.',
+        'BASIC': '10 LET A = 0\n20 IF A = 0 THEN PRINT "ok"\n30 END',
+    }
+    for language, source in examples.items():
+        for target in ('JavaScript', 'Python'):
+            result = transpile(source, language, target)
+            assert result['validation']['status'] == 'passed'
+            assert result['unsupported'] == []
+
+
+def test_legacy_not_equal_and_ordered_comparisons():
+    source = '10 LET A = 8\n20 LET B = 2\n30 IF A <> B THEN PRINT "NE"\n40 IF A <= B THEN PRINT "LE"\n50 IF A >= B THEN PRINT "GE"\n60 END'
+    for target in ('JavaScript', 'Python'):
+        result = transpile(source, 'BASIC', target)
+        assert result['validation']['status'] == 'passed'
+        assert result['unsupported'] == []
 
 
 def test_unsupported_legacy_syntax_is_reported_for_fallback():
@@ -97,6 +144,20 @@ def test_experiment_endpoint_exposes_controlled_ablation():
     assert response['ok'] is True
     assert response['rule_only']['total'] == response['hybrid']['total']
     assert response['summary']['overall']['delta_success_rate_percent'] >= 0
+    assert response['ablation_scope']['compared_component'] == 'LLM fallback candidate generation'
+    assert response['ablation_scope']['not_isolated']
+    assert response['hybrid']['accepted_llm_candidates'] == 0
+
+
+def test_rules_endpoint_exposes_json_coverage_report():
+    payload = rules_report()
+    assert payload['ok'] is True
+    assert payload['catalogue_entries'] >= 35
+    assert payload['rule_table_version'] == '1.3'
+    assert payload['is_executable_coverage_measure'] is False
+    assert 'family_counts' in payload
+    assert payload['rules'][0]['source']
+    assert payload['status_counts']['unsupported'] == 1
 
 
 def test_experiment_endpoint_rejects_invalid_repeat_count():
@@ -104,12 +165,22 @@ def test_experiment_endpoint_rejects_invalid_repeat_count():
     assert response == {'ok': False, 'error': 'Repeats must be between 1 and 10.'}
 
 
-def test_benchmark_all_curated_cases_pass():
+def test_benchmark_covers_translation_and_expected_unsupported_outcomes():
     from backend.benchmark import run_benchmark
     report = run_benchmark('JavaScript')
-    assert report['total'] == 8
-    assert report['passed'] == 8
-    assert report['success_rate_percent'] == 100.0
+    assert report['total'] == 24
+    assert report['external_task_derived_cases'] == 12
+    assert report['passed'] == 23
+    assert report['success_rate_percent'] < 100.0
+    assert report['success_rate_95ci_percent'][0] < report['success_rate_percent']
+    assert report['expected_outcome_match_rate_percent'] == 100.0
+    assert report['gold_output_accuracy_percent'] == 100.0
+    assert report['gold_output_cases'] == 23
+    assert report['unsupported_cases_expected'] == 1
+    assert report['unsupported_recognition_rate_percent'] == 100.0
+    external = [case for case in report['cases'] if case.get('source_reference')]
+    assert len(external) == 12
+    assert all(case['source_reference']['url'].startswith('https://') for case in external)
 
 
 def test_translation_contract_is_generated_for_valid_translation():

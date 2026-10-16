@@ -1,3 +1,4 @@
+from decimal import Decimal, InvalidOperation
 import subprocess
 import tempfile
 from pathlib import Path
@@ -24,6 +25,28 @@ def run_python(code):
     return _run(['python'], 'translated.py', code)
 
 
+def _outputs_equivalent(source_output, target_output):
+    if source_output == target_output:
+        return True
+    source_lines = source_output.splitlines()
+    target_lines = target_output.splitlines()
+    if len(source_lines) != len(target_lines):
+        return False
+    for source_line, target_line in zip(source_lines, target_lines):
+        if source_line == target_line:
+            continue
+        if source_line.lower() in ('true', 'false') and source_line.lower() == target_line.lower():
+            continue
+        try:
+            source_number = Decimal(source_line)
+            target_number = Decimal(target_line)
+        except InvalidOperation:
+            return False
+        if not source_number.is_finite() or not target_number.is_finite() or source_number != target_number:
+            return False
+    return True
+
+
 def compare(source_output, target, target_language='JavaScript'):
     if not target['available']:
         runtime = 'Node.js' if target_language == 'JavaScript' else 'Python'
@@ -32,7 +55,7 @@ def compare(source_output, target, target_language='JavaScript'):
             'source_output': source_output, 'target_output': None, 'target_runtime': runtime,
             'failure_class': 'runtime_unavailable'
         }
-    same = target['ok'] and source_output == target['output']
+    same = target['ok'] and _outputs_equivalent(source_output, target['output'])
     if not target['ok']:
         failure = 'target_runtime_error'
         message = 'Generated target program failed during execution.'

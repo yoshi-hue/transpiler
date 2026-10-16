@@ -180,7 +180,7 @@ pre{height:220px;padding:14px;overflow:auto;white-space:pre-wrap}
       <section class="card">
         <div class="card-title">Prototype evaluation</div>
         <div class="metrics">
-          <div class="metric">Rule coverage<b id="coverage">—</b></div>
+          <div class="metric">Input construct coverage<b id="coverage">—</b></div>
           <div class="metric">Validation<b id="validation">—</b></div>
           <div class="metric">Fallback calls<b id="fallback">—</b></div>
           <div class="metric">Unsupported syntax<b id="unsupported">—</b></div>
@@ -200,6 +200,22 @@ pre{height:220px;padding:14px;overflow:auto;white-space:pre-wrap}
 
     <details class="tools-panel">
       <summary>Show evaluation tools and downloads</summary>
+      <section class="card">
+      <div class="card-title">Descriptive rule catalogue</div>
+      <div class="experiment-toolbar">
+        <button onclick="loadRulesReport()">Load catalogue</button>
+        <button class="secondary" onclick="downloadRulesReport()">Download rules JSON</button>
+      </div>
+      <div class="experiment-summary">
+        <div class="experiment-card"><span>Rule table version</span><b id="rulesVersion">—</b></div>
+        <div class="experiment-card"><span>Catalogue entries (not coverage)</span><b id="rulesTotal">—</b></div>
+        <div class="experiment-card"><span>Marked implemented in catalogue</span><b id="rulesImplemented">—</b></div>
+        <div class="experiment-card"><span>Language families</span><b id="rulesFamilies">—</b></div>
+      </div>
+      <div class="decision">This catalogue is descriptive; its size and status labels do not measure executable language coverage. Use benchmark pass rates and required-construct measurements for evidence.</div>
+      <pre id="rulesReportDetails" class="output" style="height:180px">Load the catalogue to view per-family counts and mapping descriptions.</pre>
+    </section>
+
       <section class="card">
         <div class="card-title">Failure-mode walkthrough</div>
         <div class="failure-example">Use “Load LLM fallback example” from More actions to see an unsupported construct trigger the model path. Without provider settings, the request is recorded and skipped; with a provider, the candidate remains unaccepted until validation passes.</div>
@@ -338,6 +354,7 @@ const apiUrl=path=>`${API_BASE_URL}${path}`;
 const BACKEND_ERROR_MESSAGE='Could not connect to the backend. Configure its public URL in frontend/config.js and deploy the FastAPI backend separately.';
 let latestTranslation=null;
 let latestExperiment=null;
+let latestRulesReport=null;
 function loadExample(){ $('sourceCode').value=examples[$('source').value]; translateCode(); }
 function loadFailureExample(){ $('sourceCode').value=failureExample[$('source').value] || failureExample['Python-like']; translateCode(); }
 function loadLLMExample(){ $('sourceCode').value=llmExample[$('source').value] || llmExample['Python-like']; translateCode(); }
@@ -373,7 +390,7 @@ async function translateCode(){
   const fallbackCount=(data.fallback_log||[]).length;
   const unsupportedCount=(data.unsupported||[]).length;
   $('decisionExplanation').textContent=v.status==='passed'
-    ? `Accepted: ${data.rule_coverage.coverage_percent}% of IR nodes were handled by deterministic rules and validation passed.`
+    ? `Accepted: ${data.rule_coverage.translated_units} of ${data.rule_coverage.source_units} recognized source units were translated deterministically and validation passed.`
     : unsupportedCount
       ? `Held for review: ${unsupportedCount} unsupported construct(s) triggered the bounded fallback path. The candidate is not accepted until validation passes.`
       : `Held for review: validation status is ${v.status}. The generated output is evidence, not an accepted translation.`;
@@ -384,6 +401,24 @@ async function translateCode(){
 function downloadText(filename,content,type){
  const blob=new Blob([content],{type}); const url=URL.createObjectURL(blob); const link=document.createElement('a');
  link.href=url; link.download=filename; link.click(); URL.revokeObjectURL(url);
+}
+async function loadRulesReport(){
+ const box=$('rulesReportDetails'); box.textContent='Loading rule coverage...';
+ try{
+  const response=await fetch(apiUrl('/rules'));
+  const data=await response.json();
+  if(!response.ok || !data.ok){throw new Error(data.error||`Rules endpoint returned HTTP ${response.status}.`);}
+  latestRulesReport=data;
+  $('rulesVersion').textContent=data.rule_table_version||'—';
+  $('rulesTotal').textContent=data.total_rules??'—';
+  $('rulesImplemented').textContent=data.implemented_rules??'—';
+  $('rulesFamilies').textContent=Object.keys(data.family_counts||{}).length;
+  box.textContent=JSON.stringify({family_counts:data.family_counts,status_counts:data.status_counts,rules:data.rules},null,2);
+ }catch(error){box.textContent=error.message||BACKEND_ERROR_MESSAGE;}
+}
+function downloadRulesReport(){
+ if(!latestRulesReport){$('rulesReportDetails').textContent='Load the rule coverage report before downloading it.';return;}
+ downloadText('transpiler-rules.json',JSON.stringify(latestRulesReport,null,2),'application/json');
 }
 function downloadGeneratedCode(){
  if(!latestTranslation){ $('status').textContent='Translate a program before downloading target code.'; $('status').className='status neutral'; return; }

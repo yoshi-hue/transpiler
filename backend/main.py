@@ -8,6 +8,7 @@ from .transpiler import transpile, TARGETS
 from .legacy import LANGUAGES, SUBSETS
 from .benchmark import run_benchmark, run_experiment
 from .llm_fallback import fallback_status, test_connection
+from .rules import get_rules_report
 
 load_dotenv(Path(__file__).resolve().parent.parent / '.env')
 
@@ -25,6 +26,11 @@ def home(): return FileResponse(FRONTEND)
 def frontend_config(): return FileResponse(FRONTEND_CONFIG, media_type='application/javascript')
 @app.get('/languages')
 def languages(): return {'languages':LANGUAGES,'subsets':SUBSETS,'targets':TARGETS}
+
+@app.get('/rules')
+def rules_report():
+    return {'ok': True, **get_rules_report()}
+
 @app.get('/benchmark')
 def benchmark(target: str='JavaScript'):
     if target not in TARGETS: return {'ok':False,'error':'Unsupported target language.'}

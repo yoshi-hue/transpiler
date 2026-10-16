@@ -46,7 +46,7 @@ def tokenize_legacy(code, language):
 
 def expr(e):
     e = e.strip().rstrip('.')
-    e = e.replace('<>', '!=').replace('=', '==')
+    e = e.replace('<>', '!=')
     e = re.sub(r'(?<![<>!])=(?!=)', '==', e)
     e = re.sub(r'\bAND\b', 'and', e, flags=re.I)
     e = re.sub(r'\bOR\b', 'or', e, flags=re.I)
@@ -60,7 +60,7 @@ def js_expr(e):
     e = re.sub(r'\bAND\b', '&&', e, flags=re.I)
     e = re.sub(r'\bOR\b', '||', e, flags=re.I)
     e = re.sub(r'\bNOT\b', '!', e, flags=re.I)
-    e = e.replace('<>', '!=').replace('==', '==').replace('=', '==')
+    e = e.replace('<>', '!=')
     e = re.sub(r'(?<![<>!=])=(?!=)', '==', e)
     e = re.sub(r'\bTRUE\b', 'true', e, flags=re.I)
     e = re.sub(r'\bFALSE\b', 'false', e, flags=re.I)
@@ -231,7 +231,7 @@ def parse(language, code):
 def eval_expr(e, env):
     e=e.strip().rstrip(';.')
     e=re.sub(r"'([^']*)'", r'"\1"', e)
-    e=e.replace('<>','!=').replace('=', '==')
+    e=e.replace('<>','!=')
     e=re.sub(r'(?<![<>!=])=(?!=)', '==', e)
     e=re.sub(r'\bAND\b','and',e,flags=re.I); e=re.sub(r'\bOR\b','or',e,flags=re.I); e=re.sub(r'\bNOT\b','not',e,flags=re.I)
     e=re.sub(r'\bTRUE\b','True',e,flags=re.I); e=re.sub(r'\bFALSE\b','False',e,flags=re.I)
@@ -239,6 +239,14 @@ def eval_expr(e, env):
     local={k:v for k,v in env.items()}; local.update({k.upper():v for k,v in env.items()})
     try: return eval(e, {'__builtins__':{}}, local)
     except Exception: raise UnsupportedSyntax(f'Could not evaluate supported expression: {e}')
+
+def record_expression_rules(expression, rules, target):
+    if re.search(r'[+*/%]|\s-\s', expression):
+        rules.append(f'arithmetic → {target} operators')
+    if re.search(r'<=|>=|<>|!=|==|(?<![<>=])=(?!=)|[<>]', expression):
+        rules.append(f'comparison → {target} operators')
+    if re.search(r'\b(?:AND|OR|NOT)\b', expression, re.I):
+        rules.append(f'logical → {target} operators')
 
 def run_nodes(nodes, env, output):
     for n in nodes:
@@ -269,20 +277,27 @@ def generate_js(nodes, indent=0, declared=None, rules=None):
     for n in nodes:
         k=n['kind']
         if k=='assign':
+            record_expression_rules(n['expr'], rules, 'JavaScript')
             name=n['name']; prefix='let ' if name not in declared else ''
             declared.add(name); out.append(pad+prefix+name+' = '+js_expr(n['expr'])+';'); rules.append('assignment → JavaScript let/assignment')
-        elif k=='print': out.append(pad+'console.log('+js_expr(n['expr'])+');'); rules.append('output → console.log')
+        elif k=='print':
+            record_expression_rules(n['expr'], rules, 'JavaScript')
+            out.append(pad+'console.log('+js_expr(n['expr'])+');'); rules.append('output → console.log')
         elif k=='if':
+            record_expression_rules(n['cond'], rules, 'JavaScript')
             out.append(pad+'if ('+js_expr(n['cond'])+') {'); rules.append('conditional → if/else')
             out.extend(generate_js(n['then'],indent+1,declared,rules));
             if n['else']:
                 out.append(pad+'} else {'); out.extend(generate_js(n['else'],indent+1,declared,rules))
             out.append(pad+'}')
         elif k=='for':
+            record_expression_rules(n['start'], rules, 'JavaScript')
+            record_expression_rules(n['end'], rules, 'JavaScript')
             name=n['name']; start=js_expr(n['start']); end=js_expr(n['end']);
             out.append(pad+f'for (let {name} = {start}; {name} <= {end}; {name}++) {{'); rules.append('loop → JavaScript for')
             out.extend(generate_js(n['body'],indent+1,declared,rules)); out.append(pad+'}')
         elif k=='while':
+            record_expression_rules(n['cond'], rules, 'JavaScript')
             out.append(pad+'while ('+js_expr(n['cond'])+') {'); rules.append('loop → JavaScript while'); out.extend(generate_js(n['body'],indent+1,declared,rules)); out.append(pad+'}')
     return out
 
@@ -295,19 +310,25 @@ def generate_python(nodes, indent=0, declared=None, rules=None):
     for n in nodes:
         k=n['kind']
         if k=='assign':
+            record_expression_rules(n['expr'], rules, 'Python')
             name=n['name']; out.append(pad+name+' = '+py_expr(n['expr'])); declared.add(name)
             rules.append('assignment → Python assignment')
         elif k=='print':
+            record_expression_rules(n['expr'], rules, 'Python')
             out.append(pad+'print('+py_expr(n['expr'])+')'); rules.append('output → Python print')
         elif k=='if':
+            record_expression_rules(n['cond'], rules, 'Python')
             out.append(pad+'if '+py_expr(n['cond'])+':'); rules.append('conditional → Python if/else')
             body=generate_python(n['then'],indent+1,declared,rules); out.extend(body or [pad+'    pass'])
             if n['else']:
                 out.append(pad+'else:'); out.extend(generate_python(n['else'],indent+1,declared,rules) or [pad+'    pass'])
         elif k=='for':
+            record_expression_rules(n['start'], rules, 'Python')
+            record_expression_rules(n['end'], rules, 'Python')
             out.append(pad+f'for {n["name"]} in range({py_expr(n["start"])}, ({py_expr(n["end"])} + 1)):'); rules.append('loop → Python range')
             out.extend(generate_python(n['body'],indent+1,declared,rules) or [pad+'    pass'])
         elif k=='while':
+            record_expression_rules(n['cond'], rules, 'Python')
             out.append(pad+'while '+py_expr(n['cond'])+':'); rules.append('loop → Python while')
             out.extend(generate_python(n['body'],indent+1,declared,rules) or [pad+'    pass'])
     return out
@@ -318,6 +339,7 @@ def py_expr(e):
     e=re.sub(r'\bAND\b','and',e,flags=re.I); e=re.sub(r'\bOR\b','or',e,flags=re.I); e=re.sub(r'\bNOT\b','not',e,flags=re.I)
     e=re.sub(r'\bTRUE\b','True',e,flags=re.I); e=re.sub(r'\bFALSE\b','False',e,flags=re.I)
     e=e.replace('<>','!=')
+    e=re.sub(r'(?<![<>!=])=(?!=)', '==', e)
     return e
 
 def legacy_transpile(language, code, target='JavaScript'):
@@ -343,14 +365,22 @@ def legacy_transpile(language, code, target='JavaScript'):
             for key in ('then','else','body'):
                 if key in n: walk(n[key],idx,scope)
     walk(nodes)
-    # Coverage is construct-based rather than simply counting duplicate rule strings.
-    unique_rules=list(dict.fromkeys(rules)); avail=max(1,len(set(['assignment','output','conditional','loop'])))
-    used_categories=len(set(r.split(' → ')[0].split()[0] for r in unique_rules))
-    coverage={'rules_available':avail,'rules_used':used_categories,'coverage_percent':round(used_categories/avail*100,1),
-              'deterministic_rules':len(unique_rules),'unsupported_constructs':len(unsupported)}
+    unique_rules=list(dict.fromkeys(rules))
+    translated_units=len(ir)
+    unsupported_units=len(unsupported)
+    source_units=translated_units+unsupported_units
+    coverage={
+        'coverage_basis':'parsed IR statement nodes plus parser-reported unsupported constructs',
+        'source_units':source_units,
+        'translated_units':translated_units,
+        'unsupported_units':unsupported_units,
+        'rules_used':len(unique_rules),
+        'deterministic_rules':len(unique_rules),
+        'coverage_percent':round((translated_units/source_units)*100,1) if source_units else 100.0,
+        'coverage_breakdown':unique_rules,
+    }
     notes=['Subset translation: '+LANGUAGES[language],
            'Shared normalized representation is lowered to the selected target backend.',
            'Rule-first translation is applied before optional LLM fallback.',
            'Unsupported constructs are surfaced explicitly and are never silently treated as translated.']
     return LegacyResult(language,target,output,tokenize_legacy(code,language),ir,symbols,unique_rules,coverage,nodes,unsupported,notes)
-

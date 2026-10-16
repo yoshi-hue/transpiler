@@ -1,0 +1,114 @@
+{
+  "schema_version": "1.0",
+  "scope": "Implemented parser and deterministic backend subset, not full language conformance.",
+  "targets": [
+    "JavaScript",
+    "Python"
+  ],
+  "languages": {
+    "COBOL": {
+      "dialect": "Documented free-format teaching subset",
+      "implemented_constructs": [
+        "WORKING-STORAGE numeric PIC declarations with VALUE",
+        "MOVE expression TO identifier",
+        "COMPUTE identifier = expression",
+        "DISPLAY expression",
+        "IF / ELSE / END-IF",
+        "STOP RUN"
+      ],
+      "not_claimed": [
+        "fixed-format column semantics",
+        "ACCEPT/input",
+        "PERFORM loops or paragraphs",
+        "file I/O",
+        "COPYbooks",
+        "packed decimal and full PIC semantics"
+      ]
+    },
+    "FORTRAN": {
+      "dialect": "FORTRAN 77/90-style subset",
+      "implemented_constructs": [
+        "INTEGER and REAL declarations",
+        "scalar assignment",
+        "PRINT *, expression",
+        "block IF / ELSE / END IF",
+        "DO identifier = start, stop / END DO"
+      ],
+      "not_claimed": [
+        "READ/input",
+        "arrays",
+        "subroutines and functions",
+        "modules",
+        "formatted I/O",
+        "step values other than the implicit increment of one"
+      ]
+    },
+    "Pascal": {
+      "dialect": "Simple Pascal subset",
+      "implemented_constructs": [
+        "scalar var declarations",
+        "assignment using :=",
+        "WRITE / WRITELN",
+        "single-statement IF / THEN / ELSE",
+        "single-statement FOR / TO / DO",
+        "single-statement WHILE / DO"
+      ],
+      "not_claimed": [
+        "procedures and functions",
+        "compound BEGIN / END blocks",
+        "arrays, records, pointers, and sets",
+        "case statements",
+        "input",
+        "dialect-specific compiler extensions"
+      ]
+    },
+    "BASIC": {
+      "dialect": "Line-numbered BASIC teaching subset",
+      "implemented_constructs": [
+        "line-numbered LET or bare scalar assignment",
+        "PRINT",
+        "single-line IF / THEN",
+        "FOR / NEXT with implicit step one",
+        "END / STOP"
+      ],
+      "not_claimed": [
+        "INPUT",
+        "GOTO and labels",
+        "GOSUB / RETURN",
+        "arrays",
+        "multi-line IF blocks",
+        "dialect-specific graphics, files, or runtime functions"
+      ]
+    },
+    "Python-like": {
+      "dialect": "Project's lexer/parser grammar; not general Python",
+      "implemented_constructs": [
+        "scalar assignment and reassignment",
+        "print(expression)",
+        "if / elif / else",
+        "while",
+        "def with positional parameters and return",
+        "function calls",
+        "numeric, string, and boolean literals",
+        "arithmetic, comparisons, and boolean operators",
+        "unary negation and not",
+        "expression statements"
+      ],
+      "not_claimed": [
+        "input, imports, classes, exceptions, comprehensions, collections, decorators, or async",
+        "general Python compatibility",
+        "Python source to Python target in the current legacy pipeline"
+      ]
+    }
+  },
+  "shared_expression_subset": [
+    "numeric and quoted string constants",
+    "identifiers",
+    "parentheses",
+    "unary minus and logical NOT",
+    "arithmetic operators supported by the current expression parser",
+    "equality and ordered comparisons",
+    "AND / OR in the legacy subset"
+  ],
+  "acceptance_policy": "A corpus case is a translation success only when the parser reports no unsupported constructs, target execution succeeds, and output agrees with an independently supplied oracle. Unsupported-syntax recognition is reported separately."
+}
