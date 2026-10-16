@@ -151,7 +151,7 @@ pre{height:220px;padding:14px;overflow:auto;white-space:pre-wrap}
       <div class="stage"><strong>1. Lexer + Parser</strong>Tokens and syntax tree</div>
       <div class="stage"><strong>2. Semantic + IR</strong>Symbols and shared IR</div>
       <div class="stage"><strong>3. Rule-first backend</strong>Feature mapping</div>
-      <div class="stage"><strong>4. Validation</strong>I/O equivalence</div>
+      <div class="stage"><strong>4. Validation</strong>Finite I/O checks</div>
     </div>
 
     <div class="editor-grid">
@@ -180,7 +180,7 @@ pre{height:220px;padding:14px;overflow:auto;white-space:pre-wrap}
       <section class="card">
         <div class="card-title">Prototype evaluation</div>
         <div class="metrics">
-          <div class="metric">Input construct coverage<b id="coverage">—</b></div>
+          <div class="metric" title="Recognized source units translated deterministically; not the descriptive catalogue size.">Recognized source-unit coverage<b id="coverage">—</b></div>
           <div class="metric">Validation<b id="validation">—</b></div>
           <div class="metric">Fallback calls<b id="fallback">—</b></div>
           <div class="metric">Unsupported syntax<b id="unsupported">—</b></div>
@@ -194,12 +194,28 @@ pre{height:220px;padding:14px;overflow:auto;white-space:pre-wrap}
           <div class="metric">Failure class<b id="failureClass">—</b></div>
         </div>
         <div id="status" class="status">Ready.</div>
-        <div id="decisionExplanation" class="decision">The system will explain whether the output was accepted deterministically, routed to fallback, or held for review.</div>
+        <div id="decisionExplanation" class="decision">The system will explain deterministic validation status and whether unsupported constructs were reported. LLM suggestions are not integrated into generated output.</div>
       </section>
     </details>
 
     <details class="tools-panel">
       <summary>Show evaluation tools and downloads</summary>
+      <section class="card">
+        <div class="card-title">Project objectives and implementation status</div>
+        <div class="decision"><strong>Research objective:</strong> investigate whether a validation-gated LLM fallback can improve correct handling of constructs outside deterministic-rule coverage. This is not demonstrated by the current run: no LLM calls were made, and model candidates are not integrated into generated target code.</div>
+        <table class="experiment-table">
+          <thead><tr><th>Objective</th><th>Current status</th></tr></thead>
+          <tbody>
+            <tr><td>Survey compiler, transpiler, and LLM translation approaches</td><td>Report task; citations require verification</td></tr>
+            <tr><td>Identify evidence-backed research gaps</td><td>Candidate gaps only; primary-source verification required</td></tr>
+            <tr><td>Build multi-language front end and shared representation</td><td>Implemented for documented subsets</td></tr>
+            <tr><td>Constrain hybrid backend with deterministic mappings</td><td>Partial: deterministic generation; fallback suggestions are not integrated</td></tr>
+            <tr><td>Check behavior with execution-based validation</td><td>Partial: finite I/O checks; not formal equivalence</td></tr>
+            <tr><td>Document contributions and limitations</td><td>Documented; no novelty claim without verified comparison</td></tr>
+          </tbody>
+        </table>
+        <div class="decision">The candidate research gaps and contribution-to-gap status are documented in <code>data/PROJECT_OBJECTIVES_AND_GAPS.md</code>. They are not findings established by this prototype.</div>
+      </section>
       <section class="card">
       <div class="card-title">Descriptive rule catalogue</div>
       <div class="experiment-toolbar">
@@ -218,7 +234,7 @@ pre{height:220px;padding:14px;overflow:auto;white-space:pre-wrap}
 
       <section class="card">
         <div class="card-title">Failure-mode walkthrough</div>
-        <div class="failure-example">Use “Load LLM fallback example” from More actions to see an unsupported construct trigger the model path. Without provider settings, the request is recorded and skipped; with a provider, the candidate remains unaccepted until validation passes.</div>
+        <div class="failure-example">Use “Load LLM fallback example” from More actions to see an unsupported construct reach the optional suggestion path. Without provider settings, the request is recorded and skipped; with a provider, a suggestion may be generated, but it is not integrated into target output or automatically accepted.</div>
       </section>
       <section class="card">
       <div class="card-title">In-project benchmark</div>
@@ -392,7 +408,7 @@ async function translateCode(){
   $('decisionExplanation').textContent=v.status==='passed'
     ? `Accepted: ${data.rule_coverage.translated_units} of ${data.rule_coverage.source_units} recognized source units were translated deterministically and validation passed.`
     : unsupportedCount
-      ? `Held for review: ${unsupportedCount} unsupported construct(s) triggered the bounded fallback path. The candidate is not accepted until validation passes.`
+      ? `Held for review: ${unsupportedCount} unsupported construct(s) were reported. Any LLM suggestion is not integrated into the generated target program.`
       : `Held for review: validation status is ${v.status}. The generated output is evidence, not an accepted translation.`;
   status.textContent=(data.language_support?data.language_support.source+' subset → '+data.language_support.target+'. ':'')+(v.message||'Translation complete.');
   status.className='status '+(v.status==='passed'?'pass':v.status==='failed'?'fail':'neutral');

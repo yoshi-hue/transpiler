@@ -1,10 +1,23 @@
 # Multi-Language Legacy Code Modernizer
 
-A compiler-design prototype implementing the project's final architecture:
+A compiler-design prototype for:
 
-**shared compiler front end → shared IR → rule-first translation → scoped LLM fallback → executable validation**
+**subset front ends → normalized representation → deterministic code generation → empirical I/O validation**
 
-The prototype supports documented subsets of COBOL, FORTRAN, Pascal, BASIC, and the earlier Python-like language. JavaScript and Python are available as targets for the implemented subset.
+The prototype supports documented subsets of COBOL, FORTRAN, Pascal, BASIC, and the earlier Python-like language. JavaScript and Python are available as targets for the implemented subset. The optional LLM path can produce suggestions for unsupported constructs when configured, but those candidates are not integrated into target code or automatically accepted.
+
+## Project objectives and evidence status
+
+The project objectives are to survey translation approaches, identify evidence-backed research gaps, build a multi-language front end and shared representation, investigate a constrained hybrid backend, validate behavior by execution, and document contributions and limitations. Their current implementation status and the presentation's candidate gap claims are tracked in [`data/PROJECT_OBJECTIVES_AND_GAPS.md`](./data/PROJECT_OBJECTIVES_AND_GAPS.md).
+
+A course-specific DOCX report may contain personal identifiers and is maintained separately from the public repository.
+
+The main implementation/evaluation boundaries are:
+
+- Front ends, normalized representation, deterministic generation, and finite execution checks are implemented for the subsets in [`data/supported_subset.json`](./data/supported_subset.json).
+- The LLM-fallback improvement is a research objective, not an established result. Current evidence records zero configured LLM cases and zero model calls; generated candidates are not integrated into output.
+- Contracts, risk assessments, failure fingerprints, learned-rule records, and the descriptive mapping catalogue are metadata/diagnostic features. They do not currently control acceptance or demonstrate improved correctness.
+- The candidate literature gaps are not presented as verified findings until their primary sources and exact citations are checked.
 
 ## Why this project matters
 
@@ -12,27 +25,27 @@ The project addresses a practical and intellectually meaningful challenge: moder
 
 Many real-world migration tasks are dominated by highly structured, deterministic constructs such as arithmetic, assignment, branching, and simple loops. Those patterns are well suited to compiler rules, while unusual or unsupported forms still benefit from external model assistance. The design therefore treats the LLM as a focused fallback rather than the primary translator.
 
-This creates a research story grounded in reliability: rule-first translation preserves determinism and explainability, while validation and learned rules turn the model into a constrained, auditable assistant rather than an unchecked code generator.
+This motivates a testable research question: can a validation-gated, scoped model fallback correctly handle some constructs that deterministic rules do not cover? The current prototype has not established that result.
 
 ## Research framing and academic contribution
 
-The project is a prototype at the intersection of compiler construction and AI-assisted software maintenance. Its hypothesis is that a rule-first pipeline with scoped model suggestions can keep translation behavior inspectable and validate candidates on a declared subset. The current small benchmark does not establish statistical generality or superiority over alternative systems.
+The project is a prototype at the intersection of compiler construction and AI-assisted software maintenance. Its hypothesis is that a rule-first pipeline with scoped model suggestions can keep translation behavior inspectable and, if candidates are integrated behind an independent validation gate, improve results on constructs outside deterministic coverage. The current small benchmark does not establish statistical generality or superiority over alternative systems.
 
 The project contributes:
 
-- a shared front end and shared IR for multiple legacy languages
+- subset front ends and a normalized representation for multiple legacy languages
 - rule-first deterministic translation for common constructs
-- scoped LLM fallback only for constructs outside deterministic coverage
+- optional LLM candidate generation for unsupported constructs; candidate integration is not implemented
 - executable I/O validation on the documented subset
-- experimental learned-rule metadata and failure fingerprints for future evaluation
+- provenance-aware evaluation workflow and diagnostic metadata
 
-The technical contribution can be summarized as:
+The current implemented path can be summarized as:
 
 ```text
-source code → semantic contract → risk-aware validation → learned rules → failure diagnosis
+supported source → parse/normalize → deterministic target generation → finite I/O check
 ```
 
-## Conference-ready positioning
+## Research positioning
 
 This project is best framed as a hybrid compiler + AI systems paper centered on reliable translation under uncertainty.
 
@@ -42,31 +55,29 @@ Research hypotheses to test (not findings established by the current benchmark):
 - “Translation correctness is treated as a validation problem, not merely a code-generation problem.”
 - “Verified fallback patterns are accumulated into the rule set, lowering future dependence on external model calls.”
 
-This is a more precise research question than a general claim that “LLMs can translate legacy code.” Any effectiveness claim still requires larger independent evaluation.
+These are hypotheses, not findings. The LLM-improvement question requires a configured model, candidate integration behind validation, independent test oracles, and paired evaluation. Any effectiveness claim still requires larger independent evaluation.
 
 ## What makes the LLM integration meaningful
 
-The model is not used as a whole-program black-box translator. The deterministic rule layer runs first. Only constructs outside the explicit rule coverage are sent to the external model. Every request is logged with a request ID, model, prompt version/hash, latency, retry count, and response status.
+When configured, the prototype may request suggestions for parser-reported unsupported constructs after deterministic generation. The request includes source context; it is not currently restricted to a small IR subtree. The model path is optional and has not been exercised by the current benchmark evidence.
 
-The LLM output remains a **candidate** until validation supports accepting it. This prevents a plausible-looking model response from being counted as a correct translation.
+The LLM output remains a **candidate** and is not integrated into generated target code or automatically accepted. Consequently, current validation results measure deterministic translation, not end-to-end LLM fallback effectiveness.
 
 ## Research-grade translation safeguards
 
-The translator now emits a machine-readable semantic contract for each translation unit before it is accepted. This contract records inputs, output type, side effects, exception expectations, source/target API mappings, validation evidence, and a confidence score.
+The translator emits a machine-readable semantic-contract record and diagnostic metadata, including a risk assessment, failure fingerprint, and learned-rule record.
 
-The system also computes a construct-level risk score and selects the validation policy accordingly. Low-risk constructs use direct rule-based validation, while medium and high-risk constructs trigger additional checks, generated test cases, and stricter review.
-
-Verified fallback candidates can be recorded as learned-rule metadata, and translation failures are classified with a failure fingerprint describing the stage, source construct, target mismatch, and suggested repair. The current prototype does not establish that learned metadata changes subsequent generation or reduces model calls.
+These records do not currently select additional validation, trigger generated tests, change acceptance decisions, integrate candidates, or alter later code generation. Treat them as reporting/diagnostic mechanisms, not evidence of improved reliability.
 
 ## Evaluation strategy and benchmark design
 
-The project already includes a small in-project benchmark and a rule-vs-hybrid experiment. For conference-style evaluation, keep the same protocol but explicitly report:
+The project includes a small benchmark and a rule-only versus optional-LLM-candidate experiment. A full metadata/validation ablation is future work, not an implemented comparison. A future conference-style evaluation should compare:
 
 1. Rule-only baseline
 2. Hybrid rule-first + LLM fallback
 3. Full system with contracts, risk-aware validation, and learned rules
 
-This ablation structure is the key to making the contribution readable and defensible. The benchmark should report per-language and per-construct success, unsupported syntactic coverage, fallback frequency, validation failure count, and median LLM latency.
+Only the first two variants are represented by the current experiment harness, and the latest run configured no LLM cases. The benchmark should report per-language and per-construct success, unsupported-syntax recognition, fallback frequency, validation failures, and latency when those measures are actually available.
 
 See [LLM_EVALUATION.md](./LLM_EVALUATION.md) for the recommended protocol.
 

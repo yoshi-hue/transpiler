@@ -56,6 +56,10 @@ Use figures, tables, and appendices to explain evidence—not to pad pages. Ever
 
 ### Project facts to use and verify against the repository
 
+The supplied presentation also defines six project objectives: (1) survey rule-based/compiler and learning-based translation approaches; (2) identify specific, evidence-backed research gaps; (3) build a multi-language front end and shared representation; (4) design a hybrid backend constrained by explicit mappings; (5) validate behavior through execution rather than surface similarity alone; and (6) document contributions and limitations relative to prior work. Use [`data/PROJECT_OBJECTIVES_AND_GAPS.md`](./data/PROJECT_OBJECTIVES_AND_GAPS.md) for the current objective-status mapping. Do not claim objectives 1, 2, or 6 are completed solely because they appear in the presentation; literature and novelty claims require verified primary sources.
+
+The presentation suggests five candidate gap themes: scalability, benchmark/evaluation reliability, feature/API semantic mapping, scarcity of repository-level corpora, and multilingual bias/cross-paradigm transfer. Treat these as research questions to verify, not established facts. The shorthand citations visible in the slides (including “PoPL / ACM PL, 2025,” PLDI 2025, EMNLP 2025, a 2026 artifact analysis, and Xu et al. 2026) are incomplete. Locate and read each primary source before asserting its claim; never fabricate complete citations. The project has not measured >100-line scalability, conducted a benchmark-reliability study, measured cross-language API divergence or multilingual bias, or audited a repository-scale CodeNet corpus.
+
 - The project is a prototype, not a full compiler or full-language migration product.
 - Implemented source-language subsets are documented in `data/supported_subset.json`: COBOL, FORTRAN, Pascal, BASIC, and a project-specific Python-like grammar. JavaScript and Python are target backends for the implemented subsets.
 - The legacy-language pipeline has tokenization/parsing, normalized intermediate representation (IR), deterministic rule-first code generation, and executable validation. Describe only implementation details verified in the code.
@@ -72,6 +76,7 @@ Use figures, tables, and appendices to explain evidence—not to pad pages. Ever
 - IBM’s published statistics workbook reports 15,059 Fortran submissions (8,018 accepted), 8,727 Pascal (4,820 accepted), 1,277 COBOL (727 accepted), and 2,116 Visual Basic (1,087 accepted). The workbook has no plain BASIC entry; Visual Basic is not equivalent to this project’s BASIC subset. Label these strictly as published dataset metadata totals, not as locally audited or usable samples. Cite the workbook and state when it was consulted.
 - The current experiment compares rule-only behavior with optional LLM candidate generation. It is not a completed ablation proving the benefit of LLM integration, contracts, risk-aware validation, or learned rules.
 - The project should be positioned as a transparent hybrid compiler/AI-assistance prototype with a carefully scoped subset and evaluation protocol. Do not call it conference-ready or claim state-of-the-art performance.
+- A course-specific DOCX report may be supplied separately and may contain personal identifiers; it is not version-controlled in the public repository. If available locally, use its objective/gap/contribution/evaluation addendum and treat that status note as superseding older claims or historical screenshots.
 
 ### Presentation claims versus implementation status
 
@@ -156,16 +161,18 @@ Describe only verified implementation details. Include:
 
 #### Evidence snapshot already collected
 
-Use [`data/project_report_evidence.json`](./data/project_report_evidence.json) as the auditable evidence snapshot for the current report draft. It records the run timestamp, source commit, commands, Python/Node versions, every benchmark case status, supported-versus-unsupported outcome counts, gold-output comparisons, LLM experiment summary, and test result. Cite the artifact in the report and make it available with the project materials.
+Use [`data/project_report_evidence.json`](./data/project_report_evidence.json) as the auditable evidence record for the current report draft. It retains a pinned snapshot and a separate latest local rerun, including timestamps, source revision, commands, Python/Node versions, benchmark case statuses, supported-versus-unsupported outcome counts, expected-output comparisons, LLM experiment summary, and test result. Cite the correct record and its limitations.
 
-For the snapshot generated on **2026-10-16** from source commit `08bf1367f34c581d04360c570318331269510c10`, the recorded results are:
+The pinned snapshot generated on **2026-10-16** from source commit `08bf1367f34c581d04360c570318331269510c10` recorded:
 
 - **Benchmark:** 23/24 end-to-end cases passed (95.8%). One case was `not_run` because its COBOL `PERFORM` syntax is intentionally outside the implemented subset. Do not call that case a successful translation.
 - **Expected outcomes:** 24/24 matched (100%): all 23 expected-translatable cases passed; the one expected-unsupported case was recognized. Report this separately from the end-to-end pass rate.
 - **Independent expected-output comparison:** 23/23 available expected-output checks matched. This is a separate measure and does not make the source-interpreter comparison an independent oracle.
 - **LLM comparison:** rule-only and hybrid variants each recorded 23/24 end-to-end passes, zero configured LLM cases, zero LLM calls, zero generated candidates, and zero accepted candidates. This run therefore did **not** exercise the LLM and provides **no evidence for or against an LLM improvement**; it is not a meaningful test of fallback efficacy.
-- **Automated tests:** 29 tests passed. This is the software test-suite result, not the benchmark sample size or translation success count.
+- **Automated tests:** 29 tests passed at that pinned revision. This is the software test-suite result, not the benchmark sample size or translation success count.
 - **Environment:** Python 3.13.1 and Node.js v24.20.0, targeting JavaScript.
+
+The latest local rerun on **2026-10-16 at 18:07 UTC** used the same JavaScript benchmark and recorded the same 23/24 end-to-end, 24/24 expected-outcome, and 23/23 expected-output results, with **31 pytest tests passing**. Its rule-only and hybrid variants again made zero LLM calls and generated zero candidates. This rerun included uncommitted documentation/UI alignment changes; the benchmark implementation and case data were unchanged. Use the `latest_validation` record in the JSON evidence file for these results.
 
 Do not replace these counts with “8/8.” The 8/8 figure is not the current complete benchmark result. When results are rerun after code or environment changes, regenerate the evidence snapshot, note its new date and source commit, and use the new artifact rather than silently carrying forward these historical numbers.
 
