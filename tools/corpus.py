@@ -67,8 +67,6 @@ def _manifest_record(language, case_id, construct, source, *, origin, group, spl
     if expected_output is None:
         expected_output = LOCAL_EXPECTED_OUTPUTS.get((language, construct))
     expected_outcome = external.get('expected_outcome', 'translated')
-    if expected_outcome == 'unsupported':
-        expected_output = None
 
     provenance = external.get('provenance', {})
     source_uri = external.get('source_uri')
@@ -107,7 +105,10 @@ def _manifest_record(language, case_id, construct, source, *, origin, group, spl
         'input_fixtures': external.get('input_fixtures', []),
         'expected_outcome': expected_outcome,
         'expected_output': expected_output,
-        'oracle_status': 'separately_authored_expected_output' if expected_output is not None else 'unsupported_expected',
+        'oracle_status': external.get(
+            'oracle_status',
+            'separately_authored_expected_output' if expected_output is not None else 'unsupported_expected',
+        ),
         'source_uri': source_uri or f'embedded:backend/benchmark.py#{language}:{construct}',
         'adaptation_notes': provenance.get('adaptation', 'Project-authored local benchmark case.'),
     }

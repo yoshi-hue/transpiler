@@ -1,0 +1,151 @@
+\documentclass[10pt,conference]{IEEEtran}
+\usepackage[T1]{fontenc}
+\usepackage{url}
+\usepackage{booktabs}
+\usepackage{graphicx}
+
+\title{An Inspectable Rule-First Transpiler for Legacy-Language Subsets: A Tool Demonstration}
+
+% ICSE 2027 Tool Demonstration review is single-anonymous: replace these fields.
+\author{\IEEEauthorblockN{[Author Name]}\\
+\IEEEauthorblockA{[Department and Institution]\\
+[City, Country]\\
+[Contact Email]}}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Legacy-code translation tools can produce plausible target programs while obscuring
+which source constructs were handled and what was actually checked. We demonstrate a
+compiler-design prototype that translates declared subsets of COBOL, FORTRAN, Pascal,
+and line-numbered BASIC into JavaScript or Python, and a project-specific Python-like
+subset into JavaScript. Its web interface exposes tokenization, normalized intermediate
+data, deterministic output, unsupported constructs, optional complete-program model
+proposals, and finite validation results. The model output remains an unaccepted
+candidate. On a 20-case task-grouped pilot, both targets passed 17 supported cases and
+matched all 17 separately authored expected outputs; three COBOL loop cases were
+correctly reported unsupported. These expected outputs have not been checked against
+native source compilers. A separate refresh at pushed commit ade68dc confirmed prompt
+v3 and the configured Gemini model but returned no candidate after three provider
+attempts per target. The prototype therefore demonstrates inspectable boundaries and
+failure reporting, not an LLM effectiveness gain or general semantic equivalence.
+Demonstration video: \url{[PUBLIC_YOUTUBE_VIDEO_URL]}
+\end{abstract}
+
+\section{Introduction}
+Modernizing legacy code requires more than producing syntactically plausible output:
+users need to know which constructs were translated, where behavior is uncertain, and
+what evidence supports a candidate. Prior translation systems combine code generation
+with execution, testing, or explicit feature analysis in their evaluated settings
+\cite{yang2024,zhang2025}. Our contribution is narrower: a runnable teaching/research
+prototype whose interface makes its declared subset and validation boundary visible.
+
+The prototype does not establish a new translation algorithm, full language coverage,
+or an effectiveness advantage. It provides (1) custom subset front ends and a shared
+normalized representation, (2) deterministic rule-first translation, (3) optional
+complete-program LLM proposals for unsupported input, and (4) finite target execution
+and separately authored output checks. It is intended for researchers and students
+inspecting translation decisions, not production migration teams.
+
+\section{Tool and Demonstration}
+The front ends recognize documented subsets of COBOL, FORTRAN, Pascal, BASIC, and a
+project-specific Python-like language. The first four languages can target JavaScript or
+Python; the Python-like demonstration path targets JavaScript. This is not full-dialect
+support. The normalized representation and deterministic code generator expose the
+rule-based path. Parser-reported unsupported input can trigger an optional request for
+a complete target program. The application retains deterministic partial output,
+displays the model candidate separately, reports candidate syntax/runtime status, and
+never marks the candidate semantically accepted.
+
+\begin{figure}[t]
+\centering
+\fbox{\begin{minipage}{0.96\columnwidth}
+\centering
+Source subset $\rightarrow$ parser and normalized representation $\rightarrow$
+deterministic target code $\rightarrow$ target checks\\[2pt]
+Unsupported construct $\rightarrow$ optional full-program candidate
+$\rightarrow$ separate review status
+\end{minipage}}
+\caption{Implemented path. Candidate generation is optional; it is not an automatic
+acceptance or repair loop.}
+\label{fig:pipeline}
+\end{figure}
+
+The demonstration walks through a supported loop in a legacy source language, shows
+its intermediate representation and target output, then enters a COBOL \texttt{PERFORM}
+loop outside the declared subset. The UI shows the unsupported statements, retained
+deterministic output, fallback status, and any candidate checks. The benchmark panel
+shows per-case results and distinguishes expected-unsupported recognition from
+translation success. The fallback prompt treats the complete source as untrusted text.
+
+JavaScript candidates are syntax-checked and executed using Node's permission mode,
+with a timeout and a reduced child environment. Python candidates are syntax-checked
+only and are not executed. Neither behavior is a complete security sandbox or semantic
+acceptance gate. The current [candidate acceptance policy](CANDIDATE_ACCEPTANCE.md)
+requires multi-case evidence and human review before any future acceptance workflow.
+
+\section{Evaluation and Limitations}
+We ran the deterministic benchmark against JavaScript and Python. The test split has
+20 records in two whole-task groups: maximum-of-two-numbers and for-loop tasks. It
+contains 17 expected-translatable records and three expected-unsupported COBOL
+\texttt{PERFORM} records. The 17 supported target executions matched their separately
+authored expected outputs in both targets (17/17); all three unsupported cases were
+recognized (3/3). End-to-end status was 17/20 for each target because expected-unsupported
+cases are reported as \texttt{not\_run}, not translation passes (Table~\ref{tab:results}).
+
+\begin{table}[t]
+\centering
+\caption{Deterministic held-out pilot.}
+\label{tab:results}
+\begin{tabular}{lrr}
+\toprule
+Measure & JavaScript & Python \\
+\midrule
+Test cases & 20 & 20 \\
+Supported outputs matching expected output & 17/17 & 17/17 \\
+Expected-unsupported cases recognized & 3/3 & 3/3 \\
+End-to-end translation passes & 17/20 & 17/20 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The expected outputs are project-authored from fixed constants and loop ranges and
+match a separate reference evaluator (20/20). This checker does not import the
+transpiler or its source interpreter; it is not a native source compiler or a second
+human review. The corpus has only two test
+task groups and is not a representative estimate of translation accuracy. The original
+24-case paired refresh at pushed commit \texttt{ade68dc} used
+\texttt{gemini-3.1-flash-lite} and \texttt{legacy-modernizer-llm-v3}. The provider
+returned no candidate after three request attempts for the unsupported case in each
+target, and the hybrid success rate did not exceed the rule-only rate. This run supports
+no LLM effectiveness claim.
+
+Contracts, risk scores, failure fingerprints, and learned-rule examples are prototype
+metadata. No controlled ablation has shown that they improve correctness or review
+time. We make no scalability or multilingual-bias claim. Python candidate execution,
+independent source-language oracles, a larger task-grouped corpus, and repeated
+controlled model trials remain future work. The complete run provenance and case JSON
+are linked in the repository's \texttt{data/EVIDENCE\_V3\_REFRESH.md}.
+
+\section{Availability}
+The source and usage instructions are publicly available at
+\url{https://github.com/yoshi-hue/transpiler}. The tool runs locally using Python,
+FastAPI, and Uvicorn; the README documents installation, configuration, and execution.
+The optional model provider must be configured by the user. No API credential is
+included in the artifact.
+
+\begin{thebibliography}{2}
+\bibitem{yang2024}
+Z. Yang et al., ``Exploring and Unleashing the Power of Large Language Models in
+Automated Code Translation,'' in \emph{Proc. ACM Joint European Software Engineering
+Conference and Symposium on the Foundations of Software Engineering (ESEC/FSE)}, 2024,
+doi: 10.1145/3660778.
+
+\bibitem{zhang2025}
+H. Zhang, C. David, M. Wang, B. Paulsen, and D. Kroening, ``Scalable, Validated Code
+Translation of Entire Projects using Large Language Models,'' \emph{Proceedings of the
+ACM on Programming Languages}, vol. 9, PLDI, pp. 1616--1641, 2025,
+doi: 10.1145/3729315.
+\end{thebibliography}
+\end{document}

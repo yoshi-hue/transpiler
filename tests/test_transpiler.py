@@ -384,19 +384,22 @@ def test_experiment_endpoint_rejects_invalid_repeat_count():
 def test_benchmark_covers_translation_and_expected_unsupported_outcomes():
     from backend.benchmark import run_benchmark
     report = run_benchmark('JavaScript')
-    assert report['total'] == 24
-    assert report['external_task_derived_cases'] == 12
-    assert report['passed'] == 23
+    assert report['total'] == 20
+    assert report['external_task_derived_cases'] == 20
+    assert report['development_cases_excluded'] == 16
+    assert report['passed'] == 17
     assert report['success_rate_percent'] < 100.0
     assert report['success_rate_95ci_percent'][0] < report['success_rate_percent']
     assert report['expected_outcome_match_rate_percent'] == 100.0
     assert report['gold_output_accuracy_percent'] == 100.0
-    assert report['gold_output_cases'] == 23
-    assert report['unsupported_cases_expected'] == 1
+    assert report['gold_output_cases'] == 17
+    assert report['unsupported_cases_expected'] == 3
     assert report['unsupported_recognition_rate_percent'] == 100.0
     external = [case for case in report['cases'] if case.get('source_reference')]
-    assert len(external) == 12
+    assert len(external) == 20
     assert all(case['source_reference']['url'].startswith('https://') for case in external)
+    assert all(case['split'] == 'test' for case in report['cases'])
+    assert len({case['split_group'] for case in report['cases']}) == 2
 
 
 def test_translation_contract_is_generated_for_valid_translation():

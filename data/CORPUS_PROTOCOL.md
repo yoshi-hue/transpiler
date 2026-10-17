@@ -2,10 +2,12 @@
 
 ## Purpose and status
 
-This protocol defines selection and evaluation rules for a future independent legacy
-program corpus. The repository currently contains only a small project-authored,
-task-derived benchmark. Those cases are useful smoke tests; they are not an independent
-or representative corpus.
+This protocol defines selection and evaluation rules for the current small
+project-authored, task-derived pilot and a future independent legacy-program corpus.
+The present held-out set has whole-task grouping and separately authored expected
+outputs; those outputs match a separate reference evaluator (20/20), but have not been
+checked against native source compilers or by a second human reviewer. This is not an
+independent or representative corpus.
 
 ## Supported subset
 
@@ -40,8 +42,12 @@ downloadable.
 
 Prefer documented input/output fixtures from the original task or execute the original
 program in a pinned original runtime. Store input and expected output separately from
-the translator's source interpreter. If no independent oracle is available, mark the
-case `oracle_status: unavailable` and do not count it as a correctness result.
+the translator's source interpreter. The current fixed-constant edge cases use
+separately authored expected outputs derived from arithmetic and inclusive-loop
+semantics; they have not been cross-checked against native compilers. Mark them as
+separately authored (not independently executed) and do not present them as proof of
+source-language equivalence. If no independently checkable oracle is available, mark
+the case `oracle_status: unavailable` and exclude it from correctness claims.
 
 For supported cases, require:
 
@@ -59,8 +65,12 @@ clustered by task/problem and reviewed before splitting. All programs from the s
 and repository must stay in one split. Do not randomly split submissions/snippets from
 the same task across development and test.
 
-The corpus manifest carries `split_group` and `split`. For small task-derived sets, use a
-hand-declared split by whole task group and label it as exploratory. For a larger set,
+The corpus manifest carries `split_group` and `split`. For the current pilot, all local
+smoke tests and all A+B task variants are in development; Maximum-of-two-numbers and
+Loops/For task groups are held out together in test. The benchmark runner evaluates only
+test records and reports the number of development records excluded. This leaves two
+held-out task groups, so its rate is a descriptive pilot statistic, not a generalization
+estimate. For a larger set,
 use deterministic 70/15/15 group splitting with a fixed seed and publish the split
 manifest. The CodeNet candidate export uses seed 2026 and groups submissions by problem;
 this is only a reproducible triage split, not an evaluation split until candidates pass

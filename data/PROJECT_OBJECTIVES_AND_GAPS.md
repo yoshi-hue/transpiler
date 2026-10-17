@@ -4,8 +4,9 @@
 
 This document aligns the project objectives and literature-gap slides with the current
 prototype. It distinguishes implemented behavior from reporting-only mechanisms and
-proposed research. Several likely primary sources have now been verified, but the
-presentation itself and two shorthand citations remain unavailable or ambiguous. This
+proposed research. Selected primary sources have been verified, but the presentation itself is unavailable
+and its Xu et al. shorthand remains unidentified. The false-failure claim is now linked
+to a fully specified publication, though it cannot be matched to the missing slide. This
 is a scoped source audit, not a systematic literature review; do not generalize its
 papers into field-wide findings.
 
@@ -17,7 +18,7 @@ The executable source subset is specified in [`supported_subset.json`](./support
 | # | Objective | Status in current project | Evidence and boundary |
 |---|---|---|---|
 | 1 | Survey established rule-based, compiler, transpiler, and learning-based translation approaches. | **Partially addressed: selected primary sources and official tool documentation checked; survey is not exhaustive.** | Verified studies and tool examples are summarized below with source links and bounded claims. The list is not a systematic review, common benchmark, or controlled baseline comparison. |
-| 2 | Identify specific gaps supported by published evidence rather than assumed limitations. | **Partially addressed: several setting-specific findings verified; slide citations remain incomplete.** | The source audit supports carefully scoped questions about feature mapping, evaluation false negatives, and repository-level evaluation. It does not establish field-wide gaps. The intended Xu et al. 2026 multilingual-bias citation remains unverified, and one 2026 false-failure citation is only a likely match. The prototype does not measure scalability, benchmark reliability across systems, corpus scarcity, or model bias. |
+| 2 | Identify specific gaps supported by published evidence rather than assumed limitations. | **Partially addressed: selected studies are cited with bounded claims; the original slide deck was unavailable for complete citation reconciliation.** | The source audit supports scoped questions about feature mapping, evaluation false negatives, and repository-level evaluation. It does not establish field-wide gaps. The unidentified Xu et al. 2026 citation is excluded from the conference paper; the 2026 false-failure study is cited by its verified publication details below. The prototype does not measure scalability, benchmark reliability across systems, corpus scarcity, or model bias. |
 | 3 | Build a multi-language front end with lexing/parsing and a shared representation. | **Implemented for documented subsets.** | Custom front ends produce normalized nodes/IR for the supported COBOL, FORTRAN, Pascal, BASIC and Python-like subsets. This is not full-language support and should not be described as an ANTLR implementation. See `backend/legacy.py`, `backend/lexer.py`, `backend/parser.py`, `backend/ir.py`, and `data/supported_subset.json`. |
 | 4 | Design a hybrid back end that constrains model assistance with explicit mappings. | **Partially implemented; complete-program fallback prototype present.** | For unsupported syntax, the model receives the complete source and returns a complete target-program candidate shown as generated output. JavaScript candidates are syntax-checked and executed by Node's permission-restricted mode; Python candidates receive a syntax check only and are not executed. Candidates are never automatically marked semantically accepted. The descriptive `backend/rules.py` catalogue is not itself an executable rule-coverage table. |
 | 5 | Validate behavior with execution-based checks rather than surface-level similarity metrics alone. | **Partially implemented.** | Deterministic supported-subset translations are executed and compared with the internal source interpreter. The fallback pilot separately executes JavaScript candidates in restricted Node mode and can compare known outputs with separately authored expected-output oracles. These are finite-case checks, not formal equivalence proofs; do not describe internal interpreter agreement as an independent oracle. |
@@ -33,10 +34,10 @@ field-wide gaps.
 | Candidate gap | Claim shown in presentation | Audit result and limitation |
 |---|---|---|
 | Scalability | Translation success may fall on programs above roughly 100 lines. | **Qualified evidence:** Zhang et al. (PLDI 2025) discuss prior size-related limitations and evaluate a Go-to-Rust project translator. Their study is not proof of a universal 100-line threshold. The current project has no >100-line scalability study. |
-| Evaluation and benchmark reliability | A benchmark analysis reportedly found correct translations graded as failures. | **Likely primary-source match:** Rabbi et al. (AIware 2026) report pipeline-induced false negatives in tested code-translation setups. The slide shorthand is not unique, and the current project does not establish field-wide prevalence. |
+| Evaluation and benchmark reliability | A benchmark analysis reportedly found correct translations graded as failures. | **Verified source used for the bounded statement:** Rabbi et al. (AIware 2026) report evaluation-pipeline false negatives in tested setups. The original slide shorthand cannot be reconciled without the slide deck; no broader prevalence claim is made. |
 | Feature/API mapping | Cross-language feature/API mapping can produce subtle semantic divergence. | **Qualified evidence:** Zhang et al. (PLDI 2025) address unmapped Go-language features in Go-to-Rust translation using explicit feature mapping and type-compatibility checks. This is not a general API-mapping result. |
 | Repository-level corpus scarcity | Available data may be function-level while tasks require project/repository context. | **Correct likely source/venue:** RepoTransBench (TSE 2026) describes prior snippet/function/file-level benchmarks and contributes repository-level data. This does not prove repository-level data is absent or required for every task. The slide's EMNLP 2025 attribution is not verified. |
-| Multilingual bias and cross-paradigm transfer | Translation quality may track language representation in training data. | **Unverified:** the supplied “Xu et al. 2026” shorthand did not identify a matching primary source. Omit as an established finding pending a full citation. This prototype has no model-level bias experiment. |
+| Multilingual bias and cross-paradigm transfer | Translation quality may track language representation in training data. | **Unverified and omitted from the submission framing:** the supplied Xu et al. 2026 shorthand did not identify a matching primary source. This prototype has no model-level bias experiment. |
 
 ## Primary-source audit and bounded related work
 
@@ -97,10 +98,10 @@ field-wide gaps.
   concerns generated specifications; do not imply image/video inputs without source
   evidence.
 
-The primary source intended by the slide's “Xu et al. 2026” claim remains unknown.
-The slide deck was not in the repository, and the shorthand does not provide enough
-information to identify it. Request the complete reference rather than substituting a
-nearby paper.
+The primary source intended by the slide's Xu et al. 2026 claim remains unknown. The
+slide deck was not in the repository, and the shorthand does not provide enough
+information to identify it. It was removed from the target paper instead of being
+replaced with a nearby citation. The paper makes no claim that depends on this source.
 
 ## Related-work taxonomy and LLM follow-up systems
 
@@ -135,7 +136,7 @@ translation unconstrained unless each cited paper supports that specific claim.
 | Candidate gap | Project response/design decision | Current status and evidence limit |
 |---|---|---|
 | Scalability | Normalize parsed programs into an intermediate representation instead of relying on arbitrary line-window fragmentation. | A normalized representation exists for prototype inputs, but the project has no large-program or >100-line scalability evaluation. Do not claim that it reduces cross-fragment errors. |
-| Evaluation reliability | Keep validation and benchmark reporting in the project, expose failure categories, and compare expected outputs separately where available. | Implemented as prototype I/O checks and a 24-case pilot; the internal source interpreter is not independent. No compiler-flag or linker-configuration study has been performed. |
+| Evaluation reliability | Keep validation and benchmark reporting in the project, expose failure categories, and compare expected outputs separately where available. | Implemented as prototype I/O checks and a 20-case held-out pilot; the internal source interpreter is not independent. No compiler-flag or linker-configuration study has been performed. |
 | Feature/API mapping | Maintain explicit documented source subsets and inspectable mapping descriptions. | Mapping catalogue exists, but it is descriptive and not the execution engine. Actual emission is performed by back-end code. No comprehensive semantic-divergence study exists. |
 | Corpus scarcity | Record provenance, hashes, oracle status, grouping, and licensing review; define an external-corpus audit workflow. | Manifest contains 24 pilot cases. The full CodeNet archive is not present/audited; no claim of a curated repository-scale corpus is supported. |
 | Multilingual bias | Bound the intended translation scope by explicit language subsets and use a shared front-end/IR architecture where implemented. | No model training or multilingual-bias measurement has been done. The fallback receives source context and is not restricted to a small IR subtree; do not claim that it mitigates training-data bias. |
@@ -165,34 +166,38 @@ limitations:
    either with the descriptive catalogue entry count.
 7. **LLM fallback effect:** use a fixed model and paired rule-only/hybrid runs over
    identical cases. The complete-program candidate path now supports restricted target
-   execution for JavaScript and has one COBOL loop case with a separate expected-output
-   oracle; benchmark-only oracle matches are counted separately from translator
+   execution for JavaScript and has three COBOL loop cases with separately authored
+   expected outputs; benchmark-only oracle matches are counted separately from translator
    acceptance. Python fallback candidates are syntax-checked but not executed. Report
    calls, candidates, runtime-valid candidates, oracle matches, unsupported constructs,
    failures, and latency. The pilot is too small to establish general fallback
    improvement.
 8. **Scalability, cross-language semantics, and bias:** require purpose-built
-   benchmarks and controlled analyses; none are established by the current 24-case
-   pilot.
+   benchmarks and controlled analyses; none are established by the current 20-case
+   held-out pilot.
 
 ## Current evidence summary
 
-The latest paired run was recorded on 2026-10-17 at 11:54 UTC for JavaScript and 11:54
-UTC for Python, using `gemini-3.1-flash-lite`, prompt
-`legacy-modernizer-llm-v2`, Python 3.13.1, and Node.js v24.20.0. Both target runs had
-23/24 end-to-end passes (95.8%; Wilson 95% interval 79.8–99.3), 24/24 expected outcomes
-matched, 23/23 supported-case expected-output comparisons matched, and 31/32
-benchmark-required constructs covered. The only not-run case is the deliberately
-unsupported COBOL `PERFORM` loop.
+The refreshed v3 paired run is recorded in [`EVIDENCE_V3_REFRESH.md`](./EVIDENCE_V3_REFRESH.md)
+with raw JSON case records. It was run from pushed commit `ade68dc44200b043e77617857717d8da687b6699`,
+using `gemini-3.1-flash-lite`, prompt `legacy-modernizer-llm-v3`, Python 3.13.1, and
+Node.js v24.20.0. On the pre-split 24-case pilot, both targets had 23/24 end-to-end
+passes and 23/23 target-output matches; the expected-unsupported COBOL PERFORM case
+was recognized. In the hybrid variant the provider returned no candidate after three
+request attempts for each target. The unchanged end-to-end rate is not an LLM improvement
+result.
 
-In the JavaScript hybrid run, one candidate was generated, syntax-checked, executed in
-restricted Node mode, and matched the separately authored expected output (1/1).
-Translator acceptance remained zero and the COBOL case remained `not_run`, so this did
-not increase the end-to-end pass rate. In the Python hybrid run, one candidate passed
-syntax checking; execution and oracle scoring were explicitly not run. Both comparisons
-were single-repeat pilots, not evidence of general semantic equivalence or a statistical
-LLM improvement. Forty automated tests passed after also adding COBOL regressions for
-single-line source and unsupported data declarations. The latest evaluation record,
-including per-target counts and exact latencies, is in
-[`project_report_evidence.json`](./project_report_evidence.json). A venue-neutral demo
-submission draft is in [`../CONFERENCE_DEMO_SUBMISSION.md`](../CONFERENCE_DEMO_SUBMISSION.md).
+The strengthened held-out test split has 20 cases across two task groups (17 supported,
+three expected-unsupported COBOL loops). The deterministic benchmark reports 17/17
+separately authored expected-output matches for both JavaScript and Python and correctly
+recognizes all three unsupported cases. These outputs were derived from fixed constants and loop semantics and match a separate
+reference evaluator (20/20). They have not been independently executed in native
+source-language compilers or reviewed by a second human; the set is exploratory and
+cannot establish general semantic equivalence. See
+[`../BENCHMARK_AND_ABLATION_PROTOCOL.md`](../BENCHMARK_AND_ABLATION_PROTOCOL.md).
+
+Contracts, risk scores, failure fingerprints, and learned-rule examples remain prototype
+diagnostics. No controlled ablation was performed and no benefit is claimed. Scalability
+and multilingual bias are not contributions or findings. The target submission draft is
+[`../ICSE_2027_TOOL_DEMO.tex`](../ICSE_2027_TOOL_DEMO.tex); verified author identities,
+the public video, and compilation to the required PDF remain outstanding.

@@ -1,0 +1,5671 @@
+{
+  "timestamp_utc": "2026-10-17T12:32:28.928457+00:00",
+  "python_version": "3.13.1 (tags/v3.13.1:0671451, Dec  3 2024, 19:06:28) [MSC v.1942 64 bit (AMD64)]",
+  "platform": "Windows-10-10.0.19045-SP0",
+  "target": "JavaScript",
+  "rule_table_version": "1.3",
+  "llm_configuration": {
+    "configured": true,
+    "provider_configured": true,
+    "enabled_for_request": true,
+    "provider": "Google Gemini",
+    "model": "gemini-3.1-flash-lite",
+    "endpoint_set": true,
+    "key_set": true,
+    "api_mode": "chat",
+    "prompt_version": "legacy-modernizer-llm-v3",
+    "timeout_seconds": 45.0,
+    "max_retries": 2
+  },
+  "benchmark": {
+    "target": "JavaScript",
+    "dataset_id": "rosettacode-task-adaptations-v1",
+    "external_task_derived_cases": 12,
+    "total": 24,
+    "passed": 23,
+    "failed": 1,
+    "success_rate_percent": 95.8,
+    "required_constructs": 32,
+    "covered_required_constructs": 31,
+    "required_construct_coverage_percent": 96.9,
+    "success_rate_95ci_percent": [
+      79.8,
+      99.3
+    ],
+    "expected_outcomes_matched": 24,
+    "expected_outcome_match_rate_percent": 100.0,
+    "supported_case_success_rate_percent": 100.0,
+    "supported_case_success_rate_95ci_percent": [
+      85.7,
+      100.0
+    ],
+    "translation_success_rate_percent": 100.0,
+    "unsupported_cases_expected": 1,
+    "unsupported_cases_recognized": 1,
+    "unsupported_recognition_rate_percent": 100.0,
+    "gold_output_cases": 23,
+    "gold_output_matches": 23,
+    "gold_output_accuracy_percent": 100.0,
+    "cases": [
+      {
+        "language": "COBOL",
+        "case": "arithmetic",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [],
+          "covered": [],
+          "total": 0,
+          "covered_count": 0,
+          "coverage_percent": null
+        },
+        "source_reference": null,
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 4
+      },
+      {
+        "language": "COBOL",
+        "case": "conditional",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [],
+          "covered": [],
+          "total": 0,
+          "covered_count": 0,
+          "coverage_percent": null
+        },
+        "source_reference": null,
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 6
+      },
+      {
+        "language": "COBOL",
+        "case": "comparison",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [],
+          "covered": [],
+          "total": 0,
+          "covered_count": 0,
+          "coverage_percent": null
+        },
+        "source_reference": null,
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 6
+      },
+      {
+        "language": "FORTRAN",
+        "case": "loop",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [],
+          "covered": [],
+          "total": 0,
+          "covered_count": 0,
+          "coverage_percent": null
+        },
+        "source_reference": null,
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 3
+      },
+      {
+        "language": "FORTRAN",
+        "case": "conditional",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [],
+          "covered": [],
+          "total": 0,
+          "covered_count": 0,
+          "coverage_percent": null
+        },
+        "source_reference": null,
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 6
+      },
+      {
+        "language": "FORTRAN",
+        "case": "comparison",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [],
+          "covered": [],
+          "total": 0,
+          "covered_count": 0,
+          "coverage_percent": null
+        },
+        "source_reference": null,
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 4
+      },
+      {
+        "language": "Pascal",
+        "case": "arithmetic",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [],
+          "covered": [],
+          "total": 0,
+          "covered_count": 0,
+          "coverage_percent": null
+        },
+        "source_reference": null,
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 4
+      },
+      {
+        "language": "Pascal",
+        "case": "loop",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [],
+          "covered": [],
+          "total": 0,
+          "covered_count": 0,
+          "coverage_percent": null
+        },
+        "source_reference": null,
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 3
+      },
+      {
+        "language": "Pascal",
+        "case": "conditional",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [],
+          "covered": [],
+          "total": 0,
+          "covered_count": 0,
+          "coverage_percent": null
+        },
+        "source_reference": null,
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 6
+      },
+      {
+        "language": "BASIC",
+        "case": "arithmetic",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [],
+          "covered": [],
+          "total": 0,
+          "covered_count": 0,
+          "coverage_percent": null
+        },
+        "source_reference": null,
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 3
+      },
+      {
+        "language": "BASIC",
+        "case": "loop",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [],
+          "covered": [],
+          "total": 0,
+          "covered_count": 0,
+          "coverage_percent": null
+        },
+        "source_reference": null,
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 3
+      },
+      {
+        "language": "BASIC",
+        "case": "comparison",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [],
+          "covered": [],
+          "total": 0,
+          "covered_count": 0,
+          "coverage_percent": null
+        },
+        "source_reference": null,
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 11
+      },
+      {
+        "language": "COBOL",
+        "case": "rosetta-a-plus-b-cobol",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [
+            "assignment",
+            "arithmetic",
+            "output"
+          ],
+          "covered": [
+            "arithmetic",
+            "assignment",
+            "output"
+          ],
+          "total": 3,
+          "covered_count": 3,
+          "coverage_percent": 100.0
+        },
+        "source_reference": {
+          "task": "A+B",
+          "url": "https://rosettacode.org/wiki/A%2BB",
+          "adaptation": "Authored for this benchmark from the independently published task prompt; constant inputs replace interactive input to fit the documented subset."
+        },
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 4
+      },
+      {
+        "language": "FORTRAN",
+        "case": "rosetta-a-plus-b-fortran",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [
+            "assignment",
+            "arithmetic",
+            "output"
+          ],
+          "covered": [
+            "arithmetic",
+            "assignment",
+            "output"
+          ],
+          "total": 3,
+          "covered_count": 3,
+          "coverage_percent": 100.0
+        },
+        "source_reference": {
+          "task": "A+B",
+          "url": "https://rosettacode.org/wiki/A%2BB",
+          "adaptation": "Authored for this benchmark from the independently published task prompt; constant inputs replace interactive input to fit the documented subset."
+        },
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 4
+      },
+      {
+        "language": "Pascal",
+        "case": "rosetta-a-plus-b-pascal",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [
+            "assignment",
+            "arithmetic",
+            "output"
+          ],
+          "covered": [
+            "arithmetic",
+            "assignment",
+            "output"
+          ],
+          "total": 3,
+          "covered_count": 3,
+          "coverage_percent": 100.0
+        },
+        "source_reference": {
+          "task": "A+B",
+          "url": "https://rosettacode.org/wiki/A%2BB",
+          "adaptation": "Authored for this benchmark from the independently published task prompt; constant inputs replace interactive input to fit the documented subset."
+        },
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 4
+      },
+      {
+        "language": "BASIC",
+        "case": "rosetta-a-plus-b-basic",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [
+            "assignment",
+            "arithmetic",
+            "output"
+          ],
+          "covered": [
+            "arithmetic",
+            "assignment",
+            "output"
+          ],
+          "total": 3,
+          "covered_count": 3,
+          "coverage_percent": 100.0
+        },
+        "source_reference": {
+          "task": "A+B",
+          "url": "https://rosettacode.org/wiki/A%2BB",
+          "adaptation": "Authored for this benchmark from the independently published task prompt; constant inputs replace interactive input to fit the documented subset."
+        },
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 4
+      },
+      {
+        "language": "COBOL",
+        "case": "rosetta-maximum-cobol",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [
+            "conditional",
+            "comparison",
+            "output"
+          ],
+          "covered": [
+            "comparison",
+            "conditional",
+            "output"
+          ],
+          "total": 3,
+          "covered_count": 3,
+          "coverage_percent": 100.0
+        },
+        "source_reference": {
+          "task": "Maximum of two numbers",
+          "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers",
+          "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input."
+        },
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 7
+      },
+      {
+        "language": "FORTRAN",
+        "case": "rosetta-maximum-fortran",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [
+            "conditional",
+            "comparison",
+            "output"
+          ],
+          "covered": [
+            "comparison",
+            "conditional",
+            "output"
+          ],
+          "total": 3,
+          "covered_count": 3,
+          "coverage_percent": 100.0
+        },
+        "source_reference": {
+          "task": "Maximum of two numbers",
+          "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers",
+          "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input."
+        },
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 7
+      },
+      {
+        "language": "Pascal",
+        "case": "rosetta-maximum-pascal",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [
+            "conditional",
+            "comparison",
+            "output"
+          ],
+          "covered": [
+            "comparison",
+            "conditional",
+            "output"
+          ],
+          "total": 3,
+          "covered_count": 3,
+          "coverage_percent": 100.0
+        },
+        "source_reference": {
+          "task": "Maximum of two numbers",
+          "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers",
+          "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input."
+        },
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 7
+      },
+      {
+        "language": "BASIC",
+        "case": "rosetta-maximum-basic",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [
+            "conditional",
+            "comparison",
+            "output"
+          ],
+          "covered": [
+            "comparison",
+            "conditional",
+            "output"
+          ],
+          "total": 3,
+          "covered_count": 3,
+          "coverage_percent": 100.0
+        },
+        "source_reference": {
+          "task": "Maximum of two numbers",
+          "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers",
+          "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input."
+        },
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 8
+      },
+      {
+        "language": "COBOL",
+        "case": "rosetta-loops-for-cobol",
+        "status": "not_run",
+        "failure_class": "unsupported_source_syntax",
+        "unsupported": 2,
+        "source_construct_coverage_percent": 33.3,
+        "required_construct_coverage": {
+          "required": [
+            "loop",
+            "output"
+          ],
+          "covered": [
+            "output"
+          ],
+          "total": 2,
+          "covered_count": 1,
+          "coverage_percent": 50.0
+        },
+        "source_reference": {
+          "task": "Loops/For",
+          "url": "https://rosettacode.org/wiki/Loops/For",
+          "adaptation": "Authored for this benchmark from the independently published task prompt. PERFORM is deliberately outside the implemented COBOL subset; the separately authored expected output allows optional candidate behavior to be scored without treating parser support as implemented."
+        },
+        "gold_output_match": null,
+        "expected_outcome": "unsupported",
+        "outcome_correct": true,
+        "generated_lines": 1
+      },
+      {
+        "language": "FORTRAN",
+        "case": "rosetta-loops-for-fortran",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [
+            "loop",
+            "output"
+          ],
+          "covered": [
+            "loop",
+            "output"
+          ],
+          "total": 2,
+          "covered_count": 2,
+          "coverage_percent": 100.0
+        },
+        "source_reference": {
+          "task": "Loops/For",
+          "url": "https://rosettacode.org/wiki/Loops/For",
+          "adaptation": "Authored for this benchmark from the independently published task prompt; minimal loop/output form."
+        },
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 3
+      },
+      {
+        "language": "Pascal",
+        "case": "rosetta-loops-for-pascal",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [
+            "loop",
+            "output"
+          ],
+          "covered": [
+            "loop",
+            "output"
+          ],
+          "total": 2,
+          "covered_count": 2,
+          "coverage_percent": 100.0
+        },
+        "source_reference": {
+          "task": "Loops/For",
+          "url": "https://rosettacode.org/wiki/Loops/For",
+          "adaptation": "Authored for this benchmark from the independently published task prompt; minimal loop/output form."
+        },
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 3
+      },
+      {
+        "language": "BASIC",
+        "case": "rosetta-loops-for-basic",
+        "status": "passed",
+        "failure_class": null,
+        "unsupported": 0,
+        "source_construct_coverage_percent": 100.0,
+        "required_construct_coverage": {
+          "required": [
+            "loop",
+            "output"
+          ],
+          "covered": [
+            "loop",
+            "output"
+          ],
+          "total": 2,
+          "covered_count": 2,
+          "coverage_percent": 100.0
+        },
+        "source_reference": {
+          "task": "Loops/For",
+          "url": "https://rosettacode.org/wiki/Loops/For",
+          "adaptation": "Authored for this benchmark from the independently published task prompt; minimal loop/output form with a distinct range from the local smoke test."
+        },
+        "gold_output_match": true,
+        "expected_outcome": "translated",
+        "outcome_correct": true,
+        "generated_lines": 3
+      }
+    ]
+  },
+  "experiment": {
+    "target": "JavaScript",
+    "dataset_id": "rosettacode-task-adaptations-v1",
+    "external_task_derived_cases": 12,
+    "repeats": 1,
+    "rule_only": {
+      "target": "rule_only",
+      "total": 24,
+      "passed": 23,
+      "failed": 1,
+      "success_rate_percent": 95.8,
+      "success_rate_95ci_percent": [
+        79.8,
+        99.3
+      ],
+      "unsupported_constructs": 2,
+      "validation_failures": 1,
+      "required_constructs": 32,
+      "covered_required_constructs": 31,
+      "required_construct_coverage_percent": 96.9,
+      "candidate_generated": 0,
+      "candidate_syntax_valid": 0,
+      "candidate_runtime_valid": 0,
+      "candidate_runtime_checked": 0,
+      "candidate_runtime_not_run": 0,
+      "accepted_llm_candidates": 0,
+      "candidate_oracle_cases": 0,
+      "candidate_oracle_matches": 0,
+      "candidate_oracle_match_percent": null,
+      "llm_configured_cases": 0,
+      "expected_outcomes_matched": 24,
+      "expected_outcome_match_rate_percent": 100.0,
+      "supported_case_success_rate_percent": 100.0,
+      "supported_case_success_rate_95ci_percent": [
+        85.7,
+        100.0
+      ],
+      "unsupported_cases_expected": 1,
+      "unsupported_cases_recognized": 1,
+      "unsupported_recognition_rate_percent": 100.0,
+      "gold_output_cases": 23,
+      "gold_output_matches": 23,
+      "gold_output_accuracy_percent": 100.0,
+      "fallback_frequency_percent": 0.0,
+      "metrics": {
+        "llm_calls": 0,
+        "llm_attempts": 0,
+        "llm_latency_ms": [],
+        "median_llm_latency_ms": null,
+        "mean_llm_latency_ms": null,
+        "llm_cost_usd": null,
+        "candidate_generated": 0,
+        "candidate_syntax_valid": 0,
+        "candidate_runtime_valid": 0,
+        "accepted_llm_candidates": 0,
+        "candidate_oracle_cases": 0,
+        "candidate_oracle_matches": 0,
+        "llm_configured_cases": 0,
+        "fallback_frequency_percent": 0.0,
+        "validation_failures": 1
+      },
+      "by_language": {
+        "COBOL": {
+          "total": 6,
+          "passed": 5,
+          "failed": 1,
+          "unsupported_constructs": 2,
+          "validation_failures": 1,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "accepted_llm_candidates": 0,
+          "llm_configured_cases": 0,
+          "success_rate_percent": 83.3,
+          "fallback_frequency_percent": 0.0,
+          "median_llm_latency_ms": null,
+          "mean_llm_latency_ms": null,
+          "llm_cost_usd": null,
+          "success_rate_95ci_percent": [
+            43.6,
+            97.0
+          ]
+        },
+        "FORTRAN": {
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "unsupported_constructs": 0,
+          "validation_failures": 0,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "accepted_llm_candidates": 0,
+          "llm_configured_cases": 0,
+          "success_rate_percent": 100.0,
+          "fallback_frequency_percent": 0.0,
+          "median_llm_latency_ms": null,
+          "mean_llm_latency_ms": null,
+          "llm_cost_usd": null,
+          "success_rate_95ci_percent": [
+            61.0,
+            100.0
+          ]
+        },
+        "Pascal": {
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "unsupported_constructs": 0,
+          "validation_failures": 0,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "accepted_llm_candidates": 0,
+          "llm_configured_cases": 0,
+          "success_rate_percent": 100.0,
+          "fallback_frequency_percent": 0.0,
+          "median_llm_latency_ms": null,
+          "mean_llm_latency_ms": null,
+          "llm_cost_usd": null,
+          "success_rate_95ci_percent": [
+            61.0,
+            100.0
+          ]
+        },
+        "BASIC": {
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "unsupported_constructs": 0,
+          "validation_failures": 0,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "accepted_llm_candidates": 0,
+          "llm_configured_cases": 0,
+          "success_rate_percent": 100.0,
+          "fallback_frequency_percent": 0.0,
+          "median_llm_latency_ms": null,
+          "mean_llm_latency_ms": null,
+          "llm_cost_usd": null,
+          "success_rate_95ci_percent": [
+            61.0,
+            100.0
+          ]
+        }
+      },
+      "by_construct": {
+        "COBOL:arithmetic": {
+          "language": "COBOL",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "COBOL:conditional": {
+          "language": "COBOL",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "COBOL:comparison": {
+          "language": "COBOL",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "FORTRAN:loop": {
+          "language": "FORTRAN",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "FORTRAN:conditional": {
+          "language": "FORTRAN",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "FORTRAN:comparison": {
+          "language": "FORTRAN",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "Pascal:arithmetic": {
+          "language": "Pascal",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "Pascal:loop": {
+          "language": "Pascal",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "Pascal:conditional": {
+          "language": "Pascal",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "BASIC:arithmetic": {
+          "language": "BASIC",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "BASIC:loop": {
+          "language": "BASIC",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "BASIC:comparison": {
+          "language": "BASIC",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "COBOL:rosetta-a-plus-b-cobol": {
+          "language": "COBOL",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "assignment",
+              "arithmetic",
+              "output"
+            ],
+            "covered": [
+              "arithmetic",
+              "assignment",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "FORTRAN:rosetta-a-plus-b-fortran": {
+          "language": "FORTRAN",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "assignment",
+              "arithmetic",
+              "output"
+            ],
+            "covered": [
+              "arithmetic",
+              "assignment",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "Pascal:rosetta-a-plus-b-pascal": {
+          "language": "Pascal",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "assignment",
+              "arithmetic",
+              "output"
+            ],
+            "covered": [
+              "arithmetic",
+              "assignment",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "BASIC:rosetta-a-plus-b-basic": {
+          "language": "BASIC",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "assignment",
+              "arithmetic",
+              "output"
+            ],
+            "covered": [
+              "arithmetic",
+              "assignment",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "COBOL:rosetta-maximum-cobol": {
+          "language": "COBOL",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "conditional",
+              "comparison",
+              "output"
+            ],
+            "covered": [
+              "comparison",
+              "conditional",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "FORTRAN:rosetta-maximum-fortran": {
+          "language": "FORTRAN",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "conditional",
+              "comparison",
+              "output"
+            ],
+            "covered": [
+              "comparison",
+              "conditional",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "Pascal:rosetta-maximum-pascal": {
+          "language": "Pascal",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "conditional",
+              "comparison",
+              "output"
+            ],
+            "covered": [
+              "comparison",
+              "conditional",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "BASIC:rosetta-maximum-basic": {
+          "language": "BASIC",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "conditional",
+              "comparison",
+              "output"
+            ],
+            "covered": [
+              "comparison",
+              "conditional",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "COBOL:rosetta-loops-for-cobol": {
+          "language": "COBOL",
+          "status": "not_run",
+          "failure_class": "unsupported_source_syntax",
+          "unsupported": 2,
+          "required_construct_coverage": {
+            "required": [
+              "loop",
+              "output"
+            ],
+            "covered": [
+              "output"
+            ],
+            "total": 2,
+            "covered_count": 1,
+            "coverage_percent": 50.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 1
+        },
+        "FORTRAN:rosetta-loops-for-fortran": {
+          "language": "FORTRAN",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "loop",
+              "output"
+            ],
+            "covered": [
+              "loop",
+              "output"
+            ],
+            "total": 2,
+            "covered_count": 2,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "Pascal:rosetta-loops-for-pascal": {
+          "language": "Pascal",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "loop",
+              "output"
+            ],
+            "covered": [
+              "loop",
+              "output"
+            ],
+            "total": 2,
+            "covered_count": 2,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "BASIC:rosetta-loops-for-basic": {
+          "language": "BASIC",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "loop",
+              "output"
+            ],
+            "covered": [
+              "loop",
+              "output"
+            ],
+            "total": 2,
+            "covered_count": 2,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        }
+      },
+      "cases": [
+        {
+          "language": "COBOL",
+          "case": "arithmetic",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": false,
+          "generated_lines": 4,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "COBOL",
+          "case": "conditional",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": false,
+          "generated_lines": 6,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "COBOL",
+          "case": "comparison",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": false,
+          "generated_lines": 6,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "FORTRAN",
+          "case": "loop",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": false,
+          "generated_lines": 3,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "FORTRAN",
+          "case": "conditional",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": false,
+          "generated_lines": 6,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "FORTRAN",
+          "case": "comparison",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": false,
+          "generated_lines": 4,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "Pascal",
+          "case": "arithmetic",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": false,
+          "generated_lines": 4,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "Pascal",
+          "case": "loop",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": false,
+          "generated_lines": 3,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "Pascal",
+          "case": "conditional",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": false,
+          "generated_lines": 6,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "BASIC",
+          "case": "arithmetic",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": false,
+          "generated_lines": 3,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "BASIC",
+          "case": "loop",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": false,
+          "generated_lines": 3,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "BASIC",
+          "case": "comparison",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": false,
+          "generated_lines": 11,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "COBOL",
+          "case": "rosetta-a-plus-b-cobol",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "assignment",
+              "arithmetic",
+              "output"
+            ],
+            "covered": [
+              "arithmetic",
+              "assignment",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": false,
+          "generated_lines": 4,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "A+B",
+            "url": "https://rosettacode.org/wiki/A%2BB",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; constant inputs replace interactive input to fit the documented subset."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "FORTRAN",
+          "case": "rosetta-a-plus-b-fortran",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "assignment",
+              "arithmetic",
+              "output"
+            ],
+            "covered": [
+              "arithmetic",
+              "assignment",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": false,
+          "generated_lines": 4,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "A+B",
+            "url": "https://rosettacode.org/wiki/A%2BB",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; constant inputs replace interactive input to fit the documented subset."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "Pascal",
+          "case": "rosetta-a-plus-b-pascal",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "assignment",
+              "arithmetic",
+              "output"
+            ],
+            "covered": [
+              "arithmetic",
+              "assignment",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": false,
+          "generated_lines": 4,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "A+B",
+            "url": "https://rosettacode.org/wiki/A%2BB",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; constant inputs replace interactive input to fit the documented subset."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "BASIC",
+          "case": "rosetta-a-plus-b-basic",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "assignment",
+              "arithmetic",
+              "output"
+            ],
+            "covered": [
+              "arithmetic",
+              "assignment",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": false,
+          "generated_lines": 4,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "A+B",
+            "url": "https://rosettacode.org/wiki/A%2BB",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; constant inputs replace interactive input to fit the documented subset."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "COBOL",
+          "case": "rosetta-maximum-cobol",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "conditional",
+              "comparison",
+              "output"
+            ],
+            "covered": [
+              "comparison",
+              "conditional",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": false,
+          "generated_lines": 7,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "Maximum of two numbers",
+            "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "FORTRAN",
+          "case": "rosetta-maximum-fortran",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "conditional",
+              "comparison",
+              "output"
+            ],
+            "covered": [
+              "comparison",
+              "conditional",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": false,
+          "generated_lines": 7,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "Maximum of two numbers",
+            "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "Pascal",
+          "case": "rosetta-maximum-pascal",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "conditional",
+              "comparison",
+              "output"
+            ],
+            "covered": [
+              "comparison",
+              "conditional",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": false,
+          "generated_lines": 7,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "Maximum of two numbers",
+            "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "BASIC",
+          "case": "rosetta-maximum-basic",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "conditional",
+              "comparison",
+              "output"
+            ],
+            "covered": [
+              "comparison",
+              "conditional",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": false,
+          "generated_lines": 8,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "Maximum of two numbers",
+            "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "COBOL",
+          "case": "rosetta-loops-for-cobol",
+          "status": "not_run",
+          "failure_class": "unsupported_source_syntax",
+          "unsupported": 2,
+          "unsupported_constructs": [
+            "PERFORM 3 TIMES",
+            "END-PERFORM"
+          ],
+          "source_construct_coverage_percent": 33.3,
+          "required_construct_coverage": {
+            "required": [
+              "loop",
+              "output"
+            ],
+            "covered": [
+              "output"
+            ],
+            "total": 2,
+            "covered_count": 1,
+            "coverage_percent": 50.0
+          },
+          "llm_configured": false,
+          "generated_lines": 1,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "Loops/For",
+            "url": "https://rosettacode.org/wiki/Loops/For",
+            "adaptation": "Authored for this benchmark from the independently published task prompt. PERFORM is deliberately outside the implemented COBOL subset; the separately authored expected output allows optional candidate behavior to be scored without treating parser support as implemented."
+          },
+          "expected_outcome": "unsupported",
+          "gold_output_match": null,
+          "outcome_correct": true,
+          "validation_failures": 1
+        },
+        {
+          "language": "FORTRAN",
+          "case": "rosetta-loops-for-fortran",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "loop",
+              "output"
+            ],
+            "covered": [
+              "loop",
+              "output"
+            ],
+            "total": 2,
+            "covered_count": 2,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": false,
+          "generated_lines": 3,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "Loops/For",
+            "url": "https://rosettacode.org/wiki/Loops/For",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; minimal loop/output form."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "Pascal",
+          "case": "rosetta-loops-for-pascal",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "loop",
+              "output"
+            ],
+            "covered": [
+              "loop",
+              "output"
+            ],
+            "total": 2,
+            "covered_count": 2,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": false,
+          "generated_lines": 3,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "Loops/For",
+            "url": "https://rosettacode.org/wiki/Loops/For",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; minimal loop/output form."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "BASIC",
+          "case": "rosetta-loops-for-basic",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "loop",
+              "output"
+            ],
+            "covered": [
+              "loop",
+              "output"
+            ],
+            "total": 2,
+            "covered_count": 2,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": false,
+          "generated_lines": 3,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "Loops/For",
+            "url": "https://rosettacode.org/wiki/Loops/For",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; minimal loop/output form with a distinct range from the local smoke test."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        }
+      ]
+    },
+    "hybrid": {
+      "target": "hybrid",
+      "total": 24,
+      "passed": 23,
+      "failed": 1,
+      "success_rate_percent": 95.8,
+      "success_rate_95ci_percent": [
+        79.8,
+        99.3
+      ],
+      "unsupported_constructs": 2,
+      "validation_failures": 1,
+      "required_constructs": 32,
+      "covered_required_constructs": 31,
+      "required_construct_coverage_percent": 96.9,
+      "candidate_generated": 0,
+      "candidate_syntax_valid": 0,
+      "candidate_runtime_valid": 0,
+      "candidate_runtime_checked": 0,
+      "candidate_runtime_not_run": 0,
+      "accepted_llm_candidates": 0,
+      "candidate_oracle_cases": 0,
+      "candidate_oracle_matches": 0,
+      "candidate_oracle_match_percent": null,
+      "llm_configured_cases": 24,
+      "expected_outcomes_matched": 24,
+      "expected_outcome_match_rate_percent": 100.0,
+      "supported_case_success_rate_percent": 100.0,
+      "supported_case_success_rate_95ci_percent": [
+        85.7,
+        100.0
+      ],
+      "unsupported_cases_expected": 1,
+      "unsupported_cases_recognized": 1,
+      "unsupported_recognition_rate_percent": 100.0,
+      "gold_output_cases": 23,
+      "gold_output_matches": 23,
+      "gold_output_accuracy_percent": 100.0,
+      "fallback_frequency_percent": 4.2,
+      "metrics": {
+        "llm_calls": 1,
+        "llm_attempts": 3,
+        "llm_latency_ms": [
+          1634.7
+        ],
+        "median_llm_latency_ms": 1634.7,
+        "mean_llm_latency_ms": 1634.7,
+        "llm_cost_usd": null,
+        "candidate_generated": 0,
+        "candidate_syntax_valid": 0,
+        "candidate_runtime_valid": 0,
+        "accepted_llm_candidates": 0,
+        "candidate_oracle_cases": 0,
+        "candidate_oracle_matches": 0,
+        "llm_configured_cases": 24,
+        "fallback_frequency_percent": 4.2,
+        "validation_failures": 1
+      },
+      "by_language": {
+        "COBOL": {
+          "total": 6,
+          "passed": 5,
+          "failed": 1,
+          "unsupported_constructs": 2,
+          "validation_failures": 1,
+          "llm_calls": 1,
+          "llm_attempts": 3,
+          "llm_latency_ms": [
+            1634.7
+          ],
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "accepted_llm_candidates": 0,
+          "llm_configured_cases": 6,
+          "success_rate_percent": 83.3,
+          "fallback_frequency_percent": 16.7,
+          "median_llm_latency_ms": 1634.7,
+          "mean_llm_latency_ms": 1634.7,
+          "llm_cost_usd": null,
+          "success_rate_95ci_percent": [
+            43.6,
+            97.0
+          ]
+        },
+        "FORTRAN": {
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "unsupported_constructs": 0,
+          "validation_failures": 0,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "accepted_llm_candidates": 0,
+          "llm_configured_cases": 6,
+          "success_rate_percent": 100.0,
+          "fallback_frequency_percent": 0.0,
+          "median_llm_latency_ms": null,
+          "mean_llm_latency_ms": null,
+          "llm_cost_usd": null,
+          "success_rate_95ci_percent": [
+            61.0,
+            100.0
+          ]
+        },
+        "Pascal": {
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "unsupported_constructs": 0,
+          "validation_failures": 0,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "accepted_llm_candidates": 0,
+          "llm_configured_cases": 6,
+          "success_rate_percent": 100.0,
+          "fallback_frequency_percent": 0.0,
+          "median_llm_latency_ms": null,
+          "mean_llm_latency_ms": null,
+          "llm_cost_usd": null,
+          "success_rate_95ci_percent": [
+            61.0,
+            100.0
+          ]
+        },
+        "BASIC": {
+          "total": 6,
+          "passed": 6,
+          "failed": 0,
+          "unsupported_constructs": 0,
+          "validation_failures": 0,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "accepted_llm_candidates": 0,
+          "llm_configured_cases": 6,
+          "success_rate_percent": 100.0,
+          "fallback_frequency_percent": 0.0,
+          "median_llm_latency_ms": null,
+          "mean_llm_latency_ms": null,
+          "llm_cost_usd": null,
+          "success_rate_95ci_percent": [
+            61.0,
+            100.0
+          ]
+        }
+      },
+      "by_construct": {
+        "COBOL:arithmetic": {
+          "language": "COBOL",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "COBOL:conditional": {
+          "language": "COBOL",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "COBOL:comparison": {
+          "language": "COBOL",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "FORTRAN:loop": {
+          "language": "FORTRAN",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "FORTRAN:conditional": {
+          "language": "FORTRAN",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "FORTRAN:comparison": {
+          "language": "FORTRAN",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "Pascal:arithmetic": {
+          "language": "Pascal",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "Pascal:loop": {
+          "language": "Pascal",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "Pascal:conditional": {
+          "language": "Pascal",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "BASIC:arithmetic": {
+          "language": "BASIC",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "BASIC:loop": {
+          "language": "BASIC",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "BASIC:comparison": {
+          "language": "BASIC",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "COBOL:rosetta-a-plus-b-cobol": {
+          "language": "COBOL",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "assignment",
+              "arithmetic",
+              "output"
+            ],
+            "covered": [
+              "arithmetic",
+              "assignment",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "FORTRAN:rosetta-a-plus-b-fortran": {
+          "language": "FORTRAN",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "assignment",
+              "arithmetic",
+              "output"
+            ],
+            "covered": [
+              "arithmetic",
+              "assignment",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "Pascal:rosetta-a-plus-b-pascal": {
+          "language": "Pascal",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "assignment",
+              "arithmetic",
+              "output"
+            ],
+            "covered": [
+              "arithmetic",
+              "assignment",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "BASIC:rosetta-a-plus-b-basic": {
+          "language": "BASIC",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "assignment",
+              "arithmetic",
+              "output"
+            ],
+            "covered": [
+              "arithmetic",
+              "assignment",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "COBOL:rosetta-maximum-cobol": {
+          "language": "COBOL",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "conditional",
+              "comparison",
+              "output"
+            ],
+            "covered": [
+              "comparison",
+              "conditional",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "FORTRAN:rosetta-maximum-fortran": {
+          "language": "FORTRAN",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "conditional",
+              "comparison",
+              "output"
+            ],
+            "covered": [
+              "comparison",
+              "conditional",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "Pascal:rosetta-maximum-pascal": {
+          "language": "Pascal",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "conditional",
+              "comparison",
+              "output"
+            ],
+            "covered": [
+              "comparison",
+              "conditional",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "BASIC:rosetta-maximum-basic": {
+          "language": "BASIC",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "conditional",
+              "comparison",
+              "output"
+            ],
+            "covered": [
+              "comparison",
+              "conditional",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "COBOL:rosetta-loops-for-cobol": {
+          "language": "COBOL",
+          "status": "not_run",
+          "failure_class": "unsupported_source_syntax",
+          "unsupported": 2,
+          "required_construct_coverage": {
+            "required": [
+              "loop",
+              "output"
+            ],
+            "covered": [
+              "output"
+            ],
+            "total": 2,
+            "covered_count": 1,
+            "coverage_percent": 50.0
+          },
+          "llm_calls": 1,
+          "llm_attempts": 3,
+          "llm_latency_ms": [
+            1634.7
+          ],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 1
+        },
+        "FORTRAN:rosetta-loops-for-fortran": {
+          "language": "FORTRAN",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "loop",
+              "output"
+            ],
+            "covered": [
+              "loop",
+              "output"
+            ],
+            "total": 2,
+            "covered_count": 2,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "Pascal:rosetta-loops-for-pascal": {
+          "language": "Pascal",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "loop",
+              "output"
+            ],
+            "covered": [
+              "loop",
+              "output"
+            ],
+            "total": 2,
+            "covered_count": 2,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        },
+        "BASIC:rosetta-loops-for-basic": {
+          "language": "BASIC",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "required_construct_coverage": {
+            "required": [
+              "loop",
+              "output"
+            ],
+            "covered": [
+              "loop",
+              "output"
+            ],
+            "total": 2,
+            "covered_count": 2,
+            "coverage_percent": 100.0
+          },
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "validation_failures": 0
+        }
+      },
+      "cases": [
+        {
+          "language": "COBOL",
+          "case": "arithmetic",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": true,
+          "generated_lines": 4,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "COBOL",
+          "case": "conditional",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": true,
+          "generated_lines": 6,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "COBOL",
+          "case": "comparison",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": true,
+          "generated_lines": 6,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "FORTRAN",
+          "case": "loop",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": true,
+          "generated_lines": 3,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "FORTRAN",
+          "case": "conditional",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": true,
+          "generated_lines": 6,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "FORTRAN",
+          "case": "comparison",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": true,
+          "generated_lines": 4,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "Pascal",
+          "case": "arithmetic",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": true,
+          "generated_lines": 4,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "Pascal",
+          "case": "loop",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": true,
+          "generated_lines": 3,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "Pascal",
+          "case": "conditional",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": true,
+          "generated_lines": 6,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "BASIC",
+          "case": "arithmetic",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": true,
+          "generated_lines": 3,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "BASIC",
+          "case": "loop",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": true,
+          "generated_lines": 3,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "BASIC",
+          "case": "comparison",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [],
+            "covered": [],
+            "total": 0,
+            "covered_count": 0,
+            "coverage_percent": null
+          },
+          "llm_configured": true,
+          "generated_lines": 11,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": null,
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "COBOL",
+          "case": "rosetta-a-plus-b-cobol",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "assignment",
+              "arithmetic",
+              "output"
+            ],
+            "covered": [
+              "arithmetic",
+              "assignment",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": true,
+          "generated_lines": 4,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "A+B",
+            "url": "https://rosettacode.org/wiki/A%2BB",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; constant inputs replace interactive input to fit the documented subset."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "FORTRAN",
+          "case": "rosetta-a-plus-b-fortran",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "assignment",
+              "arithmetic",
+              "output"
+            ],
+            "covered": [
+              "arithmetic",
+              "assignment",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": true,
+          "generated_lines": 4,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "A+B",
+            "url": "https://rosettacode.org/wiki/A%2BB",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; constant inputs replace interactive input to fit the documented subset."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "Pascal",
+          "case": "rosetta-a-plus-b-pascal",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "assignment",
+              "arithmetic",
+              "output"
+            ],
+            "covered": [
+              "arithmetic",
+              "assignment",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": true,
+          "generated_lines": 4,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "A+B",
+            "url": "https://rosettacode.org/wiki/A%2BB",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; constant inputs replace interactive input to fit the documented subset."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "BASIC",
+          "case": "rosetta-a-plus-b-basic",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "assignment",
+              "arithmetic",
+              "output"
+            ],
+            "covered": [
+              "arithmetic",
+              "assignment",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": true,
+          "generated_lines": 4,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "A+B",
+            "url": "https://rosettacode.org/wiki/A%2BB",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; constant inputs replace interactive input to fit the documented subset."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "COBOL",
+          "case": "rosetta-maximum-cobol",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "conditional",
+              "comparison",
+              "output"
+            ],
+            "covered": [
+              "comparison",
+              "conditional",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": true,
+          "generated_lines": 7,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "Maximum of two numbers",
+            "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "FORTRAN",
+          "case": "rosetta-maximum-fortran",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "conditional",
+              "comparison",
+              "output"
+            ],
+            "covered": [
+              "comparison",
+              "conditional",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": true,
+          "generated_lines": 7,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "Maximum of two numbers",
+            "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "Pascal",
+          "case": "rosetta-maximum-pascal",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "conditional",
+              "comparison",
+              "output"
+            ],
+            "covered": [
+              "comparison",
+              "conditional",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": true,
+          "generated_lines": 7,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "Maximum of two numbers",
+            "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "BASIC",
+          "case": "rosetta-maximum-basic",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "conditional",
+              "comparison",
+              "output"
+            ],
+            "covered": [
+              "comparison",
+              "conditional",
+              "output"
+            ],
+            "total": 3,
+            "covered_count": 3,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": true,
+          "generated_lines": 8,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "Maximum of two numbers",
+            "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "COBOL",
+          "case": "rosetta-loops-for-cobol",
+          "status": "not_run",
+          "failure_class": "unsupported_source_syntax",
+          "unsupported": 2,
+          "unsupported_constructs": [
+            "PERFORM 3 TIMES",
+            "END-PERFORM"
+          ],
+          "source_construct_coverage_percent": 33.3,
+          "required_construct_coverage": {
+            "required": [
+              "loop",
+              "output"
+            ],
+            "covered": [
+              "output"
+            ],
+            "total": 2,
+            "covered_count": 1,
+            "coverage_percent": 50.0
+          },
+          "llm_configured": true,
+          "generated_lines": 1,
+          "llm_calls": 1,
+          "llm_attempts": 3,
+          "llm_latency_ms": [
+            1634.7
+          ],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "Loops/For",
+            "url": "https://rosettacode.org/wiki/Loops/For",
+            "adaptation": "Authored for this benchmark from the independently published task prompt. PERFORM is deliberately outside the implemented COBOL subset; the separately authored expected output allows optional candidate behavior to be scored without treating parser support as implemented."
+          },
+          "expected_outcome": "unsupported",
+          "gold_output_match": null,
+          "outcome_correct": true,
+          "validation_failures": 1
+        },
+        {
+          "language": "FORTRAN",
+          "case": "rosetta-loops-for-fortran",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "loop",
+              "output"
+            ],
+            "covered": [
+              "loop",
+              "output"
+            ],
+            "total": 2,
+            "covered_count": 2,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": true,
+          "generated_lines": 3,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "Loops/For",
+            "url": "https://rosettacode.org/wiki/Loops/For",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; minimal loop/output form."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "Pascal",
+          "case": "rosetta-loops-for-pascal",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "loop",
+              "output"
+            ],
+            "covered": [
+              "loop",
+              "output"
+            ],
+            "total": 2,
+            "covered_count": 2,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": true,
+          "generated_lines": 3,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "Loops/For",
+            "url": "https://rosettacode.org/wiki/Loops/For",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; minimal loop/output form."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        },
+        {
+          "language": "BASIC",
+          "case": "rosetta-loops-for-basic",
+          "status": "passed",
+          "failure_class": null,
+          "unsupported": 0,
+          "unsupported_constructs": [],
+          "source_construct_coverage_percent": 100.0,
+          "required_construct_coverage": {
+            "required": [
+              "loop",
+              "output"
+            ],
+            "covered": [
+              "loop",
+              "output"
+            ],
+            "total": 2,
+            "covered_count": 2,
+            "coverage_percent": 100.0
+          },
+          "llm_configured": true,
+          "generated_lines": 3,
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_match": null,
+          "accepted_llm_candidates": 0,
+          "source_reference": {
+            "task": "Loops/For",
+            "url": "https://rosettacode.org/wiki/Loops/For",
+            "adaptation": "Authored for this benchmark from the independently published task prompt; minimal loop/output form with a distinct range from the local smoke test."
+          },
+          "expected_outcome": "translated",
+          "gold_output_match": true,
+          "outcome_correct": true,
+          "validation_failures": 0
+        }
+      ]
+    },
+    "ablation_scope": {
+      "compared_component": "complete-program LLM fallback generation, restricted target execution, and independent expected-output matching",
+      "candidate_acceptance": "Candidate oracle matches are counted for benchmark cases only; the translator never marks model candidates accepted automatically.",
+      "not_isolated": [
+        "semantic contracts",
+        "risk assessment",
+        "learned-rule metadata do not currently alter code generation or acceptance decisions"
+      ]
+    },
+    "summary": {
+      "by_language": {
+        "COBOL": {
+          "rule_only": {
+            "total": 6,
+            "passed": 5,
+            "failed": 1,
+            "unsupported_constructs": 2,
+            "validation_failures": 1,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_generated": 0,
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "accepted_llm_candidates": 0,
+            "llm_configured_cases": 0,
+            "success_rate_percent": 83.3,
+            "fallback_frequency_percent": 0.0,
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "llm_cost_usd": null,
+            "success_rate_95ci_percent": [
+              43.6,
+              97.0
+            ]
+          },
+          "hybrid": {
+            "total": 6,
+            "passed": 5,
+            "failed": 1,
+            "unsupported_constructs": 2,
+            "validation_failures": 1,
+            "llm_calls": 1,
+            "llm_attempts": 3,
+            "llm_latency_ms": [
+              1634.7
+            ],
+            "candidate_generated": 0,
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "accepted_llm_candidates": 0,
+            "llm_configured_cases": 6,
+            "success_rate_percent": 83.3,
+            "fallback_frequency_percent": 16.7,
+            "median_llm_latency_ms": 1634.7,
+            "mean_llm_latency_ms": 1634.7,
+            "llm_cost_usd": null,
+            "success_rate_95ci_percent": [
+              43.6,
+              97.0
+            ]
+          }
+        },
+        "FORTRAN": {
+          "rule_only": {
+            "total": 6,
+            "passed": 6,
+            "failed": 0,
+            "unsupported_constructs": 0,
+            "validation_failures": 0,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_generated": 0,
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "accepted_llm_candidates": 0,
+            "llm_configured_cases": 0,
+            "success_rate_percent": 100.0,
+            "fallback_frequency_percent": 0.0,
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "llm_cost_usd": null,
+            "success_rate_95ci_percent": [
+              61.0,
+              100.0
+            ]
+          },
+          "hybrid": {
+            "total": 6,
+            "passed": 6,
+            "failed": 0,
+            "unsupported_constructs": 0,
+            "validation_failures": 0,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_generated": 0,
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "accepted_llm_candidates": 0,
+            "llm_configured_cases": 6,
+            "success_rate_percent": 100.0,
+            "fallback_frequency_percent": 0.0,
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "llm_cost_usd": null,
+            "success_rate_95ci_percent": [
+              61.0,
+              100.0
+            ]
+          }
+        },
+        "Pascal": {
+          "rule_only": {
+            "total": 6,
+            "passed": 6,
+            "failed": 0,
+            "unsupported_constructs": 0,
+            "validation_failures": 0,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_generated": 0,
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "accepted_llm_candidates": 0,
+            "llm_configured_cases": 0,
+            "success_rate_percent": 100.0,
+            "fallback_frequency_percent": 0.0,
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "llm_cost_usd": null,
+            "success_rate_95ci_percent": [
+              61.0,
+              100.0
+            ]
+          },
+          "hybrid": {
+            "total": 6,
+            "passed": 6,
+            "failed": 0,
+            "unsupported_constructs": 0,
+            "validation_failures": 0,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_generated": 0,
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "accepted_llm_candidates": 0,
+            "llm_configured_cases": 6,
+            "success_rate_percent": 100.0,
+            "fallback_frequency_percent": 0.0,
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "llm_cost_usd": null,
+            "success_rate_95ci_percent": [
+              61.0,
+              100.0
+            ]
+          }
+        },
+        "BASIC": {
+          "rule_only": {
+            "total": 6,
+            "passed": 6,
+            "failed": 0,
+            "unsupported_constructs": 0,
+            "validation_failures": 0,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_generated": 0,
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "accepted_llm_candidates": 0,
+            "llm_configured_cases": 0,
+            "success_rate_percent": 100.0,
+            "fallback_frequency_percent": 0.0,
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "llm_cost_usd": null,
+            "success_rate_95ci_percent": [
+              61.0,
+              100.0
+            ]
+          },
+          "hybrid": {
+            "total": 6,
+            "passed": 6,
+            "failed": 0,
+            "unsupported_constructs": 0,
+            "validation_failures": 0,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_generated": 0,
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "accepted_llm_candidates": 0,
+            "llm_configured_cases": 6,
+            "success_rate_percent": 100.0,
+            "fallback_frequency_percent": 0.0,
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "llm_cost_usd": null,
+            "success_rate_95ci_percent": [
+              61.0,
+              100.0
+            ]
+          }
+        }
+      },
+      "by_construct": {
+        "COBOL:arithmetic": {
+          "rule_only": {
+            "language": "COBOL",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "COBOL",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "COBOL:conditional": {
+          "rule_only": {
+            "language": "COBOL",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "COBOL",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "COBOL:comparison": {
+          "rule_only": {
+            "language": "COBOL",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "COBOL",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "FORTRAN:loop": {
+          "rule_only": {
+            "language": "FORTRAN",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "FORTRAN",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "FORTRAN:conditional": {
+          "rule_only": {
+            "language": "FORTRAN",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "FORTRAN",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "FORTRAN:comparison": {
+          "rule_only": {
+            "language": "FORTRAN",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "FORTRAN",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "Pascal:arithmetic": {
+          "rule_only": {
+            "language": "Pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "Pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "Pascal:loop": {
+          "rule_only": {
+            "language": "Pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "Pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "Pascal:conditional": {
+          "rule_only": {
+            "language": "Pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "Pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "BASIC:arithmetic": {
+          "rule_only": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "BASIC:loop": {
+          "rule_only": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "BASIC:comparison": {
+          "rule_only": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [],
+              "covered": [],
+              "total": 0,
+              "covered_count": 0,
+              "coverage_percent": null
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "COBOL:rosetta-a-plus-b-cobol": {
+          "rule_only": {
+            "language": "COBOL",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "assignment",
+                "arithmetic",
+                "output"
+              ],
+              "covered": [
+                "arithmetic",
+                "assignment",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "COBOL",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "assignment",
+                "arithmetic",
+                "output"
+              ],
+              "covered": [
+                "arithmetic",
+                "assignment",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "FORTRAN:rosetta-a-plus-b-fortran": {
+          "rule_only": {
+            "language": "FORTRAN",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "assignment",
+                "arithmetic",
+                "output"
+              ],
+              "covered": [
+                "arithmetic",
+                "assignment",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "FORTRAN",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "assignment",
+                "arithmetic",
+                "output"
+              ],
+              "covered": [
+                "arithmetic",
+                "assignment",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "Pascal:rosetta-a-plus-b-pascal": {
+          "rule_only": {
+            "language": "Pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "assignment",
+                "arithmetic",
+                "output"
+              ],
+              "covered": [
+                "arithmetic",
+                "assignment",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "Pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "assignment",
+                "arithmetic",
+                "output"
+              ],
+              "covered": [
+                "arithmetic",
+                "assignment",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "BASIC:rosetta-a-plus-b-basic": {
+          "rule_only": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "assignment",
+                "arithmetic",
+                "output"
+              ],
+              "covered": [
+                "arithmetic",
+                "assignment",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "assignment",
+                "arithmetic",
+                "output"
+              ],
+              "covered": [
+                "arithmetic",
+                "assignment",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "COBOL:rosetta-maximum-cobol": {
+          "rule_only": {
+            "language": "COBOL",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "COBOL",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "FORTRAN:rosetta-maximum-fortran": {
+          "rule_only": {
+            "language": "FORTRAN",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "FORTRAN",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "Pascal:rosetta-maximum-pascal": {
+          "rule_only": {
+            "language": "Pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "Pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "BASIC:rosetta-maximum-basic": {
+          "rule_only": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "COBOL:rosetta-loops-for-cobol": {
+          "rule_only": {
+            "language": "COBOL",
+            "status": "not_run",
+            "failure_class": "unsupported_source_syntax",
+            "unsupported": 2,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 1,
+              "coverage_percent": 50.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 1
+          },
+          "hybrid": {
+            "language": "COBOL",
+            "status": "not_run",
+            "failure_class": "unsupported_source_syntax",
+            "unsupported": 2,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 1,
+              "coverage_percent": 50.0
+            },
+            "llm_calls": 1,
+            "llm_attempts": 3,
+            "llm_latency_ms": [
+              1634.7
+            ],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 1
+          }
+        },
+        "FORTRAN:rosetta-loops-for-fortran": {
+          "rule_only": {
+            "language": "FORTRAN",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "FORTRAN",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "Pascal:rosetta-loops-for-pascal": {
+          "rule_only": {
+            "language": "Pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "Pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "BASIC:rosetta-loops-for-basic": {
+          "rule_only": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "hybrid": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        }
+      },
+      "overall": {
+        "rule_only_success_rate_percent": 95.8,
+        "hybrid_success_rate_percent": 95.8,
+        "delta_success_rate_percent": 0.0
+      }
+    }
+  }
+}

@@ -7,6 +7,7 @@ per-language and per-construct breakdowns, fallback frequency, latency, and
 validation-failure tracking for research reporting.
 """
 import json
+import re
 import statistics
 from pathlib import Path
 
@@ -27,9 +28,10 @@ CASES = [
     ('BASIC', 'comparison', '''10 LET A = 8\n20 LET B = 2\n30 IF A <> B THEN PRINT "NE"\n40 IF A <= B THEN PRINT "LE"\n50 IF A >= B THEN PRINT "GE"\n60 END'''),
 ]
 
-EXTERNAL_DATASET_ID = 'rosettacode-task-adaptations-v1'
+EXTERNAL_DATASET_ID = 'rosettacode-task-adaptations-v2'
 EXTERNAL_CASES = []
 _EXTERNAL_CASE_METADATA = {}
+_TEST_SPLIT_TASKS = {'Maximum of two numbers', 'Loops/For'}
 _external_cases_path = Path(__file__).resolve().parent.parent / 'data' / 'external_task_cases.jsonl'
 with _external_cases_path.open(encoding='utf-8') as _dataset_file:
     for _line_number, _line in enumerate(_dataset_file, 1):
@@ -44,10 +46,22 @@ with _external_cases_path.open(encoding='utf-8') as _dataset_file:
         _case_key = (_case['language'], _case['id'])
         if _case_key in _EXTERNAL_CASE_METADATA:
             raise ValueError(f'Duplicate external benchmark case id on line {_line_number}: {_case["id"]}.')
+        _task = _case.get('provenance', {}).get('task')
+        _case['split'] = 'test' if _task in _TEST_SPLIT_TASKS else 'development'
+        _case['split_group'] = f'rosettacode:{_task}'
+        _case.setdefault(
+            'oracle_status',
+            'separately_authored_expected_output' if _case.get('expected_output') is not None else 'unsupported_expected',
+        )
         _EXTERNAL_CASE_METADATA[_case_key] = _case
         EXTERNAL_CASES.append((_case['language'], _case['id'], _case['source']))
 
-DEFAULT_CASES = CASES + EXTERNAL_CASES
+# Local smoke tests and all A+B variants are development data. Score only complete
+# task groups assigned to the held-out test split.
+DEFAULT_CASES = [
+    case for case in EXTERNAL_CASES
+    if _EXTERNAL_CASE_METADATA[(case[0], case[1])]['split'] == 'test'
+]
 
 LOCAL_EXPECTED_OUTPUTS = {
     ('COBOL', 'arithmetic'): '12',
@@ -82,6 +96,28 @@ def _oracle_match(actual_output, expected_output):
         return None
     normalize = lambda value: str(value).replace('\r\n', '\n').strip()
     return normalize(actual_output) == normalize(expected_output)
+
+
+def _fallback_failure_summary(entry):
+    """Retain actionable failure provenance without copying provider response bodies."""
+    result = str(entry.get('result', ''))
+    status = re.search(r'HTTP\s+(\d{3})', result)
+    if status:
+        category = 'provider_http_error'
+        http_status = int(status.group(1))
+    elif 'timed out' in result.lower() or 'timeout' in result.lower():
+        category, http_status = 'timeout', None
+    elif 'connection error' in result.lower():
+        category, http_status = 'connection_error', None
+    else:
+        category, http_status = 'request_error', None
+    return {
+        'category': category,
+        'http_status': http_status,
+        'attempts': entry.get('attempts'),
+        'latency_ms': entry.get('latency_ms'),
+        'request_id': entry.get('request_id'),
+    }
 
 
 def _wilson_interval(successes, total, z=1.96):
@@ -143,6 +179,13 @@ def _case_result(language, case_name, source, target, *, enable_llm):
             'llm_cost_usd': None,
             'validation_failures': 1,
             'source_reference': metadata.get('provenance'),
+            'split': metadata.get('split'),
+            'split_group': metadata.get('split_group'),
+            'oracle_status': metadata.get('oracle_status'),
+            'expected_output': metadata.get('expected_output'),
+            'model': None,
+            'prompt_version': None,
+            'fallback_failures': [],
             'required_construct_coverage': _required_construct_coverage(language, case_name, [], source),
             'candidate_generated': 0,
             'accepted_llm_candidates': 0,
@@ -157,11 +200,14 @@ def _case_result(language, case_name, source, target, *, enable_llm):
     )
     llm_latencies = []
     llm_attempts = 0
+    fallback_failures = []
     for entry in logs:
         if isinstance(entry.get('latency_ms'), (int, float)):
             llm_latencies.append(float(entry['latency_ms']))
         if isinstance(entry.get('attempts'), int):
             llm_attempts += entry['attempts']
+        if entry.get('action') == 'LLM fallback failed':
+            fallback_failures.append(_fallback_failure_summary(entry))
     rules_used = result.get('rules_used', [])
     suggestions = result.get('fallback_suggestions', [])
     target_runtime = result.get('target_runtime', {})
@@ -194,9 +240,12 @@ def _case_result(language, case_name, source, target, *, enable_llm):
         'source_construct_coverage_percent': result.get('rule_coverage', {}).get('coverage_percent'),
         'required_construct_coverage': _required_construct_coverage(language, case_name, rules_used, source),
         'llm_configured': result.get('fallback_status', {}).get('configured', False),
+        'model': result.get('fallback_status', {}).get('model'),
+        'prompt_version': result.get('fallback_status', {}).get('prompt_version'),
         'generated_lines': result.get('generated_lines', 0),
         'llm_calls': llm_calls,
         'llm_attempts': llm_attempts,
+        'fallback_failures': fallback_failures,
         'llm_latency_ms': llm_latencies,
         'llm_cost_usd': None,
         'candidate_generated': sum(suggestion.get('candidate_status') == 'candidate_generated' for suggestion in suggestions),
@@ -207,6 +256,10 @@ def _case_result(language, case_name, source, target, *, enable_llm):
         'candidate_oracle_match': candidate_oracle_match,
         'accepted_llm_candidates': 0,
         'source_reference': metadata.get('provenance'),
+        'split': metadata.get('split'),
+        'split_group': metadata.get('split_group'),
+        'oracle_status': metadata.get('oracle_status'),
+        'expected_output': metadata.get('expected_output'),
         'expected_outcome': metadata.get('expected_outcome', 'translated'),
         'gold_output_match': gold_output_match,
         'outcome_correct': (
@@ -386,6 +439,10 @@ def run_benchmark(target='JavaScript', cases=None):
                 'source_construct_coverage_percent': r['rule_coverage'].get('coverage_percent'),
                 'required_construct_coverage': _required_construct_coverage(language, case_name, r.get('rules_used', []), source),
                 'source_reference': _case_metadata(language, case_name, source).get('provenance'),
+                'split': _case_metadata(language, case_name, source).get('split'),
+                'split_group': _case_metadata(language, case_name, source).get('split_group'),
+                'oracle_status': _case_metadata(language, case_name, source).get('oracle_status'),
+                'expected_output': _case_metadata(language, case_name, source).get('expected_output'),
                 'gold_output_match': (
                     _oracle_match(
                         r.get('target_runtime', {}).get('output'),
@@ -427,7 +484,11 @@ def run_benchmark(target='JavaScript', cases=None):
     return {
         'target': target,
         'dataset_id': EXTERNAL_DATASET_ID,
-        'external_task_derived_cases': len(EXTERNAL_CASES),
+        'external_task_derived_cases': len(run_cases),
+        'development_cases_excluded': len(CASES) + sum(
+            _EXTERNAL_CASE_METADATA[(language, case_name)]['split'] == 'development'
+            for language, case_name, _ in EXTERNAL_CASES
+        ),
         'total': len(results),
         'passed': passed,
         'failed': len(results) - passed,
@@ -493,7 +554,11 @@ def run_experiment(target='JavaScript', cases=None, repeats=1):
     return {
         'target': target,
         'dataset_id': EXTERNAL_DATASET_ID,
-        'external_task_derived_cases': len(EXTERNAL_CASES),
+        'external_task_derived_cases': len(run_cases),
+        'development_cases_excluded': len(CASES) + sum(
+            _EXTERNAL_CASE_METADATA[(language, case_name)]['split'] == 'development'
+            for language, case_name, _ in EXTERNAL_CASES
+        ),
         'repeats': repeats,
         'rule_only': rule_only,
         'hybrid': hybrid,

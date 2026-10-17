@@ -23,7 +23,7 @@ def test_project_objectives_and_candidate_gaps_are_documented_with_status_caveat
 def test_frontend_exposes_objective_status_and_does_not_claim_fallback_improvement():
     frontend = (ROOT / 'frontend' / 'index.html').read_text(encoding='utf-8')
     assert 'Project objectives and implementation status' in frontend
-    assert 'LLM candidates can be displayed separately' in frontend
+    assert 'This prototype does not establish that outcome' in frontend
     assert 'suggestion may be generated and displayed separately' in frontend
     assert 'Finite I/O checks' in frontend
     assert 'Fallback events include skipped attempts' in frontend

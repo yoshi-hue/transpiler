@@ -42,14 +42,17 @@ Enable the same model and rerun exactly the same benchmark. Keep fixed:
 
 For parser-reported unsupported syntax, the application sends the complete source
 program once and asks for one complete target program. This preserves statement order
-better than requesting and concatenating unrelated fragments. The application records
-a request ID, model, prompt version/hash, attempt count, HTTP status, latency, and
-candidate output for each fallback request.
+better than requesting and concatenating unrelated fragments. For a returned candidate,
+the application records a request ID, model, prompt version/hash, attempt count, HTTP
+status, latency, and candidate output. On failure, it records request ID, attempts,
+latency, and a failure message; the benchmark keeps a redacted failure category and
+HTTP status, when available.
 
 The current implementation uses prompt version `legacy-modernizer-llm-v3`. Source and
 context are JSON-quoted as untrusted text, and model instructions explicitly say not
-to follow instructions embedded in code comments or literals. The recorded v2 pilot
-below is historical and should not be presented as an evaluation of v3. Retry settings
+to follow instructions embedded in code comments or literals. The older v2 result in
+[`data/project_report_evidence.json`](./data/project_report_evidence.json) is historical
+and must not be presented as an evaluation of v3. Retry settings
 are bounded at startup; transient HTTP errors are retried, permanent client errors are
 reported immediately, and a provider `Retry-After` value is respected up to 30 seconds.
 
@@ -73,68 +76,39 @@ general correctness. The translator does not automatically accept model candidat
 
 Recommended table columns:
 
-| Metric | Rule-only | Hybrid | Full stack |
-|---|---:|---:|---:|
-| Programs | | | |
-| Deterministic rule coverage | | | |
-| Unsupported constructs | | | |
-| LLM calls | 0 | | |
-| Target execution success | | | |
-| Semantic validation success | | | |
-| Output mismatches | | | |
-| Median LLM latency (ms) | — | | |
-| LLM requests rejected | — | | |
-| Delta vs baseline | — | | |
+| Metric | Rule-only | Hybrid |
+|---|---:|---:|
+| Programs | | |
+| Deterministic rule coverage | | |
+| Unsupported constructs | | |
+| LLM calls | 0 | |
+| Target execution success | | |
+| Semantic validation success | | |
+| Output mismatches | | |
+| Median LLM latency (ms) | -- | |
+| LLM requests rejected | -- | |
+| Delta vs baseline | -- | |
 
-The desired full conference-style ablation chain is:
+Metadata features are excluded from the causal comparison: contracts, risk assessments,
+failure fingerprints, and learned-rule records do not alter code generation, validation,
+or acceptance. Describe them as prototype diagnostics. The only implemented paired
+comparison is rule-only versus hybrid candidate generation; it does not isolate or test
+the metadata features.
 
-- Rule-only baseline
-- Rule-first + LLM fallback
-- Rule-first + contracts + risk-aware validation + learned rules (not yet implemented as a toggled ablation)
-
-**Current implementation boundary:** rule-only output is compared with a complete
-LLM-generated program for parser-reported unsupported cases. The model candidate is
-shown as the target output and the deterministic partial output is retained separately
-for review; the candidate is not automatically accepted. JavaScript syntax is checked and the complete candidate is run
-with Node's permission model and a scrubbed environment. Python candidates receive
-syntax checking only. A benchmark candidate is counted as oracle-matching only when
-restricted execution succeeds and output equals that case's separate expected-output
-oracle. This benchmark-only score does not change translator acceptance or establish
-general semantic equivalence.
-Contracts, risk assessments, and learned-rule metadata do not change translation or
-acceptance decisions; do not report them as causal ablations until switches and
-independent outcome measures are implemented.
-
-The current benchmark includes 12 local cases and 12 source-attributed adaptations of
-Rosetta Code task prompts (A+B, Maximum of two numbers, and Loops/For). These are task-derived
-challenge cases, not a representative corpus of independently collected legacy
-programs. The COBOL `PERFORM 3 TIMES` challenge remains outside deterministic parser
-coverage, but now has a separately authored expected output so model candidate
-generation, restricted runtime execution, and oracle matching can be measured without
-relabeling parser coverage. See [`data/external_task_cases.jsonl`](./data/external_task_cases.jsonl)
-for per-case expected output, URLs, and adaptation notes.
-
-This makes the experiment immediately interpretable: if the full stack improves correctness without harming determinism, its value is clearer than a single opaque end-to-end number.
-
-### Recorded live pilot
-
-The latest single-repeat paired run, rerun after the COBOL parser safety regression
-fixes, is recorded in
-[`data/project_report_evidence.json`](./data/project_report_evidence.json). On
-2026-10-17, both target runs reported 23/24 end-to-end passes; the configured hybrid
-made one fallback call for the unsupported COBOL loop using
-`gemini-3.1-flash-lite` and prompt `legacy-modernizer-llm-v2`. With JavaScript, the
-candidate was syntax-valid, ran in restricted Node, and matched its separately
-authored three-line expected output (1/1); the one-call latency was 2249.3 ms and
-translator acceptance stayed at zero. With Python, the candidate passed syntax
-checking but execution was not run and no oracle match was claimed; one-call latency was
-1735.5 ms. The unsupported case remains `not_run` in both runs. These single
-fixed-input results do not show an end-to-end improvement or establish general
-correctness.
+The strengthened benchmark now contains 36 manifest records: 16 development examples
+(local smoke tests plus the A+B task family) and 20 test examples from two held-out task
+families (Maximum of two numbers and Loops/For). The test set adds equal-value maxima,
+singleton and expanded ranges, and three expected-unsupported COBOL PERFORM variants.
+The benchmark runner scores only the test split. Expected outputs are separately authored
+from constants and loop semantics and match the separate reference evaluator (20/20),
+but have not been executed in native source compilers or checked by a second human; this
+remains a small task-derived pilot. The test set is not large enough to support a
+broad effectiveness claim. See [`BENCHMARK_AND_ABLATION_PROTOCOL.md`](./BENCHMARK_AND_ABLATION_PROTOCOL.md)
+for task grouping and the sample-size design.
 
 ## 6. Minimum evidence for publication-quality reporting
 
-For a workshop or demo-style venue, the project should include at least:
+For a future effectiveness paper, the project should include at least:
 
 - a benchmark table with per-language results
 - a construct-level breakdown for arithmetic, branching, loops, and unsupported constructs
@@ -177,14 +151,10 @@ Hybrid:
 - median latency: M ms
 - rejected candidates: K
 
-Full stack:
-- success: X%
-- validation failures: Y
-- learned rules added: Z
 ```
 
 Do not claim that hybrid translation is superior unless the benchmark and evaluation protocol support that conclusion. Report per-language and per-construct breakdowns as well as aggregate numbers.
 
 The `/rules` endpoint returns a descriptive mapping catalogue, not executable rule
 coverage. Its entry count and status labels must not be used as a coverage or correctness
-metric.
+metric. Candidate acceptance requirements are specified in [`CANDIDATE_ACCEPTANCE.md`](./CANDIDATE_ACCEPTANCE.md).

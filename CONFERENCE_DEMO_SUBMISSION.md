@@ -1,170 +1,50 @@
-# Conference Demo Submission Draft
+# ICSE 2027 Tool Demonstration submission checklist
 
-**Track fit:** student research, poster, or system-demonstration track
-**Status:** venue-neutral draft; adapt to the selected conference's call for
-participation, page limit, anonymity rules, and required demo format.
-**Artifact:** this repository and the reproducibility record in
-[`data/project_report_evidence.json`](./data/project_report_evidence.json).
+**Target:** ICSE 2027 Tool Demonstration and Data Showcase track
+**Submission deadline:** 23 October 2026, Anywhere on Earth
+**Draft:** [`ICSE_2027_TOOL_DEMO.tex`](./ICSE_2027_TOOL_DEMO.tex)
+**Artifact:** [public GitHub repository](https://github.com/yoshi-hue/transpiler); usage instructions are in `README.md`.
 
-## Title
+The official track requests a PDF of at most four pages including references, the IEEE
+conference format (`IEEEtran`, 10pt conference), author identities (single-anonymous
+review), a publicly available tool and usage instructions, and a public YouTube video
+between three and five minutes. The video's URL must appear at the end of the abstract.
+The submission site is [ICSE 2027 demos HotCRP](https://icse27demos.hotcrp.com/).
 
-**A Transparent Rule-First Modernizer for Small Legacy-Language Subsets**
+## Draft scope
 
-## Abstract
+The paper presents an early prototype demonstration, not a new translation algorithm
+or a claim of improved correctness. It describes deterministic translation for declared
+language subsets, inspectable intermediate data, unsupported-syntax reporting, optional
+LLM proposals, and current validation boundaries. It excludes scalability and model-bias
+contributions, makes no causal claim for contracts/risk/failure/learned-rule metadata,
+and reports the v3 model request failures without extrapolating from the prior v2 pilot.
 
-Legacy-code migration is difficult to audit when generated code is plausible but its
-behavior is uncertain. We present a compiler-design prototype that translates documented
-subsets of COBOL, FORTRAN, Pascal, BASIC, and a project-specific Python-like language
-to JavaScript or Python. Its deterministic path parses supported constructs, normalizes
-them to an inspectable representation, emits target code, and checks finite input/output
-behavior. For parser-reported unsupported source, an optional large-language-model
-(LLM) path can produce a complete target-program candidate. The interface labels that
-candidate unvalidated; syntax/runtime checks and fixed-case oracle comparisons do not
-cause the translator to accept it.
+## Items that still require author action
 
-The demonstration exposes intermediate artifacts, unsupported syntax, candidate
-provenance, and validation status rather than presenting generated text as verified
-translation. In a 24-case, project-authored and task-derived pilot, 23 cases passed
-end-to-end checks and one deliberately unsupported COBOL loop was recognized as
-unsupported. In a paired JavaScript run, one candidate for that loop passed restricted
-execution and matched its separately authored expected output; the source case remained
-`not_run`, so this did not increase the end-to-end pass rate. The pilot is illustrative,
-not a representative corpus or evidence of general LLM effectiveness. We offer the
-prototype as a reproducible system demonstration of inspectable translation boundaries
-and explicit uncertainty reporting.
+- [ ] Replace the author, affiliation, and contact placeholders with verified identities.
+- [ ] Record and publish a three-to-five-minute demo video; put its public YouTube URL at
+  the end of the abstract.
+- [ ] Compile with the official IEEE conference template and verify the PDF is no more
+  than four pages including references. No LaTeX compiler is installed in this
+  workspace, so the checked-in `.tex` is a source draft, not a validated PDF.
+- [ ] Review the paper, code, README setup instructions, and artifact URL together after
+  the final source changes; ensure the public repository points to the intended commit.
+- [ ] Check final references against the cited primary papers and confirm there are no
+  unresolved citation placeholders. The unidentified Xu et al. 2026 slide reference is
+  omitted from the submission.
+- [ ] Submit through the official HotCRP site before the deadline. No submission has
+  been made.
 
-## Demonstration contribution
+## Evidence snapshot
 
-This submission is a **system demonstration**, not a claim of a new translation
-algorithm or statistically established improvement. The contribution is an executable,
-inspectable prototype and an evaluation workflow that makes four different outcomes
-visible:
-
-1. deterministic translation of a declared source subset;
-2. explicit reporting of constructs outside that subset;
-3. optional generation and separate display of a full-program LLM candidate; and
-4. finite syntax, runtime, and expected-output evidence without conflating those checks
-   with translator acceptance.
-
-The implementation supports custom subset front ends, normalized nodes, JavaScript and
-Python target generation, a FastAPI service, a browser UI, provenance records, a small
-paired evaluation harness, and tests. The LLM path does not silently convert
-unsupported-source recognition into a successful end-to-end translation. Diagnostic
-contract, risk, failure-fingerprint, and learned-rule fields are metadata; they are not
-active control mechanisms or demonstrated causal contributions.
-
-## Live demonstration plan (approximately 7 minutes)
-
-1. **State the scope (45 seconds).** Show the supported-subset table and clarify that
-   this is not a complete COBOL/FORTRAN/Pascal/BASIC compiler.
-2. **Translate a supported example (90 seconds).** Use the COBOL arithmetic example.
-   Show deterministic output and the finite I/O validation status. Explain that the
-   source interpreter is limited and is not an independent compiler oracle.
-3. **Inspect the pipeline (90 seconds).** Expand tokens, normalized representation,
-   emitted rules, coverage basis, and pipeline trace. Clarify that the descriptive
-   mapping catalogue is not the executable code-generation engine.
-4. **Exercise unsupported syntax (2 minutes).** Use the benchmark's COBOL
-   `PERFORM 3 TIMES` example with the configured model. Show unsupported-construct
-   reporting, the complete candidate, syntax/runtime checks, the expected-output
-   comparison, and the persistent `not_run`/unaccepted status.
-5. **Show the paired measurement (90 seconds).** Display rule-only and hybrid counts
-   with denominators, then explain why a one-case candidate match is not a pass-rate
-   improvement or general correctness result.
-6. **Close with failure boundaries (45 seconds).** Explain what happens when the model
-   is unavailable and why candidates must be reviewed before use.
-
-If the live provider is unavailable, use a previously captured, clearly labeled
-**historical** interaction or a deterministic fake-response test. Never imply that a
-recorded candidate is a fresh live result.
-
-## Evaluation snapshot
-
-Recorded paired evaluations used `gemini-3.1-flash-lite`,
-`legacy-modernizer-llm-v2`, Python 3.13.1, Node.js v24.20.0, and rule table version
-1.3. Forty automated tests passed after the COBOL parser regressions were added. The
-24 cases include 12 local examples and 12 project-authored adaptations of
-published Rosetta Code task prompts. They are not independently collected legacy
-programs.
-
-| Measure | JavaScript target | Python target |
-|---|---:|---:|
-| End-to-end passes | 23/24 (95.8%) | 23/24 (95.8%) |
-| 95% Wilson interval | 79.8–99.3% | 79.8–99.3% |
-| Expected outcomes recognized | 24/24 | 24/24 |
-| Supported-case expected-output matches | 23/23 | 23/23 |
-| Expected-unsupported cases recognized | 1/1 | 1/1 |
-| Hybrid candidates generated | 1 | 1 |
-| Candidate syntax valid | 1/1 | 1/1 |
-| Candidate runtime checked | 1/1 | 0/1 (not run) |
-| Candidate expected-output matches | 1/1 | Not scored |
-| Candidates accepted by translator | 0 | 0 |
-
-The candidate in both hybrid runs corresponds to the unsupported COBOL loop. In the
-JavaScript run, it executed under restricted Node permissions and matched the
-separately authored `STEP`-three-times expected output. In the Python run, only syntax
-was checked; execution and oracle comparison were not performed. The COBOL source
-remained `not_run` in both cases. Accordingly, the headline end-to-end score stayed
-23/24 in both rule-only and hybrid variants.
-
-The 95% interval is wide because the sample is small. These pilot results demonstrate
-that the system and reporting path execute; they do not show a statistically meaningful
-improvement, broad semantic equivalence, or performance on production legacy systems.
-See the evidence JSON for exact timestamps, per-case measures, commands, and
-limitations.
-
-## Safety and reproducibility
-
-- A fresh app process loads `.env` at startup. Keep API credentials local and never
-  include them in screenshots, evaluation artifacts, or source control.
-- JavaScript candidate execution uses Node's permission-restricted mode and a scrubbed
-  environment. This is a risk reduction, not a complete sandbox or a correctness proof.
-- Python candidates are syntax-checked only and are not executed by the fallback
-  evaluator.
-- Reproduce tests with `python -m pytest -q`.
-- Validate corpus metadata with `python tools\corpus.py validate-manifest`.
-- Run paired evaluations with
-  `python evaluate.py --target JavaScript --output evaluation_result.json` and
-  `python evaluate.py --target Python --output evaluation_result.json`. The second
-  command overwrites the local, ignored output; preserve reported aggregates in the
-  evidence record before rerunning.
-- The corpus manifest is provenance metadata, not permission to redistribute upstream
-  source. Task-derived examples have licensing review caveats.
-
-## Limitations and reviewer-facing claims
-
-- The 24-case set is small, project-authored/task-derived, and not representative.
-- The source interpreter and finite checks do not provide formal equivalence.
-- There is one unsupported-construct pilot case; Python candidate runtime behavior is
-  not evaluated.
-- No candidate is automatically accepted. The system does not provide a general
-  semantic acceptance gate for arbitrary user programs.
-- Contracts, risk scores, failure fingerprints, and learned-rule records are not
-  evaluated control mechanisms.
-- Scalability, production readiness, full-language support, multilingual bias, and
-  superiority to other translators have not been established.
-- The literature review is scoped rather than systematic. The intended “Xu et al.
-  2026” multilingual-bias reference remains unidentified; do not cite it as verified.
-
-For a research-paper track, additional work is required before submission: a named
-venue's scope and format, a larger license-cleared corpus with independent oracles,
-multiple challenging unsupported constructs, repeated controlled model trials, and
-comparisons against appropriate baselines. This demo draft deliberately makes none of
-those results up.
-
-## Submission checklist
-
-- [ ] Choose a specific conference and confirm that its student demo/poster track accepts
-  this project type.
-- [ ] Replace this venue-neutral draft with the track's required format and word/page
-  limits.
-- [ ] Do not submit the existing course DOCX without revision: it predates the latest
-  fallback implementation and contains statements that candidates are not integrated.
-- [ ] Capture current UI screenshots or a live-demo recording; label model output as an
-  unvalidated candidate and keep secrets out of view.
-- [ ] Confirm the active server restarted from the current checkout and reports the
-  expected model/prompt version.
-- [ ] Run the test suite, corpus validation, and both target evaluations immediately
-  before submission; update the evidence record if any code or results change.
-- [ ] Add only verified author, affiliation, artifact URL, and bibliography details.
-- [ ] Do not describe the pilot as proof of semantic equivalence or a demonstrated
-  LLM-driven accuracy improvement.
+The refreshed v3 paired run at pushed commit `ade68dc44200b043e77617857717d8da687b6699`
+used prompt `legacy-modernizer-llm-v3` and model `gemini-3.1-flash-lite`. It produced no
+candidate after three provider attempts per target. The strengthened held-out subset has
+20 examples from two task groups; 17 supported target outputs matched separately
+authored expected outputs in both targets, while three COBOL loops were correctly
+reported unsupported. The expected outputs match a separate reference evaluator (20/20), but have not been
+cross-checked against native source compilers or a second human reviewer. Full provenance and raw case files are in
+[`data/EVIDENCE_V3_REFRESH.md`](./data/EVIDENCE_V3_REFRESH.md) and
+[`data/evaluation_v3_javascript.json`](./data/evaluation_v3_javascript.json),
+[`data/evaluation_v3_python.json`](./data/evaluation_v3_python.json).

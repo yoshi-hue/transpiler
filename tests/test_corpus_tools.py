@@ -10,8 +10,18 @@ def test_checked_in_corpus_manifest_has_hashes_and_task_isolated_splits():
     manifest = Path(__file__).resolve().parents[1] / 'data' / 'corpus_manifest.jsonl'
     report = validate_manifest(manifest)
     assert report['ok'] is True
-    assert report['records'] == 24
-    assert report['split_counts']['test'] == 8
+    assert report['records'] == 36
+    assert report['split_counts']['development'] == 16
+    assert report['split_counts']['test'] == 20
+
+
+def test_heldout_expected_outputs_match_separate_reference_evaluator():
+    root = Path(__file__).resolve().parents[1]
+    check = json.loads((root / 'data' / 'oracle_v2_check.json').read_text(encoding='utf-8'))
+    assert check['cases'] == 20
+    assert check['matches'] == 20
+    assert all(row['match'] for row in check['results'])
+    assert 'Not an independently executed native compiler' in check['limitation']
 
 
 def test_supported_subset_spec_lists_each_implemented_source_language():

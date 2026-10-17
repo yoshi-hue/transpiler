@@ -12,15 +12,16 @@ The project objectives are to survey translation approaches, identify evidence-b
 
 A course-specific DOCX report may contain personal identifiers and is maintained separately from the public repository.
 
-For the selected student research/poster/demo scope, see the venue-neutral [conference demo submission draft](./CONFERENCE_DEMO_SUBMISSION.md). It reports the current pilot and lists remaining venue-specific and evidence requirements; it is not a guarantee of acceptance or a full research-paper claim.
+For the selected ICSE 2027 Tool Demonstration track, see the [submission draft](./ICSE_2027_TOOL_DEMO.tex) and [submission checklist](./CONFERENCE_DEMO_SUBMISSION.md). The track requires a four-page IEEE paper, author identities, a public tool with usage instructions, and a public three-to-five-minute video; the draft still needs verified author details and that video.
 
 The main implementation/evaluation boundaries are:
 
 - Front ends, normalized representation, deterministic generation, and finite execution checks are implemented for the subsets in [`data/supported_subset.json`](./data/supported_subset.json).
 - A scoped primary-source audit and related-work reading list are documented in [`data/PROJECT_OBJECTIVES_AND_GAPS.md`](./data/PROJECT_OBJECTIVES_AND_GAPS.md). They partially address the survey/gap objectives; they are not an exhaustive or systematic review.
-- The LLM fallback produces a complete-program candidate for unsupported input and displays it separately from acceptance while retaining the deterministic partial output for comparison. Candidate syntax/runtime status is reported independently; JavaScript execution uses Node's permission mode, while Python candidates receive syntax checks only. Candidates are never automatically accepted. Current prompt version is `legacy-modernizer-llm-v3`; the recorded v2 COBOL loop pilot is historical and does not evaluate the current prompt. Its single fixed-input result is not evidence of general translation correctness or a statistically supported improvement.
+- The LLM fallback can request a complete-program candidate for unsupported input and displays it separately from acceptance while retaining deterministic partial output. JavaScript candidates run in Node's permission mode; Python candidates receive syntax checks only. Candidates are never automatically accepted. Prompt v3 was confirmed in a fresh server from commit `ade68dc`; the refreshed paired run produced no candidate after three provider request attempts for the unsupported COBOL case per target. See [`data/EVIDENCE_V3_REFRESH.md`](./data/EVIDENCE_V3_REFRESH.md).
 - Contracts, risk assessments, failure fingerprints, learned-rule records, and the descriptive mapping catalogue are metadata/diagnostic features. They do not currently control acceptance or demonstrate improved correctness.
-- Several gap claims are now supported only in narrowly scoped settings; the intended multilingual-bias citation remains unidentified. Do not present these as field-wide findings.
+- Metadata mechanisms (contracts, risk scores, failure records, learned-rule examples) are prototype diagnostics only; no causal benefit is claimed or measured.
+- Scalability and multilingual-bias experiments were not conducted and are not claimed contributions or findings. The unidentified “Xu et al. 2026” citation was removed from the paper framing.
 
 ## Why this project matters
 
@@ -50,15 +51,7 @@ supported source → parse/normalize → deterministic target generation → fin
 
 ## Research positioning
 
-This project is best framed as a hybrid compiler + AI systems paper centered on reliable translation under uncertainty.
-
-Research hypotheses to test (not findings established by the current benchmark):
-
-- “We show that deterministic compiler rules can capture the majority of legacy-language behavior while an LLM proposes complete-program candidates when source syntax is unsupported.”
-- “Translation correctness is treated as a validation problem, not merely a code-generation problem.”
-- “Verified fallback patterns are accumulated into the rule set, lowering future dependence on external model calls.”
-
-These are hypotheses, not findings. The LLM-improvement question requires paired evaluation, independent test oracles, and a validated acceptance gate before candidates are considered semantically accepted. The current fallback displays the candidate but does not pass it through such an acceptance gate. Any effectiveness claim still requires larger independent evaluation.
+The paper is framed as an early tool demonstration: a prototype that exposes its declared language subset, deterministic output, unsupported syntax, candidate status, and finite execution checks. The project has not established that the fallback improves translation, that learned rules improve later results, or that the system outperforms other tools.
 
 ## What makes the LLM integration meaningful
 
@@ -74,13 +67,17 @@ These records do not currently select additional validation, trigger generated t
 
 ## Evaluation strategy and benchmark design
 
-The project includes a small benchmark and a paired rule-only versus complete-program LLM-candidate experiment. A full metadata/validation ablation is future work, not an implemented comparison. A conference-style evaluation should compare:
+The benchmark has 16 development examples and a 20-case held-out set grouped by whole task. It adds tie, singleton-range, and expanded-range cases; three COBOL `PERFORM` variants remain expected-unsupported. Expected outputs are separately authored from fixed constants and loop semantics and checked by a separate reference evaluator (20/20); they have not been checked against native source compilers. This remains a small task-derived benchmark, not a representative corpus. The refreshed v3 paired run is a historical 24-case baseline from the pushed commit; fallback requests failed, so it provides no candidate effectiveness result.
 
-1. Rule-only baseline
-2. Hybrid rule-first + LLM fallback
-3. Full system with contracts, risk-aware validation, and learned rules
+Reproduce the held-out benchmark and its separate expected-output check with:
 
-Only the first two variants are represented by the current experiment harness. The corpus contains one COBOL `PERFORM` loop with a separate expected-output oracle for candidate evaluation; report its result separately from deterministic supported-subset pass rate. The 24-case set remains a small project-authored/task-derived pilot, not a broad independent corpus. Report per-language and per-construct outcomes, unsupported-syntax recognition, fallback frequency, candidate runtime validity, oracle matches, validation failures, and latency.
+```powershell
+python tools\check_benchmark_oracles.py --output data\oracle_v2_check.json
+python tools\run_test_benchmark.py --target JavaScript --output data\benchmark_v2_javascript.json
+python tools\run_test_benchmark.py --target Python --output data\benchmark_v2_python.json
+```
+
+Candidate review requirements are in [CANDIDATE_ACCEPTANCE.md](./CANDIDATE_ACCEPTANCE.md), and the sample-size and metadata ablation decision are in [BENCHMARK_AND_ABLATION_PROTOCOL.md](./BENCHMARK_AND_ABLATION_PROTOCOL.md).
 
 See [LLM_EVALUATION.md](./LLM_EVALUATION.md) for the recommended protocol.
 
