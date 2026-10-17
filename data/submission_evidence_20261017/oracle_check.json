@@ -1,0 +1,171 @@
+{
+  "timestamp_utc": "2026-10-17T14:17:21.558159+00:00",
+  "method": "separate regex input extraction plus direct max/range/repetition calculation; no transpiler or source interpreter imports",
+  "limitation": "Not an independently executed native compiler and not an independent human review.",
+  "benchmark_sha256": "b4bf47c7acbbc786d08cfa475ffa4ec97650d95829f1e39b2c8c6a3346d89d18",
+  "checker_sha256": "0f0aa2be5453d14a223043c4f1ffdcdb1d49be29b2844c69dfc94b60d135a083",
+  "cases": 20,
+  "matches": 20,
+  "results": [
+    {
+      "case": "rosetta-maximum-cobol",
+      "task_group": "Maximum of two numbers",
+      "language": "COBOL",
+      "expected_output": "25",
+      "reference_output": "25",
+      "match": true
+    },
+    {
+      "case": "rosetta-maximum-fortran",
+      "task_group": "Maximum of two numbers",
+      "language": "FORTRAN",
+      "expected_output": "25",
+      "reference_output": "25",
+      "match": true
+    },
+    {
+      "case": "rosetta-maximum-pascal",
+      "task_group": "Maximum of two numbers",
+      "language": "Pascal",
+      "expected_output": "25",
+      "reference_output": "25",
+      "match": true
+    },
+    {
+      "case": "rosetta-maximum-basic",
+      "task_group": "Maximum of two numbers",
+      "language": "BASIC",
+      "expected_output": "25",
+      "reference_output": "25",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-cobol",
+      "task_group": "Loops/For",
+      "language": "COBOL",
+      "expected_output": "STEP\nSTEP\nSTEP",
+      "reference_output": "STEP\nSTEP\nSTEP",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-fortran",
+      "task_group": "Loops/For",
+      "language": "FORTRAN",
+      "expected_output": "1\n2\n3",
+      "reference_output": "1\n2\n3",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-pascal",
+      "task_group": "Loops/For",
+      "language": "Pascal",
+      "expected_output": "1\n2\n3",
+      "reference_output": "1\n2\n3",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-basic",
+      "task_group": "Loops/For",
+      "language": "BASIC",
+      "expected_output": "2\n3\n4",
+      "reference_output": "2\n3\n4",
+      "match": true
+    },
+    {
+      "case": "rosetta-maximum-tie-cobol",
+      "task_group": "Maximum of two numbers",
+      "language": "COBOL",
+      "expected_output": "7",
+      "reference_output": "7",
+      "match": true
+    },
+    {
+      "case": "rosetta-maximum-tie-fortran",
+      "task_group": "Maximum of two numbers",
+      "language": "FORTRAN",
+      "expected_output": "7",
+      "reference_output": "7",
+      "match": true
+    },
+    {
+      "case": "rosetta-maximum-tie-pascal",
+      "task_group": "Maximum of two numbers",
+      "language": "Pascal",
+      "expected_output": "7",
+      "reference_output": "7",
+      "match": true
+    },
+    {
+      "case": "rosetta-maximum-tie-basic",
+      "task_group": "Maximum of two numbers",
+      "language": "BASIC",
+      "expected_output": "7",
+      "reference_output": "7",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-singleton-cobol",
+      "task_group": "Loops/For",
+      "language": "COBOL",
+      "expected_output": "X",
+      "reference_output": "X",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-four-cobol",
+      "task_group": "Loops/For",
+      "language": "COBOL",
+      "expected_output": "X\nX\nX\nX",
+      "reference_output": "X\nX\nX\nX",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-singleton-fortran",
+      "task_group": "Loops/For",
+      "language": "FORTRAN",
+      "expected_output": "2",
+      "reference_output": "2",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-expanded-fortran",
+      "task_group": "Loops/For",
+      "language": "FORTRAN",
+      "expected_output": "2\n3\n4\n5",
+      "reference_output": "2\n3\n4\n5",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-singleton-pascal",
+      "task_group": "Loops/For",
+      "language": "Pascal",
+      "expected_output": "2",
+      "reference_output": "2",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-expanded-pascal",
+      "task_group": "Loops/For",
+      "language": "Pascal",
+      "expected_output": "2\n3\n4\n5",
+      "reference_output": "2\n3\n4\n5",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-singleton-basic",
+      "task_group": "Loops/For",
+      "language": "BASIC",
+      "expected_output": "2",
+      "reference_output": "2",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-expanded-basic",
+      "task_group": "Loops/For",
+      "language": "BASIC",
+      "expected_output": "2\n3\n4\n5",
+      "reference_output": "2\n3\n4\n5",
+      "match": true
+    }
+  ]
+}
