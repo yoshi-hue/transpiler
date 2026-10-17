@@ -3,6 +3,10 @@
 \usepackage{url}
 \usepackage{booktabs}
 \usepackage{graphicx}
+\usepackage{listings}
+
+\lstset{basicstyle=\ttfamily\scriptsize,breaklines=true,columns=fullflexible,
+  keepspaces=true,frame=single,showstringspaces=false}
 
 \title{An Inspectable Rule-First Transpiler for Legacy-Language Subsets: A Tool Demonstration}
 
@@ -58,26 +62,59 @@ a complete target program. The application retains deterministic partial output,
 displays the model candidate separately, reports candidate syntax/runtime status, and
 never marks the candidate semantically accepted.
 
-\begin{figure}[t]
-\centering
-\fbox{\begin{minipage}{0.96\columnwidth}
-\centering
-Source subset $\rightarrow$ parser and normalized representation $\rightarrow$
-deterministic target code $\rightarrow$ target checks\\[2pt]
-Unsupported construct $\rightarrow$ optional full-program candidate
-$\rightarrow$ separate review status
-\end{minipage}}
-\caption{Implemented path. Candidate generation is optional; it is not an automatic
-acceptance or repair loop.}
-\label{fig:pipeline}
-\end{figure}
+The demonstration uses a held-out maximum-of-two-numbers case from the test split.
+The user selects COBOL and JavaScript, pastes the source in Fig.~\ref{fig:walkthrough},
+and presses \emph{Translate}. The UI's stage indicators lead into the token and shared-IR
+inspectors; the generated-code pane shows the deterministic branch, while the status
+and metrics report a successful target run. For this concrete input ($A=17$, $B=25$),
+the target prints \texttt{25}, matching the case's separately authored expected output.
+The case is task-derived and adapted to fixed values; it is not evidence about arbitrary
+COBOL programs.
 
-The demonstration walks through a supported loop in a legacy source language, shows
-its intermediate representation and target output, then enters a COBOL \texttt{PERFORM}
-loop outside the declared subset. The UI shows the unsupported statements, retained
-deterministic output, fallback status, and any candidate checks. The benchmark panel
-shows per-case results and distinguishes expected-unsupported recognition from
-translation success. The fallback prompt treats the complete source as untrusted text.
+The second step loads the COBOL fallback example from \emph{More actions}. It contains
+\texttt{CALL "EXTERNAL-ROUTINE"}, outside the declared subset. The UI reports the
+unsupported construct, keeps deterministic output separate from any model proposal,
+and shows fallback status. In the recorded v3 refresh the provider returned no
+candidate after three attempts per target, so the demonstration explicitly shows that
+failure state rather than implying that fallback always produces usable code. The
+benchmark view can then display per-case outcomes; unsupported recognition is distinct
+from translation success. The complete source is treated as untrusted prompt content.
+
+\begin{figure*}[t]
+\centering
+\begin{minipage}[t]{0.48\textwidth}
+\textbf{A. Supported COBOL input (held-out case)}
+\begin{lstlisting}
+IDENTIFICATION DIVISION.
+PROGRAM-ID. EXT-MAX.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 A PIC 999 VALUE 17.
+01 B PIC 999 VALUE 25.
+PROCEDURE DIVISION.
+IF A > B
+ DISPLAY A
+ELSE
+ DISPLAY B
+END-IF.
+STOP RUN.
+\end{lstlisting}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\textbf{B. Deterministic JavaScript output; runtime stdout: 25}
+\begin{lstlisting}
+let A = 17;
+let B = 25;
+if (A > B) {
+    console.log(A);
+} else {
+    console.log(B);
+}
+\end{lstlisting}
+\end{minipage}
+\caption{Concrete supported-path walkthrough. The UI exposes the source, generated target, and finite runtime result; the result matches this case's expected output.}
+\label{fig:walkthrough}
+\end{figure*}
 
 JavaScript candidates are syntax-checked and executed using Node's permission mode,
 with a timeout and a reduced child environment. Python candidates are syntax-checked
