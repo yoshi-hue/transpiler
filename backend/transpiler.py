@@ -307,13 +307,23 @@ def _contract_with_metadata(source, source_language, target_language, target_cod
     return contract
 
 
-def transpile(source, source_language='Python-like', target_language='JavaScript'):
+def _is_unsupported_candidate(candidate):
+    for line in (candidate or '').splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        line = re.sub(r'^(?://|#|/\*+|\*|--)\s*', '', line)
+        return bool(re.match(r'UNSUPPORTED\b', line, re.IGNORECASE))
+    return False
+
+
+def transpile(source, source_language='Python-like', target_language='JavaScript', *, enable_llm=None):
     if source_language != 'Python-like':
         if target_language not in TARGETS:
             raise ValueError('Unsupported target language. Choose JavaScript or Python.')
         result = legacy_transpile(source_language, source, target_language)
         fallback = create_fallback_log()
-        fallback_info = fallback_status()
+        fallback_info = fallback_status(enabled=enable_llm)
         fallback_suggestions = []
         trace = [
             {'stage':'front_end', 'status':'completed', 'detail':f'{source_language} subset tokenized, parsed and normalized.'},
@@ -324,29 +334,114 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
         if result.unsupported:
             context = source[:5000]
             trace.append({'stage':'llm_fallback', 'status':'requested', 'detail':f'{len(result.unsupported)} unsupported construct(s) require review.'})
-            for construct in result.unsupported:
-                entry = fallback.record(construct)
-                if fallback_info['configured']:
-                    try:
-                        suggestion = translate_construct(source_language, target_language, construct, context)
-                        fallback_suggestions.append({'source_construct': construct, **suggestion})
-                        entry['action'] = 'LLM fallback completed; suggestion requires validation/review'
-                        entry['result'] = 'candidate generated; target/source validation still required'
-                        entry['request_id'] = suggestion.get('request_id')
-                        entry['latency_ms'] = suggestion.get('latency_ms')
-                        entry['model'] = suggestion.get('model')
-                        entry['prompt_version'] = suggestion.get('prompt_version')
-                    except Exception as exc:
-                        entry['action'] = 'LLM fallback failed'
-                        entry['result'] = str(exc)
-                else:
-                    entry['action'] = 'LLM fallback skipped; provider not configured'
-                    entry['result'] = 'Set LLM_API_URL and LLM_MODEL to enable it.'
+            entry = fallback.record('; '.join(result.unsupported))
+            if fallback_info['configured']:
+                try:
+                    suggestion = translate_construct(
+                        source_language,
+                        target_language,
+                        source,
+                        context,
+                        complete_program=True,
+                    )
+                    suggestion['source_constructs'] = result.unsupported
+                    fallback_suggestions.append(suggestion)
+                    entry['action'] = 'LLM produced a complete-program candidate; validation required'
+                    entry['result'] = 'candidate generated; target syntax/runtime checks are reported separately'
+                    entry['request_id'] = suggestion.get('request_id')
+                    entry['latency_ms'] = suggestion.get('latency_ms')
+                    entry['attempts'] = suggestion.get('attempts')
+                    entry['model'] = suggestion.get('model')
+                    entry['prompt_version'] = suggestion.get('prompt_version')
+                except Exception as exc:
+                    entry['action'] = 'LLM fallback failed'
+                    entry['result'] = str(exc)
+                    if getattr(exc, 'request_id', None):
+                        entry['request_id'] = exc.request_id
+                    if isinstance(getattr(exc, 'attempts', None), int):
+                        entry['attempts'] = exc.attempts
+                    if isinstance(getattr(exc, 'latency_ms', None), (int, float)):
+                        entry['latency_ms'] = exc.latency_ms
+            else:
+                entry['action'] = 'LLM fallback skipped; provider not configured'
+                entry['result'] = 'Set LLM_API_URL and LLM_MODEL to enable it.'
             trace[-1]['status'] = 'completed' if fallback_suggestions else 'skipped'
         else:
             trace.append({'stage':'llm_fallback', 'status':'not_needed', 'detail':'All constructs covered by deterministic rules.'})
 
-        if target_language == 'JavaScript':
+        llm_candidate = fallback_suggestions[0].get('candidate', '').strip() if fallback_suggestions else ''
+        has_llm_candidate = bool(llm_candidate) and not _is_unsupported_candidate(llm_candidate)
+        deterministic_code = result.javascript
+        candidate_validation_status = 'not_run'
+        if fallback_suggestions:
+            fallback_suggestions[0]['candidate_status'] = 'candidate_generated' if has_llm_candidate else 'unsupported_or_refused'
+        if has_llm_candidate:
+            result.javascript = llm_candidate
+
+        if result.unsupported:
+            if has_llm_candidate and target_language == 'JavaScript':
+                from .validator import check_javascript_syntax
+                syntax_result = check_javascript_syntax(result.javascript)
+                if not syntax_result.get('available'):
+                    fallback_suggestions[0]['target_syntax_valid'] = None
+                    fallback_suggestions[0]['target_runtime_valid'] = None
+                    target_run = {
+                        'available': False,
+                        'ok': None,
+                        'output': '',
+                        'error': syntax_result.get('error') or 'JavaScript syntax checker is unavailable.',
+                    }
+                    candidate_validation_status = 'syntax_check_unavailable'
+                elif syntax_result.get('ok'):
+                    fallback_suggestions[0]['target_syntax_valid'] = True
+                    target_run = run_javascript(result.javascript, restricted=True)
+                    fallback_suggestions[0]['target_runtime_valid'] = bool(target_run.get('available') and target_run.get('ok'))
+                    if not target_run.get('available'):
+                        fallback_suggestions[0]['target_runtime_valid'] = None
+                        candidate_validation_status = 'runtime_unavailable'
+                    else:
+                        candidate_validation_status = 'runtime_valid_unverified' if target_run.get('ok') else 'rejected_runtime'
+                else:
+                    fallback_suggestions[0]['target_syntax_valid'] = False
+                    target_run = {
+                        'available': True,
+                        'ok': False,
+                        'output': '',
+                        'error': syntax_result.get('error') or 'Target syntax validation failed.',
+                    }
+                    fallback_suggestions[0]['target_runtime_valid'] = None
+                    candidate_validation_status = 'rejected_syntax'
+            elif has_llm_candidate and target_language == 'Python':
+                from .validator import check_python_syntax
+                syntax_result = check_python_syntax(result.javascript)
+                target_run = {
+                    'available': False,
+                    'ok': None,
+                    'output': '',
+                    'error': 'Python candidate execution is disabled; syntax was checked only.',
+                    'syntax_valid': syntax_result['ok'],
+                    'execution_skipped': True,
+                }
+                fallback_suggestions[0]['target_syntax_valid'] = syntax_result['ok']
+                candidate_validation_status = 'syntax_valid_runtime_not_run' if syntax_result['ok'] else 'rejected_syntax'
+                fallback_suggestions[0]['target_runtime_valid'] = None
+            else:
+                target_run = {
+                    'available': False,
+                    'ok': None,
+                    'output': '',
+                    'error': 'Incomplete translation was not executed.',
+                }
+            if fallback_suggestions:
+                fallback_suggestions[0]['target_runtime_error'] = target_run.get('error', '')
+                fallback_suggestions[0]['accepted'] = False
+                fallback_suggestions[0]['validation_status'] = candidate_validation_status
+                trace.append({
+                    'stage': 'candidate_validation',
+                    'status': candidate_validation_status,
+                    'detail': 'Candidate checks are reported separately; no LLM candidate is automatically accepted.',
+                })
+        elif target_language == 'JavaScript':
             target_run = run_javascript(result.javascript)
         else:
             target_run = run_python(result.javascript)
@@ -376,7 +471,9 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
         return {
             'language_support':{'source':source_language,'target':target_language,'subset':SUBSETS[source_language]},
             'tokens':result.tokens,'ir':result.ir,'symbol_table':result.symbols,
-            'javascript':result.javascript,'rules_used':result.rules_used,
+            'javascript':result.javascript,'target_code':result.javascript,
+            'deterministic_code':deterministic_code,'rules_used':result.rules_used,
+            'code_origin':'llm_candidate' if has_llm_candidate else 'deterministic',
             'rule_table_version':RULE_TABLE_VERSION,'rule_coverage':result.coverage,
             'fallback_log':fallback.entries,'fallback_status':fallback_info,'fallback_suggestions':fallback_suggestions,
             'validation':validation,'unsupported':result.unsupported,'notes':result.notes,
@@ -435,7 +532,7 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
     dependency_order = _dependency_order(source)
     idiomatic_refactor = _idiomatic_refactor(javascript, target_language)
     property_validation = _property_validation(source, target_language)
-    return {'language_support':{'source':'Python-like','target':'JavaScript','subset':'Existing prototype subset'},'tokens':[{'type':t.type,'value':t.value,'line':t.line,'column':t.column} for t in tokens if t.type not in ('NEWLINE','INDENT','DEDENT','EOF')],'ast':ast_to_dict(ast),'ir':ir.to_dict(),'symbol_table':symbols.as_dict(),'javascript':javascript,'rules_used':generator.rules_used,'rule_table_version':RULE_TABLE_VERSION,'rule_coverage':coverage,'fallback_log':fallback.entries,'fallback_status':fallback_status(),'fallback_suggestions':[],'validation':validation,'unsupported':[],'notes':['Original Python-like demonstration pipeline retained.'],'pipeline_trace':[{'stage':'front_end','status':'completed','detail':'Python-like lexer/parser/semantic analysis completed.'},{'stage':'shared_ir','status':'completed','detail':'Shared IR constructed.'},{'stage':'rule_first','status':'completed','detail':'Deterministic JavaScript code generation completed.'},{'stage':'llm_fallback','status':'not_needed','detail':'No unsupported constructs in the current subset.'},{'stage':'validation','status':validation['status'],'detail':validation['message']}],'target_runtime':target,'generated_lines':len([x for x in javascript.splitlines() if x.strip()]),'translation_contract':contract,'risk_assessment':risk_assessment,'failure_fingerprint':failure_fingerprint,'rule_evolution':rule_evolution,'type_map':type_map,'dependency_order':dependency_order,'idiomatic_refactor':idiomatic_refactor,'property_validation':property_validation}
+    return {'language_support':{'source':'Python-like','target':'JavaScript','subset':'Existing prototype subset'},'tokens':[{'type':t.type,'value':t.value,'line':t.line,'column':t.column} for t in tokens if t.type not in ('NEWLINE','INDENT','DEDENT','EOF')],'ast':ast_to_dict(ast),'ir':ir.to_dict(),'symbol_table':symbols.as_dict(),'javascript':javascript,'target_code':javascript,'deterministic_code':javascript,'rules_used':generator.rules_used,'rule_table_version':RULE_TABLE_VERSION,'rule_coverage':coverage,'fallback_log':fallback.entries,'fallback_status':fallback_status(enabled=enable_llm),'fallback_suggestions':[],'validation':validation,'unsupported':[],'notes':['Original Python-like demonstration pipeline retained.'],'pipeline_trace':[{'stage':'front_end','status':'completed','detail':'Python-like lexer/parser/semantic analysis completed.'},{'stage':'shared_ir','status':'completed','detail':'Shared IR constructed.'},{'stage':'rule_first','status':'completed','detail':'Deterministic JavaScript code generation completed.'},{'stage':'llm_fallback','status':'not_needed','detail':'No unsupported constructs in the current subset.'},{'stage':'validation','status':validation['status'],'detail':validation['message']}],'target_runtime':target,'generated_lines':len([x for x in javascript.splitlines() if x.strip()]),'translation_contract':contract,'risk_assessment':risk_assessment,'failure_fingerprint':failure_fingerprint,'rule_evolution':rule_evolution,'type_map':type_map,'dependency_order':dependency_order,'idiomatic_refactor':idiomatic_refactor,'property_validation':property_validation}
 
 
 def _run_normalized(nodes):

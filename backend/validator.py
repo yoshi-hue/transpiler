@@ -1,15 +1,17 @@
 from decimal import Decimal, InvalidOperation
+import ast
+import os
 import subprocess
 import tempfile
 from pathlib import Path
 
 
-def _run(command, filename, code, timeout=5):
+def _run(command, filename, code, timeout=5, env=None):
     with tempfile.TemporaryDirectory() as d:
         path = Path(d) / filename
         path.write_text(code, encoding='utf-8')
         try:
-            p = subprocess.run(command + [str(path)], capture_output=True, text=True, timeout=timeout)
+            p = subprocess.run(command + [str(path)], capture_output=True, text=True, timeout=timeout, env=env)
         except FileNotFoundError:
             return {'available': False, 'ok': None, 'output': '', 'error': f'{command[0]} is not installed.'}
         except subprocess.TimeoutExpired:
@@ -17,12 +19,37 @@ def _run(command, filename, code, timeout=5):
         return {'available': True, 'ok': p.returncode == 0, 'output': p.stdout.strip(), 'error': p.stderr.strip()}
 
 
-def run_javascript(code):
-    return _run(['node'], 'translated.js', code)
+def run_javascript(code, *, restricted=False):
+    command = ['node']
+    env = None
+    if restricted:
+        command.extend(['--permission', '--max-old-space-size=128'])
+        env = {
+            key: os.environ[key]
+            for key in ('PATH', 'SystemRoot', 'WINDIR', 'TEMP', 'TMP')
+            if os.environ.get(key)
+        }
+    return _run(command, 'translated.js', code, env=env)
 
 
 def run_python(code):
     return _run(['python'], 'translated.py', code)
+
+
+def check_python_syntax(code):
+    try:
+        ast.parse(code)
+    except SyntaxError as exc:
+        return {'available': True, 'ok': False, 'error': f'{exc.msg} at line {exc.lineno}.'}
+    return {'available': True, 'ok': True, 'error': ''}
+
+
+def check_javascript_syntax(code):
+    return _run(['node', '--check'], 'translated.js', code)
+
+
+def check_javascript_syntax(code):
+    return _run(['node', '--check'], 'translated.js', code)
 
 
 def _outputs_equivalent(source_output, target_output):

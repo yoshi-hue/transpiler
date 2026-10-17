@@ -108,11 +108,152 @@ def test_unsupported_legacy_syntax_is_reported_for_fallback():
     assert result['validation']['failure_class'] == 'unsupported_source_syntax'
 
 
-def test_llm_fallback_example_records_unaccepted_construct():
+def test_cobol_single_line_program_is_split_into_sentences_and_translated():
+    source = (
+        'IDENTIFICATION DIVISION. PROGRAM-ID. DEMO. DATA DIVISION. '
+        'WORKING-STORAGE SECTION. 01 A PIC 999 VALUE 10. '
+        'PROCEDURE DIVISION. DISPLAY "VERSION 1.2". STOP RUN.'
+    )
+
+    result = transpile(source, 'COBOL', 'JavaScript')
+
+    assert result['unsupported'] == []
+    assert result['validation']['status'] == 'passed'
+    assert result['validation']['target_output'] == 'VERSION 1.2'
+    assert result['code_origin'] == 'deterministic'
+
+
+def test_cobol_single_line_unsupported_statement_is_not_silently_accepted(monkeypatch):
+    monkeypatch.setenv('LLM_API_URL', '')
+    monkeypatch.setenv('LLM_MODEL', '')
+    monkeypatch.setenv('LLM_API_KEY', '')
+    source = 'IDENTIFICATION DIVISION. PROGRAM-ID. DEMO. PROCEDURE DIVISION. CALL "EXTERNAL-ROUTINE". STOP RUN.'
+
+    result = transpile(source, 'COBOL', 'JavaScript')
+
+    assert result['unsupported'] == ['CALL "EXTERNAL-ROUTINE"']
+    assert result['validation']['status'] == 'not_run'
+    assert result['validation']['failure_class'] == 'unsupported_source_syntax'
+    assert result['code_origin'] == 'deterministic'
+
+
+def test_cobol_unrecognized_data_division_line_is_reported_unsupported(monkeypatch):
+    monkeypatch.setenv('LLM_API_URL', '')
+    monkeypatch.setenv('LLM_MODEL', '')
+    monkeypatch.setenv('LLM_API_KEY', '')
+    source = '''IDENTIFICATION DIVISION.
+PROGRAM-ID. DEMO.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 A PIC X(20).
+PROCEDURE DIVISION.
+STOP RUN.'''
+
+    result = transpile(source, 'COBOL', 'JavaScript')
+
+    assert result['unsupported'] == ['01 A PIC X(20)']
+    assert result['validation']['status'] == 'not_run'
+
+
+def test_llm_fallback_example_records_unaccepted_construct(monkeypatch):
+    monkeypatch.setenv('LLM_API_URL', '')
+    monkeypatch.setenv('LLM_MODEL', '')
+    monkeypatch.setenv('LLM_API_KEY', '')
     result = transpile('10 GOTO 100\n20 PRINT "needs fallback"\n100 END', 'BASIC', 'JavaScript')
     assert result['unsupported']
     assert result['fallback_log'][0]['action'].startswith('LLM fallback')
     assert result['validation']['status'] == 'not_run'
+
+
+def test_llm_fallback_generates_and_restrictedly_runs_a_complete_program(monkeypatch):
+    import backend.transpiler as transpiler_module
+
+    source = '''IDENTIFICATION DIVISION.
+PROGRAM-ID. EXT-LOOP.
+PROCEDURE DIVISION.
+PERFORM 3 TIMES
+ DISPLAY "STEP"
+END-PERFORM.
+STOP RUN.'''
+    candidate = 'for (let i = 0; i < 3; i++) { console.log("STEP"); }'
+    called = {}
+
+    def fake_translate(source_language, target_language, construct, context, *, complete_program=False):
+        called.update({
+            'source_language': source_language,
+            'target_language': target_language,
+            'construct': construct,
+            'context': context,
+            'complete_program': complete_program,
+        })
+        return {
+            'candidate': candidate,
+            'accepted': False,
+            'validation_status': 'not_run',
+            'request_id': 'test-request',
+            'latency_ms': 1,
+            'model': 'test-model',
+            'prompt_version': 'test-prompt',
+        }
+
+    monkeypatch.setenv('LLM_API_URL', 'https://example.com/v1/chat/completions')
+    monkeypatch.setenv('LLM_MODEL', 'test-model')
+    monkeypatch.setattr(transpiler_module, 'translate_construct', fake_translate)
+
+    result = transpiler_module.transpile(source, 'COBOL', 'JavaScript')
+
+    assert result['javascript'] == candidate
+    assert called['construct'] == source
+    assert called['complete_program'] is True
+    assert result['target_runtime']['ok'] is True
+    assert result['target_runtime']['output'] == 'STEP\nSTEP\nSTEP'
+    assert result['fallback_suggestions'][0]['target_runtime_valid'] is True
+    assert result['fallback_suggestions'][0]['accepted'] is False
+    assert result['validation']['status'] == 'not_run'
+
+
+def test_python_llm_candidate_is_syntax_checked_but_not_executed(monkeypatch):
+    import backend.transpiler as transpiler_module
+
+    monkeypatch.setenv('LLM_API_URL', 'https://example.com/v1/chat/completions')
+    monkeypatch.setenv('LLM_MODEL', 'test-model')
+    monkeypatch.setattr(
+        transpiler_module,
+        'translate_construct',
+        lambda *args, **kwargs: {
+            'candidate': 'for i in range(3):\n    print("STEP")',
+            'accepted': False,
+            'validation_status': 'not_run',
+        },
+    )
+
+    result = transpiler_module.transpile('10 GOTO 100\n100 END', 'BASIC', 'Python')
+
+    suggestion = result['fallback_suggestions'][0]
+    assert suggestion['target_syntax_valid'] is True
+    assert suggestion['target_runtime_valid'] is None
+    assert result['target_runtime']['available'] is False
+    assert result['target_runtime']['ok'] is None
+    assert result['target_runtime']['execution_skipped'] is True
+
+
+def test_restricted_llm_javascript_execution_hides_secrets_and_blocks_file_access(monkeypatch):
+    from backend.validator import run_javascript
+
+    monkeypatch.setenv('LLM_API_KEY', 'must-not-reach-generated-code')
+    result = run_javascript(
+        'console.log(process.env.LLM_API_KEY || "NO_SECRET");',
+        restricted=True,
+    )
+    assert result['ok'] is True
+    assert result['output'] == 'NO_SECRET'
+
+    blocked = run_javascript(
+        'require("fs").readFileSync(process.cwd() + "/.env", "utf8");',
+        restricted=True,
+    )
+    assert blocked['ok'] is False
+    assert 'permission' in blocked['error'].lower()
 
 
 def test_experiment_summary_reports_rule_and_hybrid_breakdown():
@@ -139,14 +280,89 @@ def test_experiment_report_renders_publication_summary():
     assert 'Fallback frequency' in text
 
 
-def test_experiment_endpoint_exposes_controlled_ablation():
+def test_experiment_endpoint_exposes_controlled_ablation(monkeypatch):
+    monkeypatch.setenv('LLM_API_URL', '')
+    monkeypatch.setenv('LLM_MODEL', '')
+    monkeypatch.setenv('LLM_API_KEY', '')
     response = experiment('JavaScript', repeats=1)
     assert response['ok'] is True
     assert response['rule_only']['total'] == response['hybrid']['total']
     assert response['summary']['overall']['delta_success_rate_percent'] >= 0
-    assert response['ablation_scope']['compared_component'] == 'LLM fallback candidate generation'
+    assert 'complete-program LLM fallback' in response['ablation_scope']['compared_component']
     assert response['ablation_scope']['not_isolated']
     assert response['hybrid']['accepted_llm_candidates'] == 0
+
+
+def test_experiment_counts_candidate_only_when_independent_oracle_matches(monkeypatch):
+    import backend.benchmark as benchmark_module
+
+    metadata = {
+        'required_constructs': ['loop', 'output'],
+        'expected_output': 'STEP\nSTEP\nSTEP',
+        'expected_outcome': 'unsupported',
+        'provenance': {'task': 'test oracle'},
+    }
+    result = {
+        'validation': {'status': 'not_run', 'failure_class': 'unsupported_source_syntax'},
+        'fallback_log': [{
+            'action': 'LLM produced a complete-program candidate; validation required',
+            'latency_ms': 12,
+        }],
+        'fallback_suggestions': [{'target_runtime_valid': True}],
+        'fallback_status': {'configured': True},
+        'target_runtime': {'available': True, 'ok': True, 'output': 'STEP\nSTEP\nSTEP'},
+        'unsupported': ['PERFORM 3 TIMES'],
+        'rule_coverage': {'coverage_percent': 0},
+        'rules_used': [],
+        'generated_lines': 3,
+    }
+    monkeypatch.setattr(benchmark_module, '_case_metadata', lambda *args: metadata)
+    monkeypatch.setattr(benchmark_module, 'transpile', lambda *args, **kwargs: result)
+
+    case = benchmark_module._case_result(
+        'COBOL',
+        'fallback-oracle-case',
+        'source',
+        'JavaScript',
+        enable_llm=True,
+    )
+
+    assert case['candidate_oracle_match'] is True
+    assert case['gold_output_match'] is None
+    assert case['accepted_llm_candidates'] == 0
+    assert case['status'] == 'not_run'
+
+    result['target_runtime']['output'] = 'WRONG'
+    failed_case = benchmark_module._case_result(
+        'COBOL',
+        'fallback-oracle-case',
+        'source',
+        'JavaScript',
+        enable_llm=True,
+    )
+    assert failed_case['candidate_oracle_match'] is False
+    assert failed_case['accepted_llm_candidates'] == 0
+
+
+def test_experiment_summary_counts_python_candidate_runtime_as_not_run():
+    from backend.benchmark import _summarize_variant
+
+    summary = _summarize_variant([{
+        'language': 'COBOL',
+        'case': 'python-candidate',
+        'status': 'not_run',
+        'candidate_generated': 1,
+        'candidate_syntax_valid': 1,
+        'candidate_runtime_valid': 0,
+        'candidate_runtime_checked': 0,
+        'candidate_runtime_not_run': 1,
+        'required_construct_coverage': {'total': 0, 'covered_count': 0},
+    }], 'hybrid')
+
+    assert summary['candidate_runtime_valid'] == 0
+    assert summary['candidate_runtime_checked'] == 0
+    assert summary['candidate_runtime_not_run'] == 1
+    assert summary['by_language']['COBOL']['candidate_runtime_not_run'] == 1
 
 
 def test_rules_endpoint_exposes_json_coverage_report():

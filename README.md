@@ -4,7 +4,7 @@ A compiler-design prototype for:
 
 **subset front ends → normalized representation → deterministic code generation → empirical I/O validation**
 
-The prototype supports documented subsets of COBOL, FORTRAN, Pascal, BASIC, and the earlier Python-like language. JavaScript and Python are available as targets for the implemented subset. The optional LLM path can produce suggestions for unsupported constructs when configured, but those candidates are not integrated into target code or automatically accepted.
+The prototype supports documented subsets of COBOL, FORTRAN, Pascal, BASIC, and the earlier Python-like language. JavaScript and Python are available as targets for the implemented subset. When configured, the LLM fallback produces a complete target-program candidate for inputs with unsupported constructs. The candidate is shown as target output, the deterministic partial output is retained separately for review, and the candidate is not automatically accepted.
 
 ## Project objectives and evidence status
 
@@ -12,12 +12,15 @@ The project objectives are to survey translation approaches, identify evidence-b
 
 A course-specific DOCX report may contain personal identifiers and is maintained separately from the public repository.
 
+For the selected student research/poster/demo scope, see the venue-neutral [conference demo submission draft](./CONFERENCE_DEMO_SUBMISSION.md). It reports the current pilot and lists remaining venue-specific and evidence requirements; it is not a guarantee of acceptance or a full research-paper claim.
+
 The main implementation/evaluation boundaries are:
 
 - Front ends, normalized representation, deterministic generation, and finite execution checks are implemented for the subsets in [`data/supported_subset.json`](./data/supported_subset.json).
-- The LLM-fallback improvement is a research objective, not an established result. Current evidence records zero configured LLM cases and zero model calls; generated candidates are not integrated into output.
+- A scoped primary-source audit and related-work reading list are documented in [`data/PROJECT_OBJECTIVES_AND_GAPS.md`](./data/PROJECT_OBJECTIVES_AND_GAPS.md). They partially address the survey/gap objectives; they are not an exhaustive or systematic review.
+- The LLM fallback produces a complete-program candidate for unsupported input and displays it separately from acceptance while retaining the deterministic partial output for comparison. Candidate syntax/runtime status is reported independently; JavaScript execution uses Node's permission mode, while Python candidates receive syntax checks only. Candidates are never automatically accepted. Current prompt version is `legacy-modernizer-llm-v3`; the recorded v2 COBOL loop pilot is historical and does not evaluate the current prompt. Its single fixed-input result is not evidence of general translation correctness or a statistically supported improvement.
 - Contracts, risk assessments, failure fingerprints, learned-rule records, and the descriptive mapping catalogue are metadata/diagnostic features. They do not currently control acceptance or demonstrate improved correctness.
-- The candidate literature gaps are not presented as verified findings until their primary sources and exact citations are checked.
+- Several gap claims are now supported only in narrowly scoped settings; the intended multilingual-bias citation remains unidentified. Do not present these as field-wide findings.
 
 ## Why this project matters
 
@@ -31,15 +34,15 @@ This motivates a testable research question: can a validation-gated, scoped mode
 
 The project is a prototype at the intersection of compiler construction and AI-assisted software maintenance. Its hypothesis is that a rule-first pipeline with scoped model suggestions can keep translation behavior inspectable and, if candidates are integrated behind an independent validation gate, improve results on constructs outside deterministic coverage. The current small benchmark does not establish statistical generality or superiority over alternative systems.
 
-The project contributes:
+The implemented prototype provides:
 
 - subset front ends and a normalized representation for multiple legacy languages
 - rule-first deterministic translation for common constructs
-- optional LLM candidate generation for unsupported constructs; candidate integration is not implemented
+- optional complete-program LLM candidate generation for unsupported constructs, with candidate display separated from semantic acceptance
 - executable I/O validation on the documented subset
 - provenance-aware evaluation workflow and diagnostic metadata
 
-The current implemented path can be summarized as:
+The supported-subset path is:
 
 ```text
 supported source → parse/normalize → deterministic target generation → finite I/O check
@@ -51,17 +54,17 @@ This project is best framed as a hybrid compiler + AI systems paper centered on 
 
 Research hypotheses to test (not findings established by the current benchmark):
 
-- “We show that deterministic compiler rules can capture the majority of legacy-language behavior while an LLM handles only unsupported fragments.”
+- “We show that deterministic compiler rules can capture the majority of legacy-language behavior while an LLM proposes complete-program candidates when source syntax is unsupported.”
 - “Translation correctness is treated as a validation problem, not merely a code-generation problem.”
 - “Verified fallback patterns are accumulated into the rule set, lowering future dependence on external model calls.”
 
-These are hypotheses, not findings. The LLM-improvement question requires a configured model, candidate integration behind validation, independent test oracles, and paired evaluation. Any effectiveness claim still requires larger independent evaluation.
+These are hypotheses, not findings. The LLM-improvement question requires paired evaluation, independent test oracles, and a validated acceptance gate before candidates are considered semantically accepted. The current fallback displays the candidate but does not pass it through such an acceptance gate. Any effectiveness claim still requires larger independent evaluation.
 
 ## What makes the LLM integration meaningful
 
-When configured, the prototype may request suggestions for parser-reported unsupported constructs after deterministic generation. The request includes source context; it is not currently restricted to a small IR subtree. The model path is optional and has not been exercised by the current benchmark evidence.
+When configured, the prototype requests a complete target-program candidate when the parser reports unsupported constructs. It sends the full source program so the model can preserve ordering and combine supported and unsupported statements. This is more than a fragment suggestion but remains probabilistic output.
 
-The LLM output remains a **candidate** and is not integrated into generated target code or automatically accepted. Consequently, current validation results measure deterministic translation, not end-to-end LLM fallback effectiveness.
+The candidate becomes the displayed/downloadable target output, but the translator does not mark it accepted. JavaScript candidates receive a syntax check and are executed in Node's permission-restricted mode with secrets removed from the child environment. Python candidates receive a syntax check only and are not executed. Even a successful run establishes only behavior on tested inputs. The LLM fallback is therefore not yet a general-purpose or production-ready migration path.
 
 ## Research-grade translation safeguards
 
@@ -71,13 +74,13 @@ These records do not currently select additional validation, trigger generated t
 
 ## Evaluation strategy and benchmark design
 
-The project includes a small benchmark and a rule-only versus optional-LLM-candidate experiment. A full metadata/validation ablation is future work, not an implemented comparison. A future conference-style evaluation should compare:
+The project includes a small benchmark and a paired rule-only versus complete-program LLM-candidate experiment. A full metadata/validation ablation is future work, not an implemented comparison. A conference-style evaluation should compare:
 
 1. Rule-only baseline
 2. Hybrid rule-first + LLM fallback
 3. Full system with contracts, risk-aware validation, and learned rules
 
-Only the first two variants are represented by the current experiment harness, and the latest run configured no LLM cases. The benchmark should report per-language and per-construct success, unsupported-syntax recognition, fallback frequency, validation failures, and latency when those measures are actually available.
+Only the first two variants are represented by the current experiment harness. The corpus contains one COBOL `PERFORM` loop with a separate expected-output oracle for candidate evaluation; report its result separately from deterministic supported-subset pass rate. The 24-case set remains a small project-authored/task-derived pilot, not a broad independent corpus. Report per-language and per-construct outcomes, unsupported-syntax recognition, fallback frequency, candidate runtime validity, oracle matches, validation failures, and latency.
 
 See [LLM_EVALUATION.md](./LLM_EVALUATION.md) for the recommended protocol.
 
@@ -95,7 +98,7 @@ The default configuration uses Google's OpenAI-compatible Gemini endpoint:
 LLM_API_URL=https://generativelanguage.googleapis.com/v1beta/openai/chat/completions
 LLM_API_MODE=chat
 LLM_PROVIDER=Google Gemini
-LLM_MODEL=gemini-2.5-flash
+LLM_MODEL=gemini-3.1-flash-lite
 LLM_API_KEY=<your Gemini API key>
 ```
 
@@ -206,7 +209,8 @@ For a future research evaluation, the desired ablation chain is:
 
 The third variant is a future experiment, not a currently implemented ablation. The
 current experiment only causally compares rule-only behavior with optional LLM
-candidate generation. LLM candidates are not inserted into generated target code, and
+candidate generation. LLM candidates replace deterministic partial output in configured
+hybrid runs, and
 contracts, risk scores, and learned-rule metadata do not currently change generation or
 acceptance. They must not be presented as ablated effectiveness improvements. The 95%
 Wilson interval is reported because this benchmark is small; larger independent

@@ -4,6 +4,11 @@ import json
 import platform
 import sys
 from datetime import datetime, timezone
+from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv(Path(__file__).resolve().parent / '.env')
 
 from backend.benchmark import run_benchmark, run_experiment
 from backend.llm_fallback import fallback_status

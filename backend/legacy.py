@@ -72,8 +72,40 @@ def strip_comment(line):
     if s.startswith('*'): return ''
     return s
 
+def _cobol_lines(code):
+    lines=[]; current=[]; quote=None; i=0
+    while i<len(code):
+        ch=code[i]
+        if quote:
+            current.append(ch)
+            if ch==quote:
+                if i+1<len(code) and code[i+1]==quote:
+                    current.append(code[i+1]); i+=1
+                else:
+                    quote=None
+        elif ch in ("'", '"'):
+            quote=ch; current.append(ch)
+        elif code[i:i+11].upper()=='PROGRAM-ID.':
+            match=re.match(r'PROGRAM-ID\.\s*[A-Za-z0-9-]+\.',code[i:],re.I)
+            if match:
+                current.extend(match.group())
+                i+=len(match.group())-1
+                lines.append(''.join(current).strip()); current=[]
+        elif ch=='.' and (i+1==len(code) or code[i+1].isspace()):
+            current.append(ch)
+            if ''.join(current).strip(): lines.append(''.join(current).strip())
+            current=[]
+        elif ch in '\r\n':
+            if ''.join(current).strip(): lines.append(''.join(current).strip())
+            current=[]
+        else:
+            current.append(ch)
+        i+=1
+    if ''.join(current).strip(): lines.append(''.join(current).strip())
+    return lines
+
 def parse_cobol(code):
-    lines=[strip_comment(x) for x in code.splitlines()]
+    lines=[strip_comment(x) for x in _cobol_lines(code)]
     lines=[x for x in lines if x]
     nodes=[]; symbols={}; unsupported=[]; i=0
     in_proc=False
@@ -84,13 +116,14 @@ def parse_cobol(code):
             i+=1; continue
         if up.startswith('PROCEDURE DIVISION'):
             in_proc=True; i+=1; continue
-        if re.match(r'^\d+\s+\w+\s+PIC\s+', s, re.I):
-            m=re.match(r'^\d+\s+(\w+)\s+PIC\s+[^ ]+(?:\s+VALUE\s+(.+))?$', s, re.I)
-            if m:
-                name=m.group(1); val=m.group(2) or '0'; symbols[name]='variable'; nodes.append({'kind':'assign','name':name,'expr':val})
-                i+=1; continue
-        if not in_proc:
+        m=re.match(r'^\d+\s+(\w+)\s+PIC\s+(?:9+|9\(\d+\))\s+VALUE\s+(.+)$',s,re.I)
+        if m:
+            name=m.group(1); val=m.group(2); symbols[name]='variable'; nodes.append({'kind':'assign','name':name,'expr':val})
             i+=1; continue
+        if re.match(r'^\d+\s+\w+\s+PIC\b',s,re.I):
+            unsupported.append(s); i+=1; continue
+        if not in_proc:
+            unsupported.append(s); i+=1; continue
         m=re.match(r'MOVE\s+(.+?)\s+TO\s+(\w+)$',s,re.I)
         if m: nodes.append({'kind':'assign','name':m.group(2),'expr':m.group(1)}); symbols[m.group(2)]='variable'; i+=1; continue
         m=re.match(r'COMPUTE\s+(\w+)\s*=\s*(.+)$',s,re.I)

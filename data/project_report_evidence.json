@@ -11,16 +11,25 @@
     "node_version": "v24.20.0"
   },
   "latest_validation": {
-    "generated_at_utc": "2026-10-16T18:07:46.004765+00:00",
-    "source_commit": "2791b8f",
-    "working_tree_note": "Local rerun includes uncommitted documentation, frontend wording, and alignment-test changes; backend benchmark implementation and benchmark case data were unchanged.",
-    "evaluation_command": "python evaluate.py --target JavaScript --output <temporary JSON file>",
+    "generated_at_utc": "2026-10-17T11:54:57.243298+00:00",
+    "source_commit": "ee8186f",
+    "working_tree_note": "Both evaluations and the test suite ran against the uncommitted working tree based on this revision. The generated evaluation_result.json is local and ignored; this record preserves aggregate results without API credentials or generated source.",
+    "evaluation_commands": [
+      "python evaluate.py --target JavaScript --output evaluation_result.json",
+      "python evaluate.py --target Python --output evaluation_result.json"
+    ],
     "test_command": "python -m pytest -q",
-    "test_result": "31 passed",
+    "test_result": "40 passed",
+    "python_version": "3.13.1",
+    "node_version": "v24.20.0",
+    "model": "gemini-3.1-flash-lite",
+    "prompt_version": "legacy-modernizer-llm-v2",
+    "rule_table_version": "1.3",
     "benchmark": {
       "case_count": 24,
       "end_to_end_passed": 23,
       "end_to_end_pass_rate_percent": 95.8,
+      "end_to_end_wilson_95ci_percent": [79.8, 99.3],
       "expected_outcomes_matched": 24,
       "expected_outcome_match_rate_percent": 100.0,
       "required_constructs": 32,
@@ -32,18 +41,76 @@
       "gold_output_matches": 23,
       "gold_output_accuracy_percent": 100.0
     },
-    "experiment": {
-      "rule_only_llm_configured_cases": 0,
-      "rule_only_llm_calls": 0,
-      "rule_only_candidates_generated": 0,
-      "hybrid_llm_configured_cases": 0,
-      "hybrid_llm_calls": 0,
-      "hybrid_candidates_generated": 0,
-      "interpretation": "The run did not exercise an LLM and provides no evidence for or against an LLM fallback improvement."
+    "target_runs": {
+      "JavaScript": {
+        "rule_only": {
+          "end_to_end_passed": 23,
+          "cases": 24,
+          "end_to_end_pass_rate_percent": 95.8,
+          "llm_calls": 0,
+          "candidate_generated": 0,
+          "gold_output_cases": 23,
+          "gold_output_matches": 23
+        },
+        "hybrid": {
+          "end_to_end_passed": 23,
+          "cases": 24,
+          "end_to_end_pass_rate_percent": 95.8,
+          "llm_configured_cases": 24,
+          "llm_calls": 1,
+          "median_llm_latency_ms": 2249.3,
+          "candidate_generated": 1,
+          "candidate_syntax_valid": 1,
+          "candidate_runtime_checked": 1,
+          "candidate_runtime_valid": 1,
+          "candidate_runtime_not_run": 0,
+          "candidate_oracle_cases": 1,
+          "candidate_oracle_matches": 1,
+          "translator_accepted_candidates": 0,
+          "unsupported_case_validation_status": "not_run"
+        }
+      },
+      "Python": {
+        "rule_only": {
+          "end_to_end_passed": 23,
+          "cases": 24,
+          "end_to_end_pass_rate_percent": 95.8,
+          "llm_calls": 0,
+          "candidate_generated": 0,
+          "gold_output_cases": 23,
+          "gold_output_matches": 23
+        },
+        "hybrid": {
+          "end_to_end_passed": 23,
+          "cases": 24,
+          "end_to_end_pass_rate_percent": 95.8,
+          "llm_configured_cases": 24,
+          "llm_calls": 1,
+          "median_llm_latency_ms": 1735.5,
+          "candidate_generated": 1,
+          "candidate_syntax_valid": 1,
+          "candidate_runtime_checked": 0,
+          "candidate_runtime_valid": 0,
+          "candidate_runtime_not_run": 1,
+          "candidate_oracle_cases": 0,
+          "candidate_oracle_matches": 0,
+          "translator_accepted_candidates": 0,
+          "unsupported_case_validation_status": "not_run"
+        }
+      }
     },
-    "python_version": "3.13.1",
-    "node_version": "v24.20.0",
-    "target": "JavaScript"
+    "interpretation": "The paired pilot generated one candidate for the unsupported COBOL loop. JavaScript was syntax-checked, executed in restricted Node, and matched the separately authored fixed-output oracle. Python was syntax-checked only; target execution was intentionally not run. Neither candidate was accepted by the translator, and the unsupported case remains not_run. No end-to-end pass-rate improvement was measured.",
+    "parser_regressions": "Added fail-closed handling for compact one-line COBOL source and unsupported data declarations after live UI investigation revealed silent omission risks. The benchmark totals were unchanged.",
+    "ui_smoke_test": {
+      "temporary_app_url": "http://127.0.0.1:58731/",
+      "loaded_model": "gemini-3.1-flash-lite",
+      "case": "COBOL PERFORM 3 TIMES",
+      "candidate_panel_visible": true,
+      "unvalidated_warning_visible": true,
+      "candidate_download_control_visible": true,
+      "temporary_server_stopped": true,
+      "existing_port_8000_note": "The pre-existing listener reported gemini-2.5-flash. Its process was not accessible to the workspace process manager, so it was left untouched."
+    }
   },
   "benchmark": {
     "source": "backend.benchmark.run_benchmark; benchmark output generated by evaluate.py",

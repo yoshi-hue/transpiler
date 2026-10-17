@@ -15,15 +15,23 @@ def test_project_objectives_and_candidate_gaps_are_documented_with_status_caveat
         'Document precisely',
     ):
         assert objective in alignment
-    assert 'candidate claims' in alignment
-    assert 'primary-source verification' in alignment
-    assert '23/24 end-to-end passes' in alignment
-    assert 'zero configured cases and zero calls' in alignment
+    assert 'scoped source audit' in alignment
+    assert 'Primary-source audit' in alignment
+    assert 'field-wide gaps' in alignment
 
 
 def test_frontend_exposes_objective_status_and_does_not_claim_fallback_improvement():
     frontend = (ROOT / 'frontend' / 'index.html').read_text(encoding='utf-8')
     assert 'Project objectives and implementation status' in frontend
-    assert 'not demonstrated by the current run' in frontend
-    assert 'suggestion may be generated, but it is not integrated into target output' in frontend
+    assert 'LLM candidates can be displayed separately' in frontend
+    assert 'suggestion may be generated and displayed separately' in frontend
     assert 'Finite I/O checks' in frontend
+    assert 'Fallback events include skipped attempts' in frontend
+
+
+def test_frontend_surfaces_llm_candidates_separately_from_validated_code():
+    frontend = (ROOT / 'frontend' / 'index.html').read_text(encoding='utf-8')
+    assert '[hidden]{display:none!important}' in frontend
+    assert 'LLM candidate (unvalidated)' in frontend
+    assert 'Download LLM candidate' in frontend
+    assert 'This model-generated program is not semantically validated' in frontend

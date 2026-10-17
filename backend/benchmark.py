@@ -7,7 +7,6 @@ per-language and per-construct breakdowns, fallback frequency, latency, and
 validation-failure tracking for research reporting.
 """
 import json
-import os
 import statistics
 from pathlib import Path
 
@@ -65,9 +64,6 @@ LOCAL_EXPECTED_OUTPUTS = {
     ('BASIC', 'comparison'): 'NE\nGE',
 }
 _LOCAL_CASE_SOURCES = {(language, name): source for language, name, source in CASES}
-
-LLM_ENV_KEYS = ('LLM_API_URL', 'LLM_API_MODE', 'LLM_MODEL', 'LLM_API_KEY', 'LLM_PROVIDER')
-
 
 def _case_metadata(language, case_name, source=None):
     external = _EXTERNAL_CASE_METADATA.get((language, case_name))
@@ -129,30 +125,10 @@ def _required_construct_coverage(language, case_name, rules_used, source=None):
     }
 
 
-def _temporary_llm_state(enable_llm):
-    original = {key: os.environ.get(key) for key in LLM_ENV_KEYS}
-
-    def restore():
-        for key in LLM_ENV_KEYS:
-            value = original.get(key)
-            if value is None:
-                os.environ.pop(key, None)
-            else:
-                os.environ[key] = value
-
-    if enable_llm:
-        return restore
-
-    for key in LLM_ENV_KEYS:
-        os.environ.pop(key, None)
-    return restore
-
-
 def _case_result(language, case_name, source, target, *, enable_llm):
     metadata = _case_metadata(language, case_name, source)
-    restore = _temporary_llm_state(enable_llm)
     try:
-        result = transpile(source, language, target)
+        result = transpile(source, language, target, enable_llm=enable_llm)
     except Exception as exc:
         return {
             'language': language,
@@ -173,21 +149,40 @@ def _case_result(language, case_name, source, target, *, enable_llm):
             'llm_configured': False,
             'gold_output_match': None,
         }
-    finally:
-        restore()
-
     validation = result.get('validation', {})
     logs = result.get('fallback_log', [])
     llm_calls = sum(
         1 for entry in logs
-        if entry.get('action') in ('LLM fallback completed; suggestion requires validation/review', 'LLM fallback failed')
+        if entry.get('action') in ('LLM produced a complete-program candidate; validation required', 'LLM fallback failed')
     )
     llm_latencies = []
+    llm_attempts = 0
     for entry in logs:
         if isinstance(entry.get('latency_ms'), (int, float)):
             llm_latencies.append(float(entry['latency_ms']))
+        if isinstance(entry.get('attempts'), int):
+            llm_attempts += entry['attempts']
     rules_used = result.get('rules_used', [])
     suggestions = result.get('fallback_suggestions', [])
+    target_runtime = result.get('target_runtime', {})
+    gold_output_match = None
+    if (
+        not result.get('unsupported')
+        and target_runtime.get('available')
+        and target_runtime.get('ok')
+    ):
+        gold_output_match = _oracle_match(target_runtime.get('output'), metadata.get('expected_output'))
+    candidate_oracle_match = None
+    if (
+        suggestions
+        and metadata.get('expected_output') is not None
+        and target == 'JavaScript'
+        and target_runtime.get('available')
+    ):
+        candidate_oracle_match = bool(
+            target_runtime.get('ok')
+            and _oracle_match(target_runtime.get('output'), metadata['expected_output'])
+        )
 
     return {
         'language': language,
@@ -201,16 +196,19 @@ def _case_result(language, case_name, source, target, *, enable_llm):
         'llm_configured': result.get('fallback_status', {}).get('configured', False),
         'generated_lines': result.get('generated_lines', 0),
         'llm_calls': llm_calls,
+        'llm_attempts': llm_attempts,
         'llm_latency_ms': llm_latencies,
         'llm_cost_usd': None,
-        'candidate_generated': len(suggestions),
+        'candidate_generated': sum(suggestion.get('candidate_status') == 'candidate_generated' for suggestion in suggestions),
+        'candidate_syntax_valid': sum(bool(suggestion.get('target_syntax_valid')) for suggestion in suggestions),
+        'candidate_runtime_valid': sum(bool(suggestion.get('target_runtime_valid')) for suggestion in suggestions),
+        'candidate_runtime_checked': sum(suggestion.get('target_runtime_valid') is not None for suggestion in suggestions),
+        'candidate_runtime_not_run': sum(suggestion.get('target_runtime_valid') is None for suggestion in suggestions),
+        'candidate_oracle_match': candidate_oracle_match,
         'accepted_llm_candidates': 0,
         'source_reference': metadata.get('provenance'),
         'expected_outcome': metadata.get('expected_outcome', 'translated'),
-        'gold_output_match': _oracle_match(
-            result.get('target_runtime', {}).get('output'),
-            metadata.get('expected_output'),
-        ),
+        'gold_output_match': gold_output_match,
         'outcome_correct': (
             validation.get('status') == 'passed'
             if metadata.get('expected_outcome', 'translated') == 'translated'
@@ -225,6 +223,7 @@ def _summarize_variant(results, variant_name):
     passed = sum(1 for item in results if item.get('status') == 'passed')
     failed = total - passed
     llm_calls = sum(item.get('llm_calls', 0) for item in results)
+    llm_attempts = sum(item.get('llm_attempts', 0) for item in results)
     llm_latencies = [value for item in results for value in item.get('llm_latency_ms', [])]
     fallback_frequency = round((llm_calls / total) * 100.0, 1) if total else 0.0
     validation_failures = sum(item.get('validation_failures', 0) for item in results)
@@ -232,7 +231,13 @@ def _summarize_variant(results, variant_name):
     required_constructs = sum(item.get('required_construct_coverage', {}).get('total', 0) for item in results)
     covered_constructs = sum(item.get('required_construct_coverage', {}).get('covered_count', 0) for item in results)
     candidate_generated = sum(item.get('candidate_generated', 0) for item in results)
+    candidate_syntax_valid = sum(item.get('candidate_syntax_valid', 0) for item in results)
+    candidate_runtime_valid = sum(item.get('candidate_runtime_valid', 0) for item in results)
+    candidate_runtime_checked = sum(item.get('candidate_runtime_checked', 0) for item in results)
+    candidate_runtime_not_run = sum(item.get('candidate_runtime_not_run', 0) for item in results)
     accepted_candidates = sum(item.get('accepted_llm_candidates', 0) for item in results)
+    candidate_oracle_cases = sum(item.get('candidate_oracle_match') is not None for item in results)
+    candidate_oracle_matches = sum(item.get('candidate_oracle_match') is True for item in results)
     configured_cases = sum(bool(item.get('llm_configured', False)) for item in results)
     expected_outcomes_matched = sum(bool(item.get('outcome_correct')) for item in results)
     expected_supported = sum(item.get('expected_outcome', 'translated') == 'translated' for item in results)
@@ -257,8 +262,13 @@ def _summarize_variant(results, variant_name):
             'unsupported_constructs': 0,
             'validation_failures': 0,
             'llm_calls': 0,
+            'llm_attempts': 0,
             'llm_latency_ms': [],
             'candidate_generated': 0,
+            'candidate_syntax_valid': 0,
+            'candidate_runtime_valid': 0,
+            'candidate_runtime_checked': 0,
+            'candidate_runtime_not_run': 0,
             'accepted_llm_candidates': 0,
             'llm_configured_cases': 0,
         })
@@ -268,8 +278,13 @@ def _summarize_variant(results, variant_name):
         entry['unsupported_constructs'] += item.get('unsupported', 0)
         entry['validation_failures'] += item.get('validation_failures', 0)
         entry['llm_calls'] += item.get('llm_calls', 0)
+        entry['llm_attempts'] += item.get('llm_attempts', 0)
         entry['llm_latency_ms'].extend(item.get('llm_latency_ms', []))
         entry['candidate_generated'] += item.get('candidate_generated', 0)
+        entry['candidate_syntax_valid'] += item.get('candidate_syntax_valid', 0)
+        entry['candidate_runtime_valid'] += item.get('candidate_runtime_valid', 0)
+        entry['candidate_runtime_checked'] += item.get('candidate_runtime_checked', 0)
+        entry['candidate_runtime_not_run'] += item.get('candidate_runtime_not_run', 0)
         entry['accepted_llm_candidates'] += item.get('accepted_llm_candidates', 0)
         entry['llm_configured_cases'] += int(bool(item.get('llm_configured', False)))
 
@@ -290,7 +305,13 @@ def _summarize_variant(results, variant_name):
             'unsupported': item.get('unsupported', 0),
             'required_construct_coverage': item.get('required_construct_coverage'),
             'llm_calls': item.get('llm_calls', 0),
+            'llm_attempts': item.get('llm_attempts', 0),
             'llm_latency_ms': item.get('llm_latency_ms', []),
+            'candidate_syntax_valid': item.get('candidate_syntax_valid', 0),
+            'candidate_runtime_valid': item.get('candidate_runtime_valid', 0),
+            'candidate_runtime_checked': item.get('candidate_runtime_checked', 0),
+            'candidate_runtime_not_run': item.get('candidate_runtime_not_run', 0),
+            'candidate_oracle_match': item.get('candidate_oracle_match'),
             'validation_failures': item.get('validation_failures', 0),
         }
 
@@ -307,7 +328,14 @@ def _summarize_variant(results, variant_name):
         'covered_required_constructs': covered_constructs,
         'required_construct_coverage_percent': round((covered_constructs / required_constructs) * 100.0, 1) if required_constructs else None,
         'candidate_generated': candidate_generated,
+        'candidate_syntax_valid': candidate_syntax_valid,
+        'candidate_runtime_valid': candidate_runtime_valid,
+        'candidate_runtime_checked': candidate_runtime_checked,
+        'candidate_runtime_not_run': candidate_runtime_not_run,
         'accepted_llm_candidates': accepted_candidates,
+        'candidate_oracle_cases': candidate_oracle_cases,
+        'candidate_oracle_matches': candidate_oracle_matches,
+        'candidate_oracle_match_percent': round((candidate_oracle_matches / candidate_oracle_cases) * 100.0, 1) if candidate_oracle_cases else None,
         'llm_configured_cases': configured_cases,
         'expected_outcomes_matched': expected_outcomes_matched,
         'expected_outcome_match_rate_percent': round((expected_outcomes_matched / total) * 100, 1) if total else 0.0,
@@ -322,12 +350,17 @@ def _summarize_variant(results, variant_name):
         'fallback_frequency_percent': fallback_frequency,
         'metrics': {
             'llm_calls': llm_calls,
+            'llm_attempts': llm_attempts,
             'llm_latency_ms': llm_latencies,
             'median_llm_latency_ms': round(statistics.median(llm_latencies), 1) if llm_latencies else None,
             'mean_llm_latency_ms': round(sum(llm_latencies) / len(llm_latencies), 1) if llm_latencies else None,
             'llm_cost_usd': None,
             'candidate_generated': candidate_generated,
+            'candidate_syntax_valid': candidate_syntax_valid,
+            'candidate_runtime_valid': candidate_runtime_valid,
             'accepted_llm_candidates': accepted_candidates,
+            'candidate_oracle_cases': candidate_oracle_cases,
+            'candidate_oracle_matches': candidate_oracle_matches,
             'llm_configured_cases': configured_cases,
             'fallback_frequency_percent': fallback_frequency,
             'validation_failures': validation_failures,
@@ -343,7 +376,7 @@ def run_benchmark(target='JavaScript', cases=None):
     results = []
     for language, case_name, source in run_cases:
         try:
-            r = transpile(source, language, target)
+            r = transpile(source, language, target, enable_llm=False)
             results.append({
                 'language': language,
                 'case': case_name,
@@ -353,9 +386,17 @@ def run_benchmark(target='JavaScript', cases=None):
                 'source_construct_coverage_percent': r['rule_coverage'].get('coverage_percent'),
                 'required_construct_coverage': _required_construct_coverage(language, case_name, r.get('rules_used', []), source),
                 'source_reference': _case_metadata(language, case_name, source).get('provenance'),
-                'gold_output_match': _oracle_match(
-                    r.get('target_runtime', {}).get('output'),
-                    _case_metadata(language, case_name, source).get('expected_output'),
+                'gold_output_match': (
+                    _oracle_match(
+                        r.get('target_runtime', {}).get('output'),
+                        _case_metadata(language, case_name, source).get('expected_output'),
+                    )
+                    if (
+                        not r.get('unsupported')
+                        and r.get('target_runtime', {}).get('available')
+                        and r.get('target_runtime', {}).get('ok')
+                    )
+                    else None
                 ),
                 'expected_outcome': _case_metadata(language, case_name, source).get('expected_outcome', 'translated'),
                 'outcome_correct': (
@@ -398,7 +439,6 @@ def run_benchmark(target='JavaScript', cases=None):
         'expected_outcomes_matched': expected_matches,
         'expected_outcome_match_rate_percent': round((expected_matches / len(results)) * 100, 1) if results else 0.0,
         'supported_case_success_rate_percent': round((expected_supported_passed / expected_supported) * 100.0, 1) if expected_supported else None,
-        'translation_success_rate_percent': round((expected_supported_passed / expected_supported) * 100.0, 1) if expected_supported else None,
         'supported_case_success_rate_95ci_percent': _wilson_interval(expected_supported_passed, expected_supported),
         'translation_success_rate_percent': round((expected_supported_passed / expected_supported) * 100.0, 1) if expected_supported else None,
         'unsupported_cases_expected': expected_unsupported,
@@ -458,8 +498,8 @@ def run_experiment(target='JavaScript', cases=None, repeats=1):
         'rule_only': rule_only,
         'hybrid': hybrid,
         'ablation_scope': {
-            'compared_component': 'LLM fallback candidate generation',
-            'candidate_acceptance': 'Candidates are not integrated into target output; accepted candidate count is therefore zero.',
+            'compared_component': 'complete-program LLM fallback generation, restricted target execution, and independent expected-output matching',
+            'candidate_acceptance': 'Candidate oracle matches are counted for benchmark cases only; the translator never marks model candidates accepted automatically.',
             'not_isolated': ['semantic contracts', 'risk assessment', 'learned-rule metadata do not currently alter code generation or acceptance decisions'],
         },
         'summary': summary,
@@ -501,7 +541,11 @@ def render_experiment_report(report):
         f"Cases with LLM configured: {hybrid.get('llm_configured_cases', 0)}",
         f"Required-construct coverage: {hybrid.get('required_construct_coverage_percent')}%",
         f"LLM candidates generated: {hybrid.get('candidate_generated', 0)}",
-        f"LLM candidates accepted: {hybrid.get('accepted_llm_candidates', 0)}",
+        f"LLM candidates syntax-valid: {hybrid.get('candidate_syntax_valid', 0)}",
+        f"LLM candidates runtime-valid: {hybrid.get('candidate_runtime_valid', 0)}",
+        f"LLM candidate runtimes not run: {hybrid.get('candidate_runtime_not_run', 0)}",
+        f"Candidate expected-output matches: {hybrid.get('candidate_oracle_matches', 0)}/{hybrid.get('candidate_oracle_cases', 0)}",
+        f"LLM candidates accepted by translator: {hybrid.get('accepted_llm_candidates', 0)}",
         f"Median LLM latency: {hybrid.get('metrics', {}).get('median_llm_latency_ms')} ms",
         f"Ablation scope: {report.get('ablation_scope', {}).get('compared_component', 'not specified')}",
         '',
