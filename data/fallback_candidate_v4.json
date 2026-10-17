@@ -3,6 +3,7 @@
   "provider": "Google Gemini",
   "model": "gemini-3.1-flash-lite",
   "prompt_version": "legacy-modernizer-llm-v3",
+  "prompt_hash": "2b62b903e13ffdbe",
   "target": "JavaScript",
   "source_case": "rosetta-loops-for-cobol",
   "candidate_sha256": "414a61901c02a390746b8aa03850bf78185777380fe69639cb419d5203cd976a",
