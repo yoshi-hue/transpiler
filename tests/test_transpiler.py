@@ -212,13 +212,26 @@ STOP RUN.'''
     assert result['fallback_suggestions'][0]['target_runtime_valid'] is True
     assert result['fallback_suggestions'][0]['accepted'] is False
     assert result['validation']['status'] == 'not_run'
+    assert result['candidate_acceptance']['accepted'] is False
+    assert result['candidate_acceptance']['requirements']['target_toolchain']['status'] == 'passed'
+    assert result['candidate_acceptance']['requirements']['independent_fixtures']['status'] == 'pending'
 
 
-def test_python_llm_candidate_is_syntax_checked_but_not_executed(monkeypatch):
+def test_python_llm_candidate_uses_isolated_runner_and_fails_closed_without_docker(monkeypatch):
     import backend.transpiler as transpiler_module
 
     monkeypatch.setenv('LLM_API_URL', 'https://example.com/v1/chat/completions')
     monkeypatch.setenv('LLM_MODEL', 'test-model')
+    monkeypatch.setattr(
+        transpiler_module,
+        'run_python_isolated',
+        lambda _code: {
+            'available': False,
+            'ok': None,
+            'output': '',
+            'error': 'Docker is required for isolated Python candidate execution.',
+        },
+    )
     monkeypatch.setattr(
         transpiler_module,
         'translate_construct',
@@ -236,7 +249,47 @@ def test_python_llm_candidate_is_syntax_checked_but_not_executed(monkeypatch):
     assert suggestion['target_runtime_valid'] is None
     assert result['target_runtime']['available'] is False
     assert result['target_runtime']['ok'] is None
-    assert result['target_runtime']['execution_skipped'] is True
+    assert 'Docker is required' in result['target_runtime']['error']
+    assert result['candidate_acceptance']['accepted'] is False
+    assert 'target_toolchain' in result['candidate_acceptance']['blockers']
+    assert 'independent_fixtures' in result['candidate_acceptance']['blockers']
+    assert 'security_review' in result['candidate_acceptance']['blockers']
+    assert 'regression_checks' in result['candidate_acceptance']['blockers']
+    assert 'human_review' in result['candidate_acceptance']['blockers']
+
+
+def test_python_isolated_runner_does_not_fall_back_to_host(monkeypatch):
+    from backend.validator import run_python_isolated
+    monkeypatch.setattr('backend.validator.shutil.which', lambda _name: None)
+    result = run_python_isolated('print("candidate")')
+    assert result['available'] is False
+    assert result['ok'] is None
+    assert 'Docker is required' in result['error']
+
+
+def test_candidate_acceptance_record_fails_closed_even_after_runtime_pass():
+    from backend.transpiler import _candidate_acceptance_record
+    record = _candidate_acceptance_record(
+        'console.log("ok");', 'JavaScript',
+        {'target_syntax_valid': True, 'target_runtime_valid': True,
+         'model': 'fixture-model', 'prompt_version': 'fixture-prompt'},
+        source_sha256='source-hash',
+    )
+    assert record['accepted'] is False
+    assert record['requirements']['target_toolchain']['status'] == 'passed'
+    assert set(record['blockers']) == {'source_review', 'independent_fixtures', 'security_review', 'regression_checks', 'human_review'}
+
+
+def test_provider_trial_is_reproducible_and_reports_missing_configuration(monkeypatch, tmp_path):
+    from tools.run_llm_provider_trial import run_trial
+    monkeypatch.setenv('LLM_API_URL', '')
+    monkeypatch.setenv('LLM_MODEL', '')
+    monkeypatch.setenv('LLM_API_KEY', '')
+    report = run_trial('JavaScript')
+    assert report['status'] == 'not_configured'
+    assert report['trial_id'] == 'cobol-perform-three-times-v1'
+    assert report['candidate_accepted'] is False
+    assert len(report['source_sha256']) == 64
 
 
 def test_restricted_llm_javascript_execution_hides_secrets_and_blocks_file_access(monkeypatch):
@@ -289,10 +342,12 @@ def test_experiment_endpoint_exposes_controlled_ablation(monkeypatch):
     response = experiment('JavaScript', repeats=1)
     assert response['ok'] is True
     assert response['rule_only']['total'] == response['hybrid']['total']
+    assert response['rule_only']['total'] == response['contracts_risk_learned_rules']['total']
     assert response['summary']['overall']['delta_success_rate_percent'] >= 0
-    assert 'complete-program LLM fallback' in response['ablation_scope']['compared_component']
-    assert response['ablation_scope']['not_isolated']
+    assert 'LLM fallback' in response['ablation_scope']['compared_component']
+    assert response['ablation_scope']['shared_mechanisms']
     assert response['hybrid']['accepted_llm_candidates'] == 0
+    assert 'human reviewer effort' in response['ablation_scope']['candidate_acceptance']
 
 
 def test_experiment_counts_candidate_only_when_independent_oracle_matches(monkeypatch):
@@ -413,6 +468,26 @@ def test_translation_contract_is_generated_for_valid_translation():
     assert contract['translation_status'] in ('satisfied_for_tested_inputs', 'pending', 'review_required')
     assert contract['confidence'] is None
     assert contract['confidence_basis'] == 'not calibrated'
+    assert result['acceptance_policy']['eligible_for_use'] is True
+    assert result['acceptance_policy']['learned_rule_storage_allowed'] is True
+
+
+def test_contract_failure_and_high_risk_block_eligibility_and_rule_storage():
+    from backend.transpiler import _acceptance_policy
+    valid_contract = {'translation_status': 'satisfied_for_tested_inputs', 'checks': []}
+    passed = {'status': 'passed'}
+    medium = {'level': 'medium'}
+    failed_contract = {'translation_status': 'failed', 'checks': [{'name': 'finite_stdout_matches_source_oracle', 'passed': False}]}
+    blocked = _acceptance_policy(failed_contract, medium, passed)
+    assert blocked['eligible_for_use'] is False
+    assert blocked['learned_rule_storage_allowed'] is False
+    assert 'contract:finite_stdout_matches_source_oracle' in blocked['reasons']
+    high = _acceptance_policy(valid_contract, {'level': 'high'}, passed)
+    assert high['eligible_for_use'] is False
+    assert high['learned_rule_storage_allowed'] is False
+    assert 'high_risk_human_review_required' in high['reasons']
+    unsupported = _acceptance_policy(valid_contract, medium, passed, unsupported=True)
+    assert unsupported['learned_rule_storage_allowed'] is False
 
 
 def test_risk_assessment_and_failure_fingerprint_are_exposed():
@@ -423,29 +498,53 @@ def test_risk_assessment_and_failure_fingerprint_are_exposed():
     assert result['failure_fingerprint']['stage'] in ('syntax', 'unsupported')
 
 
-def test_one_example_learns_a_generalized_rule_for_a_new_program(monkeypatch, tmp_path):
+def test_one_example_reuses_only_same_ordered_schema_not_arbitrary_program(monkeypatch, tmp_path):
     from backend import learned_rules
     monkeypatch.setattr(learned_rules, 'RULE_STORE', tmp_path / 'learned_rules.jsonl')
     first = transpile('10 LET A = 10\n20 PRINT A', 'BASIC', 'JavaScript')
     second = transpile('10 LET B = 27\n20 PRINT B', 'BASIC', 'JavaScript')
     assert first['validation']['status'] == 'passed'
-    assert first['learned_rule']['generalizes'] is True
+    assert first['learned_rule']['generalizes'] is False
+    assert first['learned_rule']['status'] == 'experimental_exact_schema'
     assert second['rule_evolution']['reused'] is True
     assert second['javascript'] == 'let B = 27;\nconsole.log(B);'
     assert second['validation']['status'] == 'passed'
     assert second['translation_contract']['checks']
     assert len(second['learned_rule']['examples']) == 2
+    different_shape = transpile('10 LET C = 27\n20 LET D = 4\n30 PRINT C', 'BASIC', 'JavaScript')
+    assert different_shape['rule_evolution']['reused'] is False
+    assert different_shape['code_origin'] == 'deterministic'
 
 
-def test_python_like_scalar_example_generalizes_to_new_identifiers_and_values(monkeypatch, tmp_path):
+def test_python_like_same_schema_template_is_revalidated(monkeypatch, tmp_path):
     from backend import learned_rules
     monkeypatch.setattr(learned_rules, 'RULE_STORE', tmp_path / 'learned_rules.jsonl')
     first = transpile('value = 3\nprint(value)\n')
     second = transpile('count = 8\nprint(count)\n')
-    assert first['learned_rule']['generalizes'] is True
+    assert first['learned_rule']['generalizes'] is False
     assert second['rule_evolution']['reused'] is True
     assert second['javascript'] == 'let count = 8;\nconsole.log(count);'
     assert second['validation']['status'] == 'passed'
+
+
+def test_learned_rule_rejects_schema_mismatch_and_stale_or_malformed_rule(monkeypatch, tmp_path):
+    from backend import learned_rules
+    monkeypatch.setattr(learned_rules, 'RULE_STORE', tmp_path / 'learned_rules.jsonl')
+    first = transpile('10 LET A = 10\n20 PRINT A', 'BASIC', 'JavaScript')
+    rule = first['learned_rule']
+    parsed = __import__('backend.legacy', fromlist=['legacy_transpile']).legacy_transpile(
+        'BASIC', '10 LET A = 10\n20 PRINT A\n30 PRINT A', 'JavaScript')
+    assert learned_rules.apply_generalized_rule(rule, parsed.ir) is None
+    stale = dict(rule, learner_schema_version=-1)
+    assert learned_rules.apply_generalized_rule(stale, first['ir']) is None
+    malformed = dict(rule, target_templates=['console.log({{expr}});'] * len(first['ir']))
+    assert learned_rules.apply_generalized_rule(malformed, first['ir']) is None
+
+
+def test_ambiguous_or_unsupported_schema_is_not_learned():
+    from backend.learned_rules import _schema_from_ir
+    assert _schema_from_ir([{'kind': 'assign', 'parent': None, 'attributes': {'name':'x', 'expr':'x'}}]) is None
+    assert _schema_from_ir([{'kind': 'call', 'parent': None, 'attributes': {'expr':'1'}}]) is None
 
 
 def test_pattern_learner_refuses_compound_expressions(monkeypatch, tmp_path):
@@ -462,6 +561,8 @@ def test_high_risk_profile_requires_review_and_selects_repeated_checks():
     assert risk['level'] == 'high'
     assert risk['validation_profile']['runtime_runs'] == 3
     assert risk['validation_profile']['manual_review_required'] is True
+    assert result['acceptance_policy']['eligible_for_use'] is False
+    assert result['acceptance_policy']['learned_rule_storage_allowed'] is False
 
 
 def test_medium_risk_validation_repeats_source_and_target():
@@ -485,6 +586,14 @@ def test_medium_risk_validation_repeats_source_and_target():
     assert calls == {'source': 1, 'target': 1}
     assert validation['status'] == 'passed'
     assert validation['checks'][0]['target_runs_completed'] == 2
+
+
+def test_low_medium_high_risk_selects_one_two_three_runs():
+    from backend.transpiler import _risk_assessment
+    low = _risk_assessment('x = 1', 'Python-like', 'JavaScript')
+    medium = _risk_assessment('while x < 2', 'Python-like', 'JavaScript')
+    high = _risk_assessment('goto 10 call foo open file', 'BASIC', 'JavaScript')
+    assert [low['validation_profile']['runtime_runs'], medium['validation_profile']['runtime_runs'], high['validation_profile']['runtime_runs']] == [1, 2, 3]
 
 
 def test_type_mapping_and_contract_propagation_are_exposed():

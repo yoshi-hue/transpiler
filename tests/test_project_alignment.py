@@ -35,3 +35,10 @@ def test_frontend_surfaces_llm_candidates_separately_from_validated_code():
     assert 'LLM candidate (unvalidated)' in frontend
     assert 'Download LLM candidate' in frontend
     assert 'This model-generated program is not semantically validated' in frontend
+
+
+def test_frontend_loads_a_supported_llm_example_for_python_like_selection():
+    frontend = (ROOT / 'frontend' / 'index.html').read_text(encoding='utf-8')
+    assert "if(language==='Python-like')" in frontend
+    assert "$('source').value='BASIC'" in frontend
+    assert "$('sourceCode').value=llmExample.BASIC" in frontend

@@ -1,0 +1,146 @@
+{
+  "schema_version": "1",
+  "reviewed_at_utc": "2026-10-23T18:04:17.605347+00:00",
+  "trial_id": "cobol-perform-three-times-v1",
+  "source_sha256": "356c6f3c1d5aff1bab49d3df472be557e08a94acad6bff791c90c45a4f890e32",
+  "candidate_sha256": "12672db5b78c9c0c55f5c07d94be97e838700584b11b3aeb8c78f7f2b05715d8",
+  "candidate_hash_matches_trial": true,
+  "fixture_manifest": "data\\provider_trial_python_fixtures.json",
+  "candidate_acceptance": {
+    "accepted": false,
+    "status": "unaccepted_candidate",
+    "requirements": {
+      "source_review": {
+        "status": "pending",
+        "reviewer": null,
+        "source_sha256": "356c6f3c1d5aff1bab49d3df472be557e08a94acad6bff791c90c45a4f890e32",
+        "dialect": "unspecified",
+        "source_format": "unspecified",
+        "native_compiler": null,
+        "evidence": [
+          "The visible constructs are a program header, fixed-count PERFORM, DISPLAY of a literal, END-PERFORM, and STOP RUN.",
+          "No input statements or external dependencies are present in the supplied text.",
+          "The source layout does not declare fixed or free format; native COBOL compilation is unavailable in this environment."
+        ]
+      },
+      "target_toolchain": {
+        "status": "passed",
+        "target": "Python",
+        "python_version": "3.13.1",
+        "syntax_check": true,
+        "isolated_runtime_check": true,
+        "sandbox": {
+          "image": "python:3.13-slim",
+          "network": "none",
+          "filesystem": "read-only",
+          "memory_limit": "128m",
+          "cpu_limit": "0.5",
+          "pids_limit": 32,
+          "host_mounts": []
+        }
+      },
+      "independent_fixtures": {
+        "status": "passed",
+        "fixture_set_id": "cobol-perform-three-times-python-v1",
+        "oracle_method": "Independently authored from the fixed-count PERFORM and DISPLAY semantics; not executed by a COBOL compiler.",
+        "source_format_status": "Unspecified by the trial; these free-format source variants are not compiler-validated.",
+        "cases_passed": 3,
+        "cases_total": 3,
+        "case_results": [
+          {
+            "fixture_id": "canonical",
+            "variant": "Original fixed-output loop",
+            "source_sha256": "356c6f3c1d5aff1bab49d3df472be557e08a94acad6bff791c90c45a4f890e32",
+            "expected_output": "STEP\nSTEP\nSTEP",
+            "observed_output": "STEP\nSTEP\nSTEP",
+            "match": true,
+            "runtime_error": "",
+            "sandbox": {
+              "image": "python:3.13-slim",
+              "network": "none",
+              "filesystem": "read-only",
+              "memory_limit": "128m",
+              "cpu_limit": "0.5",
+              "pids_limit": 32,
+              "host_mounts": []
+            }
+          },
+          {
+            "fixture_id": "renamed-program",
+            "variant": "Same statements with a different program identifier",
+            "source_sha256": "c7922650b1c83fae00d720b58b9630c0e2bc62191e9a7f297cf84d537f892808",
+            "expected_output": "STEP\nSTEP\nSTEP",
+            "observed_output": "STEP\nSTEP\nSTEP",
+            "match": true,
+            "runtime_error": "",
+            "sandbox": {
+              "image": "python:3.13-slim",
+              "network": "none",
+              "filesystem": "read-only",
+              "memory_limit": "128m",
+              "cpu_limit": "0.5",
+              "pids_limit": 32,
+              "host_mounts": []
+            }
+          },
+          {
+            "fixture_id": "spacing-and-comment",
+            "variant": "Same statements with spacing and a source comment",
+            "source_sha256": "a80c285990fa9eb245f5594a63ba73817d7bd8d344304102458c5fe5cb8784c6",
+            "expected_output": "STEP\nSTEP\nSTEP",
+            "observed_output": "STEP\nSTEP\nSTEP",
+            "match": true,
+            "runtime_error": "",
+            "sandbox": {
+              "image": "python:3.13-slim",
+              "network": "none",
+              "filesystem": "read-only",
+              "memory_limit": "128m",
+              "cpu_limit": "0.5",
+              "pids_limit": 32,
+              "host_mounts": []
+            }
+          }
+        ]
+      },
+      "security_review": {
+        "status": "passed",
+        "reviewer": "Codex static AST review",
+        "evidence": [
+          "Candidate contains one fixed range(3) loop and prints only the literal STEP; no imports, attribute access, filesystem, network, subprocess, environment, dynamic evaluation, or dependencies were found."
+        ]
+      },
+      "regression_checks": {
+        "status": "passed",
+        "suite_id": "tests/test_transpiler.py",
+        "result": {
+          "status": "passed",
+          "command": [
+            "C:\\Users\\Madhuri\\AppData\\Local\\Programs\\Python\\Python313\\python.exe",
+            "-m",
+            "pytest",
+            "tests/test_transpiler.py",
+            "-q",
+            "--basetemp=.pytest-tmp-review-20261023T180137380947"
+          ],
+          "exit_code": 0,
+          "stdout_tail": ".............................................                            [100%]\n",
+          "stderr_tail": ""
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "source_reviewer": null,
+        "target_reviewer": null,
+        "source_decision": null,
+        "target_decision": null,
+        "evidence": "Requires two human reviewers: one knowledgeable in the selected COBOL dialect and one in Python/runtime behavior."
+      }
+    },
+    "blockers": [
+      "source_review",
+      "human_review"
+    ],
+    "policy": "Every review gate must pass; machine checks do not substitute for the two required human reviews."
+  }
+}

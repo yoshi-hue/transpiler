@@ -9,6 +9,8 @@ validation-failure tracking for research reporting.
 import json
 import re
 import statistics
+import tempfile
+from collections import Counter
 from pathlib import Path
 
 from .transpiler import transpile
@@ -161,10 +163,10 @@ def _required_construct_coverage(language, case_name, rules_used, source=None):
     }
 
 
-def _case_result(language, case_name, source, target, *, enable_llm):
+def _case_result(language, case_name, source, target, *, enable_llm, enable_learned_rules=False):
     metadata = _case_metadata(language, case_name, source)
     try:
-        result = transpile(source, language, target, enable_llm=enable_llm, enable_learned_rules=False)
+        result = transpile(source, language, target, enable_llm=enable_llm, enable_learned_rules=enable_learned_rules)
     except Exception as exc:
         return {
             'language': language,
@@ -255,6 +257,11 @@ def _case_result(language, case_name, source, target, *, enable_llm):
         'candidate_runtime_not_run': sum(suggestion.get('target_runtime_valid') is None for suggestion in suggestions),
         'candidate_oracle_match': candidate_oracle_match,
         'accepted_llm_candidates': 0,
+        'acceptance_policy': result.get('acceptance_policy'),
+        'eligible_for_use': bool(result.get('acceptance_policy', {}).get('eligible_for_use')),
+        'learned_rule_reused': bool(result.get('rule_evolution', {}).get('reused')),
+        'learned_rule_storage_allowed': bool(result.get('acceptance_policy', {}).get('learned_rule_storage_allowed')),
+        'human_review_effort_minutes': None,
         'source_reference': metadata.get('provenance'),
         'split': metadata.get('split'),
         'split_group': metadata.get('split_group'),
@@ -305,6 +312,10 @@ def _summarize_variant(results, variant_name):
     )
     gold_output_cases = [item for item in results if item.get('gold_output_match') is not None]
     gold_output_matches = sum(bool(item.get('gold_output_match')) for item in gold_output_cases)
+    eligible_cases = sum(bool(item.get('eligible_for_use')) for item in results)
+    learned_rule_reuses = sum(bool(item.get('learned_rule_reused')) for item in results)
+    storage_allowed_cases = sum(bool(item.get('learned_rule_storage_allowed')) for item in results)
+    failure_classes = Counter(item.get('failure_class') or 'none' for item in results)
 
     by_language = {}
     for item in results:
@@ -376,6 +387,11 @@ def _summarize_variant(results, variant_name):
         'success_rate_percent': round((passed / total) * 100.0, 1) if total else 0.0,
         'success_rate_95ci_percent': _wilson_interval(passed, total),
         'unsupported_constructs': unsupported,
+        'eligible_for_use': eligible_cases,
+        'learned_rule_reuses': learned_rule_reuses,
+        'learned_rule_storage_allowed_cases': storage_allowed_cases,
+        'human_review_effort_minutes': None,
+        'failure_class_counts': dict(sorted(failure_classes.items())),
         'validation_failures': validation_failures,
         'required_constructs': required_constructs,
         'covered_required_constructs': covered_constructs,
@@ -516,14 +532,18 @@ def run_experiment(target='JavaScript', cases=None, repeats=1):
     run_cases = list(DEFAULT_CASES if cases is None else cases)
     rule_only_results = []
     hybrid_results = []
+    safeguards_results = []
 
     for _ in range(repeats):
         for language, case_name, source in run_cases:
             rule_only_results.append(_case_result(language, case_name, source, target, enable_llm=False))
             hybrid_results.append(_case_result(language, case_name, source, target, enable_llm=True))
 
+    safeguards_results = _run_safeguards_arm(run_cases, target, repeats, seed_development=(cases is None))
+
     rule_only = _summarize_variant(rule_only_results, 'rule_only')
     hybrid = _summarize_variant(hybrid_results, 'hybrid')
+    safeguards = _summarize_variant(safeguards_results, 'contracts_risk_learned_rules')
 
     summary_by_language = {}
     for language, _, _ in run_cases:
@@ -531,6 +551,7 @@ def run_experiment(target='JavaScript', cases=None, repeats=1):
             summary_by_language[language] = {
                 'rule_only': rule_only['by_language'].get(language, {}),
                 'hybrid': hybrid['by_language'].get(language, {}),
+                'safeguards': safeguards['by_language'].get(language, {}),
             }
 
     summary_by_construct = {}
@@ -539,6 +560,7 @@ def run_experiment(target='JavaScript', cases=None, repeats=1):
         summary_by_construct[key] = {
             'rule_only': rule_only['by_construct'].get(key, {}),
             'hybrid': hybrid['by_construct'].get(key, {}),
+            'safeguards': safeguards['by_construct'].get(key, {}),
         }
 
     summary = {
@@ -548,6 +570,8 @@ def run_experiment(target='JavaScript', cases=None, repeats=1):
             'rule_only_success_rate_percent': rule_only['success_rate_percent'],
             'hybrid_success_rate_percent': hybrid['success_rate_percent'],
             'delta_success_rate_percent': round(hybrid['success_rate_percent'] - rule_only['success_rate_percent'], 1),
+            'safeguards_success_rate_percent': safeguards['success_rate_percent'],
+            'safeguards_delta_vs_rule_only_percent': round(safeguards['success_rate_percent'] - rule_only['success_rate_percent'], 1),
         },
     }
 
@@ -562,13 +586,40 @@ def run_experiment(target='JavaScript', cases=None, repeats=1):
         'repeats': repeats,
         'rule_only': rule_only,
         'hybrid': hybrid,
+        'contracts_risk_learned_rules': safeguards,
         'ablation_scope': {
-            'compared_component': 'complete-program LLM fallback generation, restricted target execution, and independent expected-output matching',
-            'candidate_acceptance': 'Candidate oracle matches are counted for benchmark cases only; the translator never marks model candidates accepted automatically.',
-            'not_isolated': ['semantic contracts and risk-selected checks run in both variants and are not isolated; learned rules are disabled in both variants'],
+            'compared_component': 'three arms: deterministic rules; deterministic rules plus optional LLM fallback; and deterministic rules with contracts, risk gates, and learned-rule memory',
+            'candidate_acceptance': 'Model candidates remain unaccepted. Executable validity and expected-output matches are separate metrics. human reviewer effort is not collected and is reported as null.',
+            'learned_rule_protocol': 'The safeguards arm seeds its local learned-rule store from development cases only, then evaluates held-out cases. No held-out case is used to teach a later held-out case.',
+            'shared_mechanisms': ['risk-aware finite validation and contract reporting are part of the common translator path and cannot be disabled safely; this experiment does not estimate their individual causal effects'],
+            'limitations': ['The pilot has only two held-out task groups and project-authored task adaptations; results are descriptive, not a generalization estimate.'],
         },
         'summary': summary,
     }
+
+
+def _run_safeguards_arm(run_cases, target, repeats, *, seed_development):
+    """Evaluate learned memory in isolation, seeded only from development cases."""
+    from . import learned_rules
+
+    results = []
+    original_store = learned_rules.RULE_STORE
+    try:
+        with tempfile.TemporaryDirectory(prefix='transpiler-ablation-') as directory:
+            learned_rules.RULE_STORE = Path(directory) / 'learned_rules.jsonl'
+            if seed_development:
+                for language, case_name, source in EXTERNAL_CASES:
+                    if _EXTERNAL_CASE_METADATA[(language, case_name)]['split'] == 'development':
+                        transpile(source, language, target, enable_llm=False, enable_learned_rules=True)
+                for language, case_name, source in CASES:
+                    transpile(source, language, target, enable_llm=False, enable_learned_rules=True)
+            for _ in range(repeats):
+                for language, case_name, source in run_cases:
+                    results.append(_case_result(language, case_name, source, target,
+                                                enable_llm=False, enable_learned_rules=True))
+    finally:
+        learned_rules.RULE_STORE = original_store
+    return results
 
 
 def render_experiment_report(report):
@@ -578,8 +629,8 @@ def render_experiment_report(report):
     overall = summary.get('overall', {})
 
     lines = [
-        'Rule-only vs Hybrid Experiment Summary',
-        '====================================',
+        'Three-arm Ablation Summary',
+        '==========================',
         f"Target: {report.get('target', 'JavaScript')}",
         f"Repeats: {report.get('repeats', 1)}",
         f"Dataset: {report.get('dataset_id', 'local')}",
@@ -611,6 +662,7 @@ def render_experiment_report(report):
         f"LLM candidate runtimes not run: {hybrid.get('candidate_runtime_not_run', 0)}",
         f"Candidate expected-output matches: {hybrid.get('candidate_oracle_matches', 0)}/{hybrid.get('candidate_oracle_cases', 0)}",
         f"LLM candidates accepted by translator: {hybrid.get('accepted_llm_candidates', 0)}",
+        f"Eligibility after policy checks: {hybrid.get('eligible_for_use', 0)}/{hybrid.get('total', 0)}",
         f"Median LLM latency: {hybrid.get('metrics', {}).get('median_llm_latency_ms')} ms",
         f"Ablation scope: {report.get('ablation_scope', {}).get('compared_component', 'not specified')}",
         '',
@@ -619,6 +671,9 @@ def render_experiment_report(report):
         f"Rule-only success: {overall.get('rule_only_success_rate_percent', 0)}%",
         f"Hybrid success: {overall.get('hybrid_success_rate_percent', 0)}%",
         f"Delta: {overall.get('delta_success_rate_percent', 0)}%",
+        f"Contracts/risk/learned-rule success: {report.get('contracts_risk_learned_rules', {}).get('success_rate_percent')}%",
+        f"Learned-rule reuse count: {report.get('contracts_risk_learned_rules', {}).get('learned_rule_reuses', 0)}",
+        'Human reviewer effort: not collected',
         '',
         'Per-language summary:',
     ]

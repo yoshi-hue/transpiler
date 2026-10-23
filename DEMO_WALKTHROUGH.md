@@ -28,6 +28,12 @@ not pass `.env` into the container. For local development, see **Run locally** i
    25, producing `25`. Open the compiler details to show tokens, normalized IR,
    translation rules, and validation output. This is a fixed example, not evidence of
    general semantic equivalence.
+   Open **Validation evidence** to show the API's `acceptance_policy` decision and
+   reasons. A finite-check pass is eligible only when all required contract checks
+   pass and risk is below high. Low risk runs once; medium risk repeats source and
+   target twice; high risk uses three runs and requires human review. High-risk,
+   failed-contract, unsupported, or model-candidate results cannot enter learned-rule
+   memory. These gates control prototype use and storage; they do not certify correctness.
 3. **Show an unsupported construct (90 seconds).** Load the LLM fallback example.
    Point out the unsupported external `CALL`, the deterministic partial output, and
    the separate fallback status. Without a configured provider, the request is

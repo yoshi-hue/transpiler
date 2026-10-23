@@ -1,6 +1,8 @@
 from decimal import Decimal, InvalidOperation
 import ast
+import base64
 import os
+import shutil
 import subprocess
 import tempfile
 from pathlib import Path
@@ -34,6 +36,68 @@ def run_javascript(code, *, restricted=False):
 
 def run_python(code):
     return _run(['python'], 'translated.py', code)
+
+
+def run_python_isolated(code, *, timeout=5):
+    """Run generated Python in a networkless, read-only Docker container.
+
+    No host paths are mounted. The candidate is passed as base64 in a container-only
+    environment variable so the Docker CLI does not need to keep an interactive stdin
+    pipe open on Windows. If Docker is unavailable, execution fails closed rather than
+    running candidate code on the host.
+    """
+    docker = shutil.which('docker')
+    if not docker:
+        return {'available': False, 'ok': None, 'output': '',
+                'error': 'Docker is required for isolated Python candidate execution.'}
+    image = os.getenv('PYTHON_SANDBOX_IMAGE', 'python:3.13-slim')
+    candidate_b64 = base64.b64encode(code.encode('utf-8')).decode('ascii')
+    # Windows limits process command lines to 32,767 characters. Keep ample room
+    # for the Docker flags and command while bounding candidate payload size.
+    if len(candidate_b64) > 24000:
+        return {'available': True, 'ok': False, 'output': '',
+                'error': 'Candidate is too large for isolated execution (24,000-byte encoded limit).'}
+    command = [
+        docker, 'run', '--rm', '--network', 'none', '--read-only',
+        '--tmpfs', '/tmp:rw,noexec,nosuid,size=16m', '--memory', '128m',
+        '--cpus', '0.5', '--pids-limit', '32', '--user', '65534:65534',
+        '--cap-drop', 'ALL', '--security-opt', 'no-new-privileges',
+        '--env', 'PYTHONDONTWRITEBYTECODE=1',
+        '--env', f'CANDIDATE_B64={candidate_b64}', image, 'python', '-I', '-u', '-c',
+        'import base64, os; exec(compile(base64.b64decode(os.environ["CANDIDATE_B64"]), "<candidate>", "exec"))',
+    ]
+    try:
+        process = subprocess.run(command, capture_output=True, text=True,
+                                 timeout=timeout, check=False)
+    except subprocess.TimeoutExpired as exc:
+        # Keep Docker's partial output: it distinguishes an image/startup failure
+        # from a candidate that ran but did not exit before the deadline.
+        stdout = exc.stdout or ''
+        stderr = exc.stderr or ''
+        if isinstance(stdout, bytes):
+            stdout = stdout.decode('utf-8', errors='replace')
+        if isinstance(stderr, bytes):
+            stderr = stderr.decode('utf-8', errors='replace')
+        details = '\n'.join(part.strip() for part in (stderr, stdout) if part.strip())
+        error = 'Isolated Python candidate timed out.'
+        if details:
+            error = f'{error} Partial Docker output: {details}'
+        return {'available': True, 'ok': False, 'output': stdout.strip(),
+                'error': error}
+    except OSError as exc:
+        return {'available': False, 'ok': None, 'output': '',
+                'error': f'Could not start Docker: {exc}'}
+    return {
+        'available': True,
+        'ok': process.returncode == 0,
+        'output': process.stdout.strip(),
+        'error': process.stderr.strip(),
+        'sandbox': {
+            'image': image, 'network': 'none', 'filesystem': 'read-only',
+            'memory_limit': '128m', 'cpu_limit': '0.5', 'pids_limit': 32,
+            'host_mounts': [],
+        },
+    }
 
 
 def check_python_syntax(code):

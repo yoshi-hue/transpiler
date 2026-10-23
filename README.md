@@ -51,9 +51,9 @@ supported source → parse/normalize → deterministic target generation → fin
 ## Rule-first, contracts, risk, and rule memory
 
 - **Rule-first generation:** the documented deterministic front ends and code generators run before any optional LLM fallback. Unsupported syntax is reported; an LLM result remains a separate candidate.
-- **Executable contract checks:** each result includes a source hash and checks for complete supported-source coverage, target execution, finite output agreement, and any risk-selected repeatability checks. “Satisfied” applies only to the tested inputs; the source-side oracle is the project interpreter, not a native compiler.
-- **Risk-aware validation:** source features select one, two, or three source/target executions to check repeatability. High-risk programs are marked for human review and are excluded from learned-rule storage. Repeated runs are a determinism check, not additional input coverage.
-- **Learned-rule memory:** a successful low/medium-risk deterministic example can induce a statement-pattern rule. The current learner handles flat assignment/print programs with single number, string, boolean, or identifier expressions. It abstracts the variable/literal values into slots, persists the rule locally in ignored `data/learned_rules.jsonl`, and revalidates each match. Loops, branches, compound expressions, and LLM candidates are not learned.
+- **Executable contract checks:** each result includes a source hash and checks for complete supported-source coverage, target execution, finite output agreement, and risk-selected repeatability. Any unsupported source, non-passing validation, failed contract check, or contract state other than `satisfied_for_tested_inputs` blocks the API's `acceptance_policy.eligible_for_use`; the same conditions block learned-rule storage. A pass means eligible for use after finite checks only, not human approval or equivalence proof. The source-side oracle is the project interpreter, not a native compiler.
+- **Risk-aware validation:** low risk runs source and target once, medium risk runs each twice, and high risk runs each three times. Repeatability failures block eligibility. High risk additionally requires human review and blocks learned-rule storage. The API exposes risk level, run count, review requirement, storage decision, and blocking reasons; the UI shows the decision. Repeated runs are a determinism check, not additional input coverage.
+- **Learned-rule memory:** a successful low/medium-risk deterministic example can be stored as a local exact-schema template for flat assignment/print IR. Reuse requires the same ordered statement kinds, scalar atom kinds, and identifier dependency shape, plus matching source/target, learner-schema version, and deterministic rule-table version. Variable spellings and literal values are slots; this is bounded template substitution, not inference of a source-language rule from one example. Unsupported or ambiguous IR is rejected. Every reuse is revalidated; a cache miss/rejection leaves deterministic generation in place. Loops, branches, compound expressions, and LLM candidates are not learned.
 
 The arithmetic “property validation” field is currently marked `not_run`; the prototype does not invent property-test expectations from source text.
 
@@ -65,13 +65,13 @@ The paper is framed as an early tool demonstration: a prototype that exposes its
 
 When configured, the prototype requests a complete target-program candidate when the parser reports unsupported constructs. It sends the full source program so the model can preserve ordering and combine supported and unsupported statements. This is more than a fragment suggestion but remains probabilistic output.
 
-The candidate becomes the displayed/downloadable target output, but the translator does not mark it accepted. JavaScript candidates receive a syntax check and are executed in Node's permission-restricted mode with secrets removed from the child environment. Python candidates receive a syntax check only and are not executed. Even a successful run establishes only behavior on tested inputs. The LLM fallback is therefore not yet a general-purpose or production-ready migration path.
+The candidate becomes the displayed/downloadable target output, but the translator does not mark it accepted. JavaScript candidates receive a syntax check and are executed in Node's permission-restricted mode with secrets removed from the child environment. Python candidates receive syntax validation and run only in a no-network, read-only, resource-limited Docker container; if Docker is unavailable, they are not executed. Even a successful run establishes only behavior on tested inputs. The LLM fallback is therefore not yet a general-purpose or production-ready migration path.
 
 ## Research-grade translation safeguards
 
 The translator emits a machine-readable semantic-contract record and diagnostic metadata, including a risk assessment, failure fingerprint, and learned-rule record.
 
-These records do not currently select additional validation, trigger generated tests, change acceptance decisions, integrate candidates, or alter later code generation. Treat them as reporting/diagnostic mechanisms, not evidence of improved reliability.
+The risk profile selects repeatability runs, and the acceptance policy gates eligibility and learned-rule/example storage. These controls do not trigger generated tests, integrate model candidates, or establish improved reliability; treat them as prototype safeguards rather than evidence of a causal benefit.
 
 ## Evaluation strategy and benchmark design
 
@@ -116,6 +116,17 @@ LLM_EXTRA_HEADERS={"HTTP-Referer":"https://localhost:8000","X-Title":"Mini Trans
 ```
 
 The UI's **Test LLM connection** button makes a real request to the configured endpoint. It reports the model, request ID and latency without exposing the secret key.
+
+To record a reproducible translation smoke trial (fixed source, expected output,
+prompt/model/request metadata, candidate hash, and runtime/oracle result), configure the
+same environment variables and run:
+
+```powershell
+python tools\run_llm_provider_trial.py --target JavaScript --output data\provider_trial_latest.json
+```
+
+The report explicitly says `not_configured` if endpoint/model credentials are missing.
+The fixed trial is a provider smoke check, not evidence of effectiveness or acceptance.
 
 ## Run with Docker
 
@@ -260,19 +271,23 @@ separately (2,116; 1,087 accepted), with no plain BASIC row. These are metadata 
 not source-present or supported-subset sample counts; details and limitations are in
 [`data/CORPUS_PROTOCOL.md`](./data/CORPUS_PROTOCOL.md).
 
-For a future research evaluation, the desired ablation chain is:
+The experiment endpoint reports three matched arms:
 1. rule-only baseline
 2. rule-first + configured LLM fallback
 3. rule-first + contracts + risk-aware validation + learned rules
 
-The third path is now implemented for a restricted assignment/print pattern, but the
-current experiment does not evaluate it as a separate ablation. Risk profiles select
-repeatability checks and a high-risk review gate; learned patterns can supply target
-templates for matching scalar assignment/print programs and are revalidated. No
-improvement from contracts, risk selection, or pattern reuse has been established.
-Configured hybrid runs may still display an LLM candidate in place of deterministic
-partial output. The 95% Wilson interval is reported because this benchmark is small;
-larger independent collections are needed before making general claims.
+The learned-rule arm seeds a temporary store from development cases and evaluates the
+held-out cases without allowing test-to-test learning. Risk-aware validation and contract
+reporting are common to all arms, so this experiment does not estimate their individual
+effects. LLM candidates remain unaccepted. Reviewer effort is not collected and is
+reported as unavailable. Current one-repeat reports are archived in
+[`data/ablation_v1_javascript.json`](./data/ablation_v1_javascript.json) and
+[`data/ablation_v1_python.json`](./data/ablation_v1_python.json). Both used the same 20
+held-out cases from two task groups; no LLM provider was configured and no learned-rule
+reuse occurred. All arms had 17/20 overall passes, 17/17 supported-case passes, and
+3/3 expected-unsupported cases recognized. These runs show no observed difference and
+do not establish effectiveness. The 95% Wilson interval is reported because this
+benchmark is small; larger independent collections are needed before general claims.
 
 Keep the model, prompt version, temperature, benchmark, runtime, and rule table fixed. See `LLM_EVALUATION.md` for the recommended protocol.
 

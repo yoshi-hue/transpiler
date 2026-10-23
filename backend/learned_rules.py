@@ -1,4 +1,8 @@
-"""Bounded generalized target-template rules learned from passing examples."""
+"""Exact-schema statement templates learned from validated examples.
+
+This is a local, exact-schema cache. One example records only a rendering
+template for one ordered IR schema; it does not infer new source semantics.
+"""
 import hashlib
 import json
 import re
@@ -9,6 +13,7 @@ from .rules import RULE_TABLE_VERSION
 
 RULE_STORE = Path(__file__).resolve().parent.parent / 'data' / 'learned_rules.jsonl'
 _STORE_LOCK = Lock()
+LEARNER_SCHEMA_VERSION = 2
 
 
 def _atom_kind(expression):
@@ -29,6 +34,7 @@ def _schema_from_ir(ir):
         return None
     schema = []
     assigned_names = set()
+    schema_names = {}
     for node in ir:
         if node.get('parent') is not None or node.get('kind') not in ('assign', 'print'):
             return None
@@ -43,10 +49,13 @@ def _schema_from_ir(ir):
             return None
         if node['kind'] == 'assign':
             name = attributes['name'].lower()
-            if name in assigned_names:
+            if name in assigned_names or name in schema_names:
                 return None
             assigned_names.add(name)
-        schema.append({'kind': node['kind'], 'value_kind': atom_kind})
+            schema_names[name] = f'v{len(schema_names)}'
+        # Preserve identifier dependency shape while abstracting its spelling.
+        value_ref = schema_names.get(expression.lower()) if atom_kind == 'identifier' else None
+        schema.append({'kind': node['kind'], 'value_kind': atom_kind, 'value_ref': value_ref})
     return schema
 
 
@@ -94,17 +103,22 @@ def find_generalized_rule(source_language, target_language, ir):
             continue
         if not isinstance(rule, dict):
             continue
-        if (rule.get('source_language') == source_language
+        if (rule.get('learner_schema_version') == LEARNER_SCHEMA_VERSION
+                and rule.get('source_language') == source_language
                 and rule.get('target_language') == target_language
                 and rule.get('source_schema') == schema
                 and rule.get('rule_table_version') == RULE_TABLE_VERSION
-                and rule.get('status') == 'experimental_pattern'):
+                and rule.get('status') == 'experimental_exact_schema'):
             return rule
     return None
 
 
 def apply_generalized_rule(rule, ir):
-    if not rule or len(rule.get('target_templates', [])) != len(ir):
+    if (not rule or rule.get('learner_schema_version') != LEARNER_SCHEMA_VERSION
+            or rule.get('rule_table_version') != RULE_TABLE_VERSION
+            or rule.get('status') != 'experimental_exact_schema'
+            or rule.get('source_schema') != _schema_from_ir(ir)
+            or len(rule.get('target_templates', [])) != len(ir)):
         return None
     from .legacy import js_expr, py_expr
 
@@ -166,9 +180,10 @@ def learn_generalized_rule(source_language, target_language, source, ir, target_
         'source_schema': schema,
         'target_templates': templates,
         'rule_table_version': RULE_TABLE_VERSION,
-        'status': 'experimental_pattern',
-        'generalizes': True,
-        'scope': 'flat assignment/print statements with literal or identifier expressions',
+        'learner_schema_version': LEARNER_SCHEMA_VERSION,
+        'status': 'experimental_exact_schema',
+        'generalizes': False,
+        'scope': 'exact ordered flat assignment/print IR schema; values and consistently renamed identifiers are slots; source semantics are not inferred',
         'examples': [example],
     }
     RULE_STORE.parent.mkdir(parents=True, exist_ok=True)

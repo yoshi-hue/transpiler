@@ -1,0 +1,92 @@
+{
+  "schema_version": "1",
+  "timestamp_utc": "2026-10-23T16:28:20.872006+00:00",
+  "trial_id": "cobol-perform-three-times-v1",
+  "source_language": "COBOL",
+  "target_language": "JavaScript",
+  "source_sha256": "356c6f3c1d5aff1bab49d3df472be557e08a94acad6bff791c90c45a4f890e32",
+  "expected_output": "STEP\nSTEP\nSTEP",
+  "oracle": "predeclared fixed-count output expectation; not a native COBOL execution",
+  "provider_status_before": {
+    "configured": true,
+    "provider_configured": true,
+    "enabled_for_request": true,
+    "provider": "Google Gemini",
+    "model": "gemini-3.1-flash-lite",
+    "endpoint_set": true,
+    "key_set": true,
+    "api_mode": "chat",
+    "prompt_version": "legacy-modernizer-llm-v3",
+    "timeout_seconds": 45.0,
+    "max_retries": 2
+  },
+  "status": "completed",
+  "candidate_generated": true,
+  "candidate_code": "for (let i = 0; i < 3; i++) {\n    console.log(\"STEP\");\n}\nprocess.exit(0);",
+  "candidate_sha256": "108b193939aca339f86fbe2d02d72e2d61875a09b37da31d2ca5867a636f366c",
+  "request_id": "37ebba98-205a-4c66-8fef-f095e64a9c08",
+  "provider": "Google Gemini",
+  "model": "gemini-3.1-flash-lite",
+  "prompt_version": "legacy-modernizer-llm-v3",
+  "prompt_hash": "3d4ee3bb699a8ea9",
+  "attempts": 1,
+  "latency_ms": 942.3,
+  "syntax_valid": true,
+  "runtime_valid": true,
+  "observed_output": "STEP\nSTEP\nSTEP",
+  "independent_oracle_match": true,
+  "candidate_acceptance": {
+    "accepted": false,
+    "status": "unaccepted_candidate",
+    "source_sha256": "356c6f3c1d5aff1bab49d3df472be557e08a94acad6bff791c90c45a4f890e32",
+    "candidate_sha256": "108b193939aca339f86fbe2d02d72e2d61875a09b37da31d2ca5867a636f366c",
+    "model": "gemini-3.1-flash-lite",
+    "prompt_version": "legacy-modernizer-llm-v3",
+    "prompt_hash": "3d4ee3bb699a8ea9",
+    "request_id": "37ebba98-205a-4c66-8fef-f095e64a9c08",
+    "requirements": {
+      "source_review": {
+        "status": "pending",
+        "evidence": null
+      },
+      "target_toolchain": {
+        "status": "passed",
+        "target": "JavaScript",
+        "syntax_check": true,
+        "restricted_runtime_check": true
+      },
+      "independent_fixtures": {
+        "status": "pending",
+        "fixture_set_id": null,
+        "cases_passed": 0,
+        "cases_total": 0
+      },
+      "security_review": {
+        "status": "pending",
+        "reviewer": null,
+        "evidence": null
+      },
+      "regression_checks": {
+        "status": "pending",
+        "suite_id": null,
+        "passed": null
+      },
+      "human_review": {
+        "status": "pending",
+        "source_reviewer": null,
+        "target_reviewer": null,
+        "decision": null
+      }
+    },
+    "blockers": [
+      "source_review",
+      "independent_fixtures",
+      "security_review",
+      "regression_checks",
+      "human_review"
+    ],
+    "policy": "Acceptance requires every listed gate to pass and documented reviewer decisions; automated checks never accept a candidate."
+  },
+  "candidate_accepted": false,
+  "fallback_failures": []
+}

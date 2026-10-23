@@ -1,0 +1,26 @@
+{
+  "fixture_set_id": "cobol-perform-three-times-python-v1",
+  "target_language": "Python",
+  "oracle_method": "Independently authored from the fixed-count PERFORM and DISPLAY semantics; not executed by a COBOL compiler.",
+  "source_format_status": "Unspecified by the trial; these free-format source variants are not compiler-validated.",
+  "cases": [
+    {
+      "id": "canonical",
+      "variant": "Original fixed-output loop",
+      "source": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROVIDER-TRIAL.\nPROCEDURE DIVISION.\nPERFORM 3 TIMES\n DISPLAY \"STEP\"\nEND-PERFORM.\nSTOP RUN.",
+      "expected_output": "STEP\nSTEP\nSTEP"
+    },
+    {
+      "id": "renamed-program",
+      "variant": "Same statements with a different program identifier",
+      "source": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROVIDER-TRIAL-RENAMED.\nPROCEDURE DIVISION.\nPERFORM 3 TIMES\n DISPLAY \"STEP\"\nEND-PERFORM.\nSTOP RUN.",
+      "expected_output": "STEP\nSTEP\nSTEP"
+    },
+    {
+      "id": "spacing-and-comment",
+      "variant": "Same statements with spacing and a source comment",
+      "source": "IDENTIFICATION DIVISION.\nPROGRAM-ID. PROVIDER-TRIAL-COMMENTED.\nPROCEDURE DIVISION.\n*> Repeat the fixed output three times.\nPERFORM 3 TIMES\n    DISPLAY \"STEP\"\nEND-PERFORM.\nSTOP RUN.",
+      "expected_output": "STEP\nSTEP\nSTEP"
+    }
+  ]
+}

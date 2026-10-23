@@ -260,7 +260,7 @@ pre{height:220px;padding:14px;overflow:auto;white-space:pre-wrap}
     </section>
 
     <section class="card">
-      <div class="card-title">Controlled rule-only vs hybrid experiment</div>
+      <div class="card-title">Three-arm ablation experiment</div>
       <div class="experiment-toolbar">
         <div><label for="experimentRepeats">Repeats</label><select id="experimentRepeats"><option>1</option><option>2</option><option>3</option></select></div>
         <button onclick="runExperiment()">Run experiment</button>
@@ -272,7 +272,7 @@ pre{height:220px;padding:14px;overflow:auto;white-space:pre-wrap}
         <div class="experiment-card"><span>Improvement</span><b id="experimentDelta">—</b></div>
         <div class="experiment-card"><span>Fallback frequency</span><b id="experimentFallback">—</b></div>
       </div>
-      <table class="experiment-table"><thead><tr><th>Language</th><th>Rule-only</th><th>Hybrid</th><th>Fallbacks</th></tr></thead><tbody id="experimentLanguages"><tr><td colspan="4">Run the experiment to populate the controlled comparison.</td></tr></tbody></table>
+      <table class="experiment-table"><thead><tr><th>Language</th><th>Rule-only</th><th>LLM hybrid</th><th>Safeguards + learned rules</th></tr></thead><tbody id="experimentLanguages"><tr><td colspan="4">Run the experiment to populate the matched comparison.</td></tr></tbody></table>
       <pre id="experimentDetails" class="output" style="height:180px">The full experiment record will appear here.</pre>
     </section>
 
@@ -396,7 +396,16 @@ function clearTranslation(message='Translate the current source to see generated
 }
 function loadExample(){ $('sourceCode').value=examples[$('source').value]; clearTranslation('Example loaded. Press Translate to generate and validate the target.'); }
 function loadFailureExample(){ $('sourceCode').value=failureExample[$('source').value] || failureExample['Python-like']; translateCode(); }
-function loadLLMExample(){ $('sourceCode').value=llmExample[$('source').value] || llmExample['Python-like']; translateCode(); }
+function loadLLMExample(){
+ const language=$('source').value;
+ if(language==='Python-like'){
+  $('source').value='BASIC';
+  $('sourceCode').value=llmExample.BASIC;
+ } else {
+  $('sourceCode').value=llmExample[language] || llmExample.BASIC;
+ }
+ translateCode();
+}
 $('source').addEventListener('change',loadExample);
 $('target').addEventListener('change',()=>clearTranslation('Target changed. Press Translate to run the source against the selected target.'));
 async function translateCode(){
@@ -416,8 +425,9 @@ async function translateCode(){
   $('llmCandidateNote').hidden=!candidateText;
   if(candidateText){
    const candidateStatuses=suggestions.map(item=>item.validation_status||'not_run');
-   const runtimePolicy=data.language_support.target==='Python'?'Python candidates are syntax-checked only.':'JavaScript candidates run with restricted Node permissions.';
-   $('llmCandidateNote').textContent=`Model candidate status: ${candidateStatuses.join(', ')}. It is not semantically validated or automatically accepted. ${runtimePolicy}`;
+   const runtimePolicy=data.language_support.target==='Python'?'Python candidate execution is not enabled.':'JavaScript candidates receive syntax checks and restricted Node execution.';
+   const blockers=data.candidate_acceptance?.blockers||['candidate acceptance record unavailable'];
+   $('llmCandidateNote').textContent=`Model candidate status: ${candidateStatuses.join(', ')}. NOT ACCEPTED. ${runtimePolicy} Remaining acceptance gates: ${blockers.join(', ')}.`;
   }
   $('deterministicPartialPanel').hidden=!llmOnly || !hasDeterministicCode;
   $('deterministicPartialCode').textContent=deterministicCode;
@@ -440,21 +450,23 @@ async function translateCode(){
   $('failureClass').textContent=data.validation.failure_class || 'none';
   $('fallbackDetails').textContent=JSON.stringify({status:fb,events:data.fallback_log||[],suggestions:data.fallback_suggestions||[]},null,2);
   const v=data.validation; $('validation').textContent=v.status;
-  $('validationDetails').textContent=JSON.stringify({validation:v,contract:data.translation_contract,risk:data.risk_assessment,learned_rule:data.learned_rule},null,2);
+  $('validationDetails').textContent=JSON.stringify({validation:v,contract:data.translation_contract,risk:data.risk_assessment,acceptance_policy:data.acceptance_policy,candidate_acceptance:data.candidate_acceptance,learned_rule:data.learned_rule,learned_rule_policy:'Local exact-schema cache only. A stored example does not infer source semantics or a rule for arbitrary programs. Contract failures, unsupported constructs, model candidates, failed checks, and high risk block learned-rule storage. Risk selects 1/2/3 repeat runs for low/medium/high; high risk also requires human review. A miss or rejection retains deterministic output.'},null,2);
   $('traceDetails').textContent=JSON.stringify(data.pipeline_trace||[],null,2);
   latestTranslation=data;
   const fallbackCount=(data.fallback_log||[]).length;
   const unsupportedCount=(data.unsupported||[]).length;
-  const riskReviewRequired=data.translation_contract?.translation_status==='review_required';
+  const policy=data.acceptance_policy||{};
+  const riskReviewRequired=(policy.reasons||[]).includes('high_risk_human_review_required');
+  const policyBlocked=!policy.eligible_for_use;
   $('decisionExplanation').textContent=v.status==='passed'
     ? riskReviewRequired
       ? `Finite I/O checks passed, but the high-risk profile requires human review before this result can be used. These checks do not prove semantic equivalence.`
-      : `Finite I/O check passed: ${data.rule_coverage.translated_units} of ${data.rule_coverage.source_units} recognized source units were translated deterministically. This is not proof of semantic equivalence.`
+      : `Finite I/O check passed: ${data.rule_coverage.translated_units} of ${data.rule_coverage.source_units} recognized source units were translated deterministically. Policy: ${policy.status||'unavailable'}. This is not proof of semantic equivalence.`
     : unsupportedCount
       ? `Held for review: ${unsupportedCount} unsupported construct(s) were reported. Any LLM candidate is displayed separately and remains unvalidated.`
       : `Held for review: validation status is ${v.status}. The generated output is evidence, not an accepted translation.`;
-  status.textContent=(data.language_support?data.language_support.source+' subset → '+data.language_support.target+'. ':'')+(v.message||'Translation complete.')+(riskReviewRequired?' High-risk review is required.':'');
-  status.className='status '+(riskReviewRequired?'neutral':v.status==='passed'?'pass':v.status==='failed'?'fail':'neutral');
+  status.textContent=(data.language_support?data.language_support.source+' subset → '+data.language_support.target+'. ':'')+(v.message||'Translation complete.')+(policyBlocked?' Policy blocked: '+(policy.reasons||[]).join(', '):'');
+  status.className='status '+(policyBlocked?'neutral':v.status==='passed'?'pass':v.status==='failed'?'fail':'neutral');
  }catch(error){status.textContent=BACKEND_ERROR_MESSAGE;status.className='status fail';}
 }
 function downloadText(filename,content,type){
@@ -518,7 +530,7 @@ async function runBenchmark(){
   }catch(e){box.textContent=BACKEND_ERROR_MESSAGE;}
 }
 async function runExperiment(){
- const box=$('experimentDetails'); box.textContent='Running controlled rule-only vs hybrid experiment...';
+ const box=$('experimentDetails'); box.textContent='Running the three matched ablation arms...';
  try{
   const repeats=$('experimentRepeats').value;
   const r=await fetch(apiUrl('/experiment?target='+encodeURIComponent($('target').value)+'&repeats='+repeats)); const d=await r.json();
@@ -529,14 +541,14 @@ async function runExperiment(){
   $('hybridSuccess').textContent=hybrid.success_rate_percent+'%';
   $('experimentDelta').textContent=overall.delta_success_rate_percent+'%';
   $('experimentFallback').textContent=hybrid.fallback_frequency_percent+'%';
-  $('experimentLanguages').innerHTML=Object.entries(languages).map(([language,value])=>`<tr><td>${language}</td><td>${value.rule_only.success_rate_percent}%</td><td>${value.hybrid.success_rate_percent}%</td><td>${value.hybrid.llm_calls||0}</td></tr>`).join('');
-  box.textContent=JSON.stringify({benchmark_version:d.benchmark_version,target:d.target,repeats:d.repeats,summary:d.summary,rule_only:d.rule_only.metrics,hybrid:d.hybrid.metrics},null,2);
+  $('experimentLanguages').innerHTML=Object.entries(languages).map(([language,value])=>`<tr><td>${language}</td><td>${value.rule_only.success_rate_percent}%</td><td>${value.hybrid.success_rate_percent}%</td><td>${value.safeguards.success_rate_percent}% (${value.safeguards.learned_rule_reuses||0} reuses)</td></tr>`).join('');
+  box.textContent=JSON.stringify({benchmark_version:d.benchmark_version,target:d.target,repeats:d.repeats,summary:d.summary,ablation_scope:d.ablation_scope,reviewer_effort:'not collected',rule_only:d.rule_only,hybrid:d.hybrid,contracts_risk_learned_rules:d.contracts_risk_learned_rules},null,2);
  }catch(e){box.textContent=BACKEND_ERROR_MESSAGE;}
 }
 function downloadExperimentCsv(){
  if(!latestExperiment){ $('experimentDetails').textContent='Run the experiment before downloading CSV.'; return; }
- const rows=[['language','rule_only_success_percent','hybrid_success_percent','hybrid_fallback_calls']];
- Object.entries(latestExperiment.summary.by_language||{}).forEach(([language,value])=>rows.push([language,value.rule_only.success_rate_percent,value.hybrid.success_rate_percent,value.hybrid.llm_calls||0]));
+ const rows=[['language','rule_only_success_percent','hybrid_success_percent','safeguards_success_percent','learned_rule_reuses','hybrid_fallback_calls']];
+ Object.entries(latestExperiment.summary.by_language||{}).forEach(([language,value])=>rows.push([language,value.rule_only.success_rate_percent,value.hybrid.success_rate_percent,value.safeguards.success_rate_percent,value.safeguards.learned_rule_reuses||0,value.hybrid.llm_calls||0]));
  downloadText('experiment-by-language.csv',rows.map(row=>row.join(',')).join('\n'),'text/csv');
 }
 loadExample();
