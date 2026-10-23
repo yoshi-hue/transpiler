@@ -129,6 +129,15 @@ pre{height:220px;padding:14px;overflow:auto;white-space:pre-wrap}
   <header class="app-header">
     <h1>Multi-Language Code Translator</h1>
     <p>Compiler Design prototype · legacy-language modernization with subset validation</p>
+    <div class="decision" role="note"><strong>Scope and evidence:</strong> This tool handles only the constructs listed for each language in the project subset. Unsupported syntax is reported and is not covered by deterministic output. Validation runs finite source/target I/O checks on tested inputs; it is not proof of equivalence. Model output is a separate candidate and is never automatically accepted.</div>
+    <details class="scope-details"><summary>Supported subset by source language</summary><div class="decision">
+      <p><strong>COBOL:</strong> numeric VALUE declarations, MOVE/COMPUTE, DISPLAY, and block IF; no PERFORM, ACCEPT, or file I/O.</p>
+      <p><strong>FORTRAN:</strong> scalar INTEGER/REAL values, assignment, PRINT, block IF, and unit-step DO loops; no READ, arrays, or procedures.</p>
+      <p><strong>Pascal:</strong> scalar variables, assignment, WRITE/WRITELN, simple IF, FOR, and WHILE statements; no compound BEGIN/END blocks or input.</p>
+      <p><strong>BASIC:</strong> line-numbered scalar assignment, PRINT, single-line IF, unit-step FOR/NEXT, and END/STOP; no INPUT, GOTO, or arrays.</p>
+      <p><strong>Python-like:</strong> the project's own expression, assignment, print, branch, loop, and function grammar; it is not general Python. This path targets JavaScript only.</p>
+      <p>See <code>data/supported_subset.json</code> for the complete grammar boundary. Source-side output checks use the project's interpreter; target checks execute generated code on finite cases. A passed check applies only to those inputs.</p>
+    </div></details>
   </header>
 
   <main class="app-main">
@@ -143,7 +152,7 @@ pre{height:220px;padding:14px;overflow:auto;white-space:pre-wrap}
           <button class="secondary" onclick="loadFailureExample()">Load failure example</button>
           <button class="secondary" onclick="loadLLMExample()">Load LLM fallback example</button>
           <button class="secondary" onclick="runBenchmark()">Run benchmark</button>
-          <button class="secondary" onclick="runExperiment()">Run rule vs hybrid</button>
+          <button class="secondary" onclick="runExperiment()">Run three-arm ablation</button>
           <button class="secondary" onclick="testLLM()">Test LLM connection</button>
         </div>
       </details>
@@ -162,7 +171,7 @@ pre{height:220px;padding:14px;overflow:auto;white-space:pre-wrap}
       <section class="card">
         <div id="generatedCodeTitle" class="card-title">Generated target code</div>
         <pre id="javascript" class="output"></pre>
-        <div id="llmCandidateNote" class="decision" hidden>This model-generated program is not semantically validated. JavaScript is run with restricted permissions; a successful run is not proof of equivalence. Python candidates are syntax-checked only.</div>
+        <div id="llmCandidateNote" class="decision" hidden>This model-generated program is not semantically validated and is not accepted. Automated syntax/runtime and fixture checks cover only recorded inputs and do not prove equivalence.</div>
         <div id="deterministicPartialPanel" hidden>
           <div class="card-title">Deterministic partial output (unsupported constructs remain)</div>
           <pre id="deterministicPartialCode" class="output"></pre>
@@ -263,13 +272,14 @@ pre{height:220px;padding:14px;overflow:auto;white-space:pre-wrap}
       <div class="card-title">Three-arm ablation experiment</div>
       <div class="experiment-toolbar">
         <div><label for="experimentRepeats">Repeats</label><select id="experimentRepeats"><option>1</option><option>2</option><option>3</option></select></div>
+        <label><input id="experimentEnableLLM" type="checkbox"> Allow live LLM requests (variable results)</label>
         <button onclick="runExperiment()">Run experiment</button>
         <button class="secondary" onclick="downloadExperimentCsv()">Download CSV</button>
       </div>
       <div class="experiment-summary">
         <div class="experiment-card"><span>Rule-only success</span><b id="ruleOnlySuccess">—</b></div>
         <div class="experiment-card"><span>Hybrid success</span><b id="hybridSuccess">—</b></div>
-        <div class="experiment-card"><span>Improvement</span><b id="experimentDelta">—</b></div>
+        <div class="experiment-card"><span>Observed delta (not causal)</span><b id="experimentDelta">—</b></div>
         <div class="experiment-card"><span>Fallback frequency</span><b id="experimentFallback">—</b></div>
       </div>
       <table class="experiment-table"><thead><tr><th>Language</th><th>Rule-only</th><th>LLM hybrid</th><th>Safeguards + learned rules</th></tr></thead><tbody id="experimentLanguages"><tr><td colspan="4">Run the experiment to populate the matched comparison.</td></tr></tbody></table>
@@ -425,7 +435,7 @@ async function translateCode(){
   $('llmCandidateNote').hidden=!candidateText;
   if(candidateText){
    const candidateStatuses=suggestions.map(item=>item.validation_status||'not_run');
-   const runtimePolicy=data.language_support.target==='Python'?'Python candidate execution is not enabled.':'JavaScript candidates receive syntax checks and restricted Node execution.';
+   const runtimePolicy=data.language_support.target==='Python'?'Python candidates receive syntax checks and an isolated Docker runtime check when Docker is available; otherwise runtime validation remains pending.':'JavaScript candidates receive syntax checks and restricted Node execution.';
    const blockers=data.candidate_acceptance?.blockers||['candidate acceptance record unavailable'];
    $('llmCandidateNote').textContent=`Model candidate status: ${candidateStatuses.join(', ')}. NOT ACCEPTED. ${runtimePolicy} Remaining acceptance gates: ${blockers.join(', ')}.`;
   }
@@ -533,7 +543,8 @@ async function runExperiment(){
  const box=$('experimentDetails'); box.textContent='Running the three matched ablation arms...';
  try{
   const repeats=$('experimentRepeats').value;
-  const r=await fetch(apiUrl('/experiment?target='+encodeURIComponent($('target').value)+'&repeats='+repeats)); const d=await r.json();
+  const enableLLM=$('experimentEnableLLM').checked;
+  const r=await fetch(apiUrl('/experiment?target='+encodeURIComponent($('target').value)+'&repeats='+repeats+'&enable_llm='+enableLLM)); const d=await r.json();
   if(!r.ok || !d.ok){box.textContent=d.error||d.detail||`Experiment failed (HTTP ${r.status}).`;return;}
   latestExperiment=d;
   const overall=d.summary.overall; const hybrid=d.hybrid; const languages=d.summary.by_language||{};

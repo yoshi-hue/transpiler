@@ -26,6 +26,20 @@ python tools\run_test_benchmark.py --target JavaScript --output data\benchmark_v
 python tools\run_test_benchmark.py --target Python --output data\benchmark_v2_python.json
 ```
 
+These current runner reports are stable JSON for a fixed toolchain and source tree: they
+record dataset, subset, backend, and runner hashes, and omit timestamps and local worktree
+state. Recreate the oracle check and fixed offline ablation with:
+
+```powershell
+python tools\check_benchmark_oracles.py --output data\oracle_v3_check.json
+python tools\run_ablation.py --target JavaScript --output data\reproducible_ablation_v1_javascript.json
+python tools\run_ablation.py --target Python --output data\reproducible_ablation_v1_python.json
+```
+
+The ablation runner does not load `.env`; LLM calls require an explicit `--enable-llm` flag.
+Provider-enabled runs are not deterministic, even when model and prompt are fixed. They
+record source/candidate hashes, provider/model/prompt metadata, and request IDs for audit.
+
 Both runs report 17/20 end-to-end passes, 20/20 expected outcomes correctly handled,
 17/17 separately authored target-output matches, and 3/3 expected-unsupported cases
 recognized. The 17/20 denominator treats the three expected-unsupported cases as

@@ -44,6 +44,11 @@ python evaluate.py --target Python --output data\evaluation_v3_python.json
 `evaluate.py` runs the deterministic benchmark and one paired rule-only/hybrid repeat.
 The full unmodified command output is archived in the two JSON files below. The CSV
 contains every case from both targets, benchmark phase, and both paired variants.
+Those files are a frozen historical record. The current `evaluate.py` defaults to no
+provider requests; `run_experiment` also defaults to offline mode. Pass `--enable-llm`
+to `evaluate.py` or `tools/run_ablation.py`, or check the UI opt-in, to explicitly load
+`.env` and run a live hybrid arm. That opt-in behavior applies to future runs and does
+not rewrite this baseline.
 
 ## Results
 

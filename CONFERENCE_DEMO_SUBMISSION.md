@@ -38,9 +38,15 @@ and reports the v3 model request failures without extrapolating from the prior v
 
 ## Evidence snapshot
 
-The refreshed v3 paired run at pushed commit `ade68dc44200b043e77617857717d8da687b6699`
+The refreshed v3 paired benchmark at pushed commit `ade68dc44200b043e77617857717d8da687b6699`
 used prompt `legacy-modernizer-llm-v3` and model `gemini-3.1-flash-lite`. It produced no
-candidate after three provider attempts per target. The strengthened held-out subset has
+candidate after three provider attempts per target. A later fixed, single-input provider
+trial did produce JavaScript and Python candidates; each passed its recorded runtime check
+and matched one predeclared expected output. The separate Python review report records
+three fixture-variant matches, but source review and human review remain pending. The COBOL
+source has not been checked with a native compiler, and neither candidate is accepted.
+These are smoke-trial observations, not evidence of a general effectiveness improvement.
+The strengthened held-out subset has
 20 examples from two task groups; 17 supported target outputs matched separately
 authored expected outputs in both targets, while three COBOL loops were correctly
 reported unsupported. The expected outputs match a separate reference evaluator (20/20), but have not been

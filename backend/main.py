@@ -72,7 +72,7 @@ def benchmark(target: str = 'JavaScript'):
 
 
 @app.get('/experiment')
-def experiment(target: str = 'JavaScript', repeats: int = 1, response: Response = None):
+def experiment(target: str = 'JavaScript', repeats: int = 1, enable_llm: bool = False, response: Response = None):
     if target not in TARGETS:
         if response is not None:
             response.status_code = 422
@@ -81,7 +81,7 @@ def experiment(target: str = 'JavaScript', repeats: int = 1, response: Response 
         if response is not None:
             response.status_code = 422
         return {'ok': False, 'error': 'Repeats must be between 1 and 10.'}
-    return {'ok': True, **run_experiment(target, repeats=repeats)}
+    return {'ok': True, **run_experiment(target, repeats=repeats, enable_llm=enable_llm)}
 
 
 @app.get('/llm/status')

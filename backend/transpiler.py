@@ -408,7 +408,7 @@ def _is_unsupported_candidate(candidate):
     return False
 
 
-def transpile(source, source_language='Python-like', target_language='JavaScript', *, enable_llm=None, enable_learned_rules=True):
+def transpile(source, source_language='Python-like', target_language='JavaScript', *, enable_llm=None, enable_learned_rules=True, store_validated_example=True):
     if source_language != 'Python-like':
         if target_language not in TARGETS:
             raise ValueError('Unsupported target language. Choose JavaScript or Python.')
@@ -581,7 +581,7 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
         contract = _contract_with_metadata(source, source_language, target_language, result.javascript, validation)
         acceptance = _acceptance_policy(contract, risk_assessment, validation,
                                         unsupported=bool(result.unsupported), llm_candidate=has_llm_candidate)
-        if acceptance['eligible_for_use']:
+        if acceptance['eligible_for_use'] and store_validated_example:
             save_validated_example(source,result.javascript,result.ir,validation)
         if enable_learned_rules and acceptance['learned_rule_storage_allowed']:
             learned_rule = learn_generalized_rule(

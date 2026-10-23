@@ -18,14 +18,24 @@ algorithm or a demonstrated accuracy improvement.
   executed against native source-language compilers or reviewed by a second human. The
   two-task test set is not representative and does not establish general semantic
   equivalence.
-- Prompt-v3 refresh from pushed commit `ade68dc`: no candidate returned after three
-  provider attempts for either target; no fallback effectiveness claim is supported.
-- Contracts, risk scores, failure records, and learned-rule examples are prototype
-  diagnostics. No ablation or causal benefit is claimed.
+- The historical prompt-v3 paired benchmark at pushed commit `ade68dc` returned no
+  candidate after three provider attempts for either target. A later fixed, single-input
+  provider trial generated JavaScript and Python candidates; both passed their recorded
+  runtime check and matched one predeclared output. The Python review record also reports
+  three fixture-variant matches. These trial candidates remain unaccepted: source and
+  human review gates are pending, and the COBOL source was not checked with a native
+  compiler. Neither run establishes fallback effectiveness.
+- Contract and risk checks gate finite-test eligibility and learned-rule storage; the
+  learned-rule store only reuses matching templates. Their benefit has not been measured,
+  and no ablation or causal improvement is claimed.
 - No scalability or multilingual-bias experiment was performed; neither is a paper
   contribution or finding.
 
 ## Submission package
+
+The user has said this is not currently being prepared for ICSE submission. The checklist
+below is retained only if a submission package is requested later; it is separate from
+the prototype's reproducibility and evidence-polish work.
 
 The track-specific source is [`ICSE_2027_TOOL_DEMO.tex`](./ICSE_2027_TOOL_DEMO.tex).
 The track requires IEEE conference format, a maximum of four pages including

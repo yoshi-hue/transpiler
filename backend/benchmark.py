@@ -6,6 +6,7 @@ This module also supports a controlled rule-only vs hybrid evaluation with
 per-language and per-construct breakdowns, fallback frequency, latency, and
 validation-failure tracking for research reporting.
 """
+import hashlib
 import json
 import re
 import statistics
@@ -166,7 +167,12 @@ def _required_construct_coverage(language, case_name, rules_used, source=None):
 def _case_result(language, case_name, source, target, *, enable_llm, enable_learned_rules=False):
     metadata = _case_metadata(language, case_name, source)
     try:
-        result = transpile(source, language, target, enable_llm=enable_llm, enable_learned_rules=enable_learned_rules)
+        result = transpile(
+            source, language, target,
+            enable_llm=enable_llm,
+            enable_learned_rules=enable_learned_rules,
+            store_validated_example=False,
+        )
     except Exception as exc:
         return {
             'language': language,
@@ -251,6 +257,11 @@ def _case_result(language, case_name, source, target, *, enable_llm, enable_lear
         'llm_latency_ms': llm_latencies,
         'llm_cost_usd': None,
         'candidate_generated': sum(suggestion.get('candidate_status') == 'candidate_generated' for suggestion in suggestions),
+        'candidate_sha256': [
+            hashlib.sha256(suggestion['candidate'].encode('utf-8')).hexdigest()
+            for suggestion in suggestions
+            if isinstance(suggestion.get('candidate'), str)
+        ],
         'candidate_syntax_valid': sum(bool(suggestion.get('target_syntax_valid')) for suggestion in suggestions),
         'candidate_runtime_valid': sum(bool(suggestion.get('target_runtime_valid')) for suggestion in suggestions),
         'candidate_runtime_checked': sum(suggestion.get('target_runtime_valid') is not None for suggestion in suggestions),
@@ -445,7 +456,12 @@ def run_benchmark(target='JavaScript', cases=None):
     results = []
     for language, case_name, source in run_cases:
         try:
-            r = transpile(source, language, target, enable_llm=False, enable_learned_rules=False)
+            r = transpile(
+                source, language, target,
+                enable_llm=False,
+                enable_learned_rules=False,
+                store_validated_example=False,
+            )
             results.append({
                 'language': language,
                 'case': case_name,
@@ -528,7 +544,7 @@ def run_benchmark(target='JavaScript', cases=None):
     }
 
 
-def run_experiment(target='JavaScript', cases=None, repeats=1):
+def run_experiment(target='JavaScript', cases=None, repeats=1, enable_llm=False):
     run_cases = list(DEFAULT_CASES if cases is None else cases)
     rule_only_results = []
     hybrid_results = []
@@ -537,7 +553,7 @@ def run_experiment(target='JavaScript', cases=None, repeats=1):
     for _ in range(repeats):
         for language, case_name, source in run_cases:
             rule_only_results.append(_case_result(language, case_name, source, target, enable_llm=False))
-            hybrid_results.append(_case_result(language, case_name, source, target, enable_llm=True))
+            hybrid_results.append(_case_result(language, case_name, source, target, enable_llm=enable_llm))
 
     safeguards_results = _run_safeguards_arm(run_cases, target, repeats, seed_development=(cases is None))
 
@@ -584,6 +600,7 @@ def run_experiment(target='JavaScript', cases=None, repeats=1):
             for language, case_name, _ in EXTERNAL_CASES
         ),
         'repeats': repeats,
+        'llm_enabled': enable_llm,
         'rule_only': rule_only,
         'hybrid': hybrid,
         'contracts_risk_learned_rules': safeguards,
@@ -593,6 +610,7 @@ def run_experiment(target='JavaScript', cases=None, repeats=1):
             'learned_rule_protocol': 'The safeguards arm seeds its local learned-rule store from development cases only, then evaluates held-out cases. No held-out case is used to teach a later held-out case.',
             'shared_mechanisms': ['risk-aware finite validation and contract reporting are part of the common translator path and cannot be disabled safely; this experiment does not estimate their individual causal effects'],
             'limitations': ['The pilot has only two held-out task groups and project-authored task adaptations; results are descriptive, not a generalization estimate.'],
+            'live_provider_replayability': 'Provider-enabled runs can vary across requests. Candidate hashes, provider/model/prompt metadata, request IDs, and case results are recorded; they do not make model generation deterministic.',
         },
         'summary': summary,
     }
@@ -610,9 +628,19 @@ def _run_safeguards_arm(run_cases, target, repeats, *, seed_development):
             if seed_development:
                 for language, case_name, source in EXTERNAL_CASES:
                     if _EXTERNAL_CASE_METADATA[(language, case_name)]['split'] == 'development':
-                        transpile(source, language, target, enable_llm=False, enable_learned_rules=True)
+                        transpile(
+                            source, language, target,
+                            enable_llm=False,
+                            enable_learned_rules=True,
+                            store_validated_example=False,
+                        )
                 for language, case_name, source in CASES:
-                    transpile(source, language, target, enable_llm=False, enable_learned_rules=True)
+                    transpile(
+                        source, language, target,
+                        enable_llm=False,
+                        enable_learned_rules=True,
+                        store_validated_example=False,
+                    )
             for _ in range(repeats):
                 for language, case_name, source in run_cases:
                     results.append(_case_result(language, case_name, source, target,

@@ -318,6 +318,7 @@ def test_experiment_summary_reports_rule_and_hybrid_breakdown():
     )
     assert report['rule_only']['total'] == 1
     assert report['hybrid']['total'] == 1
+    assert report['llm_enabled'] is False
     assert 'summary' in report
     assert 'by_language' in report['summary']
     assert 'llm_latency_ms' in report['hybrid']['metrics']
@@ -341,6 +342,7 @@ def test_experiment_endpoint_exposes_controlled_ablation(monkeypatch):
     monkeypatch.setenv('LLM_API_KEY', '')
     response = experiment('JavaScript', repeats=1)
     assert response['ok'] is True
+    assert response['llm_enabled'] is False
     assert response['rule_only']['total'] == response['hybrid']['total']
     assert response['rule_only']['total'] == response['contracts_risk_learned_rules']['total']
     assert response['summary']['overall']['delta_success_rate_percent'] >= 0
@@ -348,6 +350,21 @@ def test_experiment_endpoint_exposes_controlled_ablation(monkeypatch):
     assert response['ablation_scope']['shared_mechanisms']
     assert response['hybrid']['accepted_llm_candidates'] == 0
     assert 'human reviewer effort' in response['ablation_scope']['candidate_acceptance']
+
+
+def test_benchmark_does_not_persist_validated_examples(monkeypatch):
+    from backend import transpiler
+    from backend.benchmark import run_benchmark
+
+    def unexpected_persist(*_args, **_kwargs):
+        raise AssertionError('benchmark runs must not write to the validated-example store')
+
+    monkeypatch.setattr(transpiler, 'save_validated_example', unexpected_persist)
+    report = run_benchmark(
+        'JavaScript',
+        cases=[('BASIC', 'arithmetic', '10 LET A = 4\n20 LET B = 6\n30 PRINT A + B\n40 END')],
+    )
+    assert report['passed'] == 1
 
 
 def test_experiment_counts_candidate_only_when_independent_oracle_matches(monkeypatch):

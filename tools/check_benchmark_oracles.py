@@ -8,7 +8,6 @@ import argparse
 import hashlib
 import json
 import re
-from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -86,7 +85,7 @@ for case in cases:
     })
 
 record = {
-    'timestamp_utc': datetime.now(timezone.utc).isoformat(),
+    'schema_version': '2.0',
     'method': 'separate regex input extraction plus direct max/range/repetition calculation; no transpiler or source interpreter imports',
     'limitation': 'Not an independently executed native compiler and not an independent human review.',
     'benchmark_sha256': hashlib.sha256(CASES_PATH.read_bytes()).hexdigest(),

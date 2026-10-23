@@ -37,6 +37,14 @@ def test_frontend_surfaces_llm_candidates_separately_from_validated_code():
     assert 'This model-generated program is not semantically validated' in frontend
 
 
+def test_frontend_explains_subset_validation_and_candidate_limits():
+    frontend = (ROOT / 'frontend' / 'index.html').read_text(encoding='utf-8')
+    assert 'Supported subset by source language' in frontend
+    assert 'finite source/target I/O checks on tested inputs' in frontend
+    assert 'Model output is a separate candidate and is never automatically accepted' in frontend
+    assert 'Allow live LLM requests (variable results)' in frontend
+
+
 def test_frontend_loads_a_supported_llm_example_for_python_like_selection():
     frontend = (ROOT / 'frontend' / 'index.html').read_text(encoding='utf-8')
     assert "if(language==='Python-like')" in frontend

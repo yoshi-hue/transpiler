@@ -112,6 +112,30 @@ task-derived examples, source hashes, expected outputs/outcomes, source provenan
 license status, and task split grouping. It is deliberately explicit that adapted
 Rosetta Code cases contain project-authored source, not copied Rosetta Code programs.
 
+## Independent-source curation log
+
+[`corpus_exclusions.jsonl`](./corpus_exclusions.jsonl) records external-source leads
+that were assessed but not admitted. Exclusion records preserve the source/repository,
+task grouping, split disposition, license review, source hash status, original build
+status, fixture/oracle status, and specific exclusion reasons. A missing source hash is
+explicitly marked as unavailable; it must not be replaced with a hash of a URL or a
+derived/transformed source.
+
+The Exercism COBOL Hello World lead is excluded: its `src/hello-world.cob` file is an
+unfinished student starter, and the exact candidate revision, build, fixture, and oracle
+were not independently verified. The track repository documents a test command for
+example implementations, which is useful provenance but does not establish that this
+starter is a valid solution. The local CodeNet audit is still pending because the source
+archive is absent; CodeNet metadata counts or prototype-screen passes are not eligible
+corpus cases.
+
+Do not promote an exclusion into `corpus_manifest.jsonl` until all of the following are
+complete for the exact immutable source revision: compute and verify its source SHA-256;
+establish applicable redistribution/use terms; run the original build/test command or
+record an independently verifiable accepted status; preserve predeclared fixtures; check
+their expected outputs against an independent oracle; and assign the whole task/repository
+group to one split. Record exclusions when any gate fails or cannot be checked.
+
 ## Reproduction
 
 From the repository root:

@@ -5,13 +5,17 @@ template for one ordered IR schema; it does not infer new source semantics.
 """
 import hashlib
 import json
+import os
 import re
 from pathlib import Path
 from threading import Lock
 
 from .rules import RULE_TABLE_VERSION
 
-RULE_STORE = Path(__file__).resolve().parent.parent / 'data' / 'learned_rules.jsonl'
+RULE_STORE = Path(os.getenv(
+    'LEARNED_RULES_PATH',
+    str(Path(__file__).resolve().parent.parent / 'data' / 'learned_rules.jsonl'),
+))
 _STORE_LOCK = Lock()
 LEARNER_SCHEMA_VERSION = 2
 

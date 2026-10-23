@@ -18,7 +18,7 @@ The main implementation/evaluation boundaries are:
 
 - Front ends, normalized representation, deterministic generation, and finite execution checks are implemented for the subsets in [`data/supported_subset.json`](./data/supported_subset.json).
 - A scoped primary-source audit and related-work reading list are documented in [`data/PROJECT_OBJECTIVES_AND_GAPS.md`](./data/PROJECT_OBJECTIVES_AND_GAPS.md). They partially address the survey/gap objectives; they are not an exhaustive or systematic review.
-- The LLM fallback can request a complete-program candidate for unsupported input and displays it separately from acceptance while retaining deterministic partial output. JavaScript candidates run in Node's permission mode; Python candidates receive syntax checks only. Candidates are never automatically accepted. Prompt v3 was confirmed in a fresh server from commit `ade68dc`; the refreshed paired run produced no candidate after three provider request attempts for the unsupported COBOL case per target. See [`data/EVIDENCE_V3_REFRESH.md`](./data/EVIDENCE_V3_REFRESH.md).
+- The LLM fallback can request a complete-program candidate for unsupported input and displays it separately from acceptance while retaining deterministic partial output. JavaScript candidates run in Node's permission mode; Python candidates can run in an isolated Docker container. The fixed COBOL `PERFORM` provider trial generated both target candidates; each passed its recorded runtime check and matched one predeclared expected output. The Python review report also records three fixture-variant matches. Both candidates remain unaccepted because human review and some other acceptance gates are pending. The earlier paired 24-case v3 benchmark produced no candidate after three provider attempts per target; it remains a historical result, not a contradiction. See the [provider trial](./data/provider_trial_latest.json), [Python trial](./data/provider_trial_latest_python.json), and [acceptance review](./data/provider_trial_python_acceptance_review.json).
 - Contracts gate local rule storage, risk profiles select repeatability checks and high-risk review, and learned statement templates can generate matching restricted programs. These safeguards and transformations have not yet shown a causal correctness improvement.
 - Scalability and multilingual-bias experiments were not conducted and are not claimed contributions or findings. The unidentified “Xu et al. 2026” citation was removed from the paper framing.
 
@@ -65,7 +65,7 @@ The paper is framed as an early tool demonstration: a prototype that exposes its
 
 When configured, the prototype requests a complete target-program candidate when the parser reports unsupported constructs. It sends the full source program so the model can preserve ordering and combine supported and unsupported statements. This is more than a fragment suggestion but remains probabilistic output.
 
-The candidate becomes the displayed/downloadable target output, but the translator does not mark it accepted. JavaScript candidates receive a syntax check and are executed in Node's permission-restricted mode with secrets removed from the child environment. Python candidates receive syntax validation and run only in a no-network, read-only, resource-limited Docker container; if Docker is unavailable, they are not executed. Even a successful run establishes only behavior on tested inputs. The LLM fallback is therefore not yet a general-purpose or production-ready migration path.
+The candidate becomes the displayed/downloadable target output, but the translator does not mark it accepted. JavaScript candidates receive a syntax check and are executed in Node's permission-restricted mode with secrets removed from the child environment. Python candidates receive syntax validation and, when Docker is available, run in a no-network, read-only, resource-limited container. A runtime pass establishes behavior only on the recorded inputs; acceptance still requires source review, independent fixtures, security review, regression checks, and human review. The LLM fallback is not a general-purpose migration path.
 
 ## Research-grade translation safeguards
 
@@ -75,7 +75,7 @@ The risk profile selects repeatability runs, and the acceptance policy gates eli
 
 ## Evaluation strategy and benchmark design
 
-The benchmark has 16 development examples and a 20-case held-out set grouped by whole task. It adds tie, singleton-range, and expanded-range cases; three COBOL `PERFORM` variants remain expected-unsupported. Expected outputs are separately authored from fixed constants and loop semantics and checked by a separate reference evaluator (20/20); they have not been checked against native source compilers. This remains a small task-derived benchmark, not a representative corpus. The refreshed v3 paired run is a historical 24-case baseline from the pushed commit; fallback requests failed, so it provides no candidate effectiveness result.
+The manifest has 36 records: 12 local smoke cases, four development task adaptations, and a 20-case held-out set grouped into two tasks. The held-out set adds tie, singleton-range, and expanded-range cases; three COBOL `PERFORM` variants remain expected-unsupported. Expected outputs are separately authored from fixed constants and loop semantics and checked by a separate reference evaluator (20/20); they have not been checked against native source compilers. This remains a small task-derived benchmark, not a representative corpus. The historical v3 paired run is a 24-case baseline; the later one-source provider smoke trial generated and runtime-checked a candidate for each target but did not satisfy acceptance gates.
 
 Reproduce the held-out benchmark and its separate expected-output check with:
 
@@ -142,6 +142,8 @@ installs dependencies. The default Compose service does not load `.env`, so the 
 cannot make external model requests. To explicitly enable the optional fallback, set
 `LLM_API_KEY` in a local `.env` file and start with
 `docker compose -f compose.yaml -f compose.llm.yaml up --build`. Never commit `.env`.
+The container stores learned-rule and validated-example records under `/tmp`; those
+local demo records last only for the lifetime of the container.
 
 After publishing a version tag and making the GitHub Container Registry package public,
 users can run the prebuilt image without building source:
@@ -184,7 +186,7 @@ Useful paper/demo API endpoints:
 
 - `GET /rules` returns the JSON rules dataset with coverage counts, family breakdowns, and rule metadata.
 - `GET /benchmark?target=JavaScript` runs the curated benchmark.
-- `GET /experiment?target=JavaScript&repeats=1` runs the rule-only vs hybrid ablation.
+- `GET /experiment?target=JavaScript&repeats=1` runs the offline three-arm ablation. Add `&enable_llm=true` only to allow live model requests.
 
 Node.js is required for JavaScript target execution; Python 3 is required for the Python target.
 
@@ -203,7 +205,9 @@ The frontend and backend can still be run together locally using the instruction
 
 ## Evaluation
 
-Install the development dependencies and run the project suite with:
+The checked environment uses Python 3.13.1 and Node.js 24.20.0. Runtime and development
+requirements are pinned, so a clean environment resolves the same package versions. Install
+development dependencies and run the project suite with:
 
 ```bash
 python -m pip install -r requirements-dev.txt
@@ -218,8 +222,10 @@ Run the benchmark from the UI or:
 GET /benchmark?target=JavaScript
 ```
 
-The benchmark combines 12 transparent local cases with 12 task-derived cases based on
-independently published Rosetta Code prompts. The adapted source, task URLs, expected
+The held-out benchmark evaluates 20 task-derived cases based on independently published
+Rosetta Code prompts. The complete manifest also retains 12 local smoke cases and four
+development task adaptations, which are excluded from held-out scoring. The adapted
+source, task URLs, expected
 unsupported outcomes, independently authored expected outputs, and required construct labels are in
 [`data/external_task_cases.jsonl`](./data/external_task_cases.jsonl). These are
 task-derived adaptations, not independently collected legacy source programs. Reported
@@ -237,7 +243,7 @@ measure. Do not use its entry count or status labels as evidence of language sup
 
 The implemented subset is enumerated in [`data/supported_subset.json`](./data/supported_subset.json);
 screening and oracle policy are in [`data/CORPUS_PROTOCOL.md`](./data/CORPUS_PROTOCOL.md).
-[`data/corpus_manifest.jsonl`](./data/corpus_manifest.jsonl) records the current 24 cases,
+[`data/corpus_manifest.jsonl`](./data/corpus_manifest.jsonl) records the current 36 cases,
 source hashes, provenance, expected output/outcome, license status, and task-group split.
 The current set is a pilot, not an independent corpus.
 
@@ -246,6 +252,23 @@ Validate the committed manifest:
 ```powershell
 python tools\corpus.py validate-manifest
 ```
+
+Recreate stable benchmark reports (no timestamps, secrets, or local worktree state are
+written into the JSON):
+
+```powershell
+python tools\check_benchmark_oracles.py --output data\oracle_v3_check.json
+python tools\run_test_benchmark.py --target JavaScript --output data\reproducible_benchmark_v1_javascript.json
+python tools\run_test_benchmark.py --target Python --output data\reproducible_benchmark_v1_python.json
+python tools\run_ablation.py --target JavaScript --output data\reproducible_ablation_v1_javascript.json
+python tools\run_ablation.py --target Python --output data\reproducible_ablation_v1_python.json
+```
+
+The ablation command disables LLM requests unless `--enable-llm` is explicitly supplied.
+The offline report is reproducible for the same source hashes and Python/Node versions.
+Live provider results can vary and must be treated as separate trials. Docker Compose setup
+also has a local capture/profile exclusion in `.dockerignore`; do not commit `.env`, browser
+profiles, screenshots, or local debug logs.
 
 For a CodeNet audit, first obtain and extract the official archive yourself; the
 documented full archive is 7.8 GB. Then run:

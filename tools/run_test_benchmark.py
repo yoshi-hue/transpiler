@@ -1,10 +1,9 @@
 """Run the deterministic held-out test split and archive case-level provenance."""
 import argparse
+import hashlib
 import json
-import platform
 import subprocess
 import sys
-from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -21,21 +20,40 @@ def _version(command):
         return None
 
 
+def _sha256(path):
+    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+
+def _implementation_sha256():
+    digest = hashlib.sha256()
+    for path in sorted((ROOT / 'backend').glob('*.py')):
+        digest.update(path.relative_to(ROOT).as_posix().encode('utf-8'))
+        digest.update(b'\0')
+        digest.update(path.read_bytes())
+        digest.update(b'\0')
+    return digest.hexdigest()
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--target', required=True, choices=['JavaScript', 'Python'])
 parser.add_argument('--output', required=True)
 args = parser.parse_args()
 
 record = {
-    'timestamp_utc': datetime.now(timezone.utc).isoformat(),
-    'command': f'python tools/run_test_benchmark.py --target {args.target} --output {args.output}',
-    'python_version': sys.version,
-    'platform': platform.platform(),
-    'node_version': _version(['node', '--version']),
+    'schema_version': '2.0',
+    'runner': 'tools/run_test_benchmark.py',
+    'runtime': {
+        'python': sys.version.split()[0],
+        'node': _version(['node', '--version']),
+    },
     'target': args.target,
-    'git_commit': _version(['git', 'rev-parse', 'HEAD']),
-    'worktree_modified': bool(_version(['git', 'status', '--porcelain'])),
-    'llm_enabled': False,
+    'inputs': {
+        'task_cases_sha256': _sha256(ROOT / 'data' / 'external_task_cases.jsonl'),
+        'supported_subset_sha256': _sha256(ROOT / 'data' / 'supported_subset.json'),
+        'backend_implementation_sha256': _implementation_sha256(),
+        'runner_sha256': _sha256(__file__),
+    },
+    'settings': {'llm_enabled': False, 'learned_rules_enabled': False, 'split': 'test'},
     'benchmark': run_benchmark(args.target),
 }
 output = Path(args.output)

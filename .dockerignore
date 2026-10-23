@@ -1,10 +1,15 @@
 .git
 .env
+.env.*
+!.env.example
 .venv
 __pycache__
 .pytest_cache
 *.pyc
 data/*profile*/
+data/*capture*/
 data/screenshot_automation/
+data/report_screenshots/
+data/submission_evidence_*/
 data/*debug*.log
 data/simple_test.png

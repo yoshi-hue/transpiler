@@ -39,6 +39,11 @@ not pass `.env` into the container. For local development, see **Run locally** i
    the separate fallback status. Without a configured provider, the request is
    skipped. With a provider, any returned candidate is still unaccepted and requires
    the review process in `CANDIDATE_ACCEPTANCE.md`.
+   If discussing the fixed COBOL `PERFORM` provider trial, show its report separately:
+   both target candidates passed the recorded runtime check and matched one predeclared
+   output, while the Python review report records 3/3 fixture-variant matches. State that
+   these are one-source smoke results, the source was not native-compiler checked, and
+   required reviews remain pending.
 4. **State the evidence boundary (30 seconds).** The held-out pilot contains 20
    records from two task groups. Seventeen supported outputs matched project-authored
    expected outputs for each target; three unsupported COBOL loop cases were

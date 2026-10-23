@@ -30,10 +30,11 @@ proposals, and finite validation results. The model output remains an unaccepted
 candidate. On a 20-case task-grouped pilot, both targets passed 17 supported cases and
 matched all 17 separately authored expected outputs; three COBOL loop cases were
 correctly reported unsupported. These expected outputs have not been checked against
-native source compilers. A separate refresh at pushed commit ade68dc confirmed prompt
-v3 and the configured Gemini model but returned no candidate after three provider
-attempts per target. The prototype therefore demonstrates inspectable boundaries and
-failure reporting, not an LLM effectiveness gain or general semantic equivalence.
+native source compilers. The historical paired model benchmark returned no candidate;
+a later fixed, single-input trial generated JavaScript and Python candidates that each
+matched one predeclared expected output. Both remain unaccepted pending review. The
+prototype demonstrates inspectable boundaries, not an effectiveness gain or general
+semantic equivalence.
 Demonstration video: \url{[PUBLIC_YOUTUBE_VIDEO_URL]}
 \end{abstract}
 
@@ -118,9 +119,12 @@ if (A > B) {
 
 JavaScript candidates are syntax-checked and executed using Node's permission mode,
 with a timeout and a reduced child environment. Python candidates are syntax-checked
-only and are not executed. Neither behavior is a complete security sandbox or semantic
-acceptance gate. The current [candidate acceptance policy](CANDIDATE_ACCEPTANCE.md)
-requires multi-case evidence and human review before any future acceptance workflow.
+and, when Docker is available, run in an isolated no-network, read-only container with
+resource limits. A separate Python trial report records three fixture-variant matches;
+the COBOL source layout remains unspecified and has not been compiler-checked. Neither
+runtime path is a complete security sandbox or semantic acceptance gate. The current
+[candidate acceptance policy](CANDIDATE_ACCEPTANCE.md) requires independent evidence
+and human review before any candidate could be accepted.
 
 \section{Evaluation and Limitations}
 We ran the deterministic benchmark against JavaScript and Python. The test split has
@@ -155,14 +159,17 @@ task groups and is not a representative estimate of translation accuracy. The or
 24-case paired refresh at pushed commit \texttt{ade68dc} used
 \texttt{gemini-3.1-flash-lite} and \texttt{legacy-modernizer-llm-v3}. The provider
 returned no candidate after three request attempts for the unsupported case in each
-target, and the hybrid success rate did not exceed the rule-only rate. This run supports
-no LLM effectiveness claim.
+target. In a later single-input provider smoke trial, JavaScript and Python candidates
+were generated, ran in their target checks, and matched the one fixed expected output;
+the Python review artifact also reports three fixture-variant matches. Source-format and
+human review remain pending, so both candidates are unaccepted. This is not a controlled
+comparison and supports no LLM effectiveness claim.
 
-Contracts, risk scores, failure fingerprints, and learned-rule examples are prototype
-metadata. No controlled ablation has shown that they improve correctness or review
-time. We make no scalability or multilingual-bias claim. Python candidate execution,
-independent source-language oracles, a larger task-grouped corpus, and repeated
-controlled model trials remain future work. The complete run provenance and case JSON
+Contract and risk checks gate finite-test eligibility and rule storage; learned-rule
+memory reuses only matching templates. No controlled ablation has shown that these
+mechanisms improve correctness or review time. We make no scalability or multilingual-bias claim. Native source-language oracles,
+a larger task-grouped corpus, independent human review, and repeated controlled model
+trials remain future work. The complete run provenance and case JSON
 are linked in the repository's \texttt{data/EVIDENCE\_V3\_REFRESH.md}.
 
 \section{Availability}
