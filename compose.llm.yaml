@@ -1,0 +1,4 @@
+services:
+  transpiler:
+    env_file:
+      - .env

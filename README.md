@@ -12,15 +12,14 @@ The project objectives are to survey translation approaches, identify evidence-b
 
 A course-specific DOCX report may contain personal identifiers and is maintained separately from the public repository.
 
-For the selected ICSE 2027 Tool Demonstration track, see the [submission draft](./ICSE_2027_TOOL_DEMO.tex) and [submission checklist](./CONFERENCE_DEMO_SUBMISSION.md). The track requires a four-page IEEE paper, author identities, a public tool with usage instructions, and a public three-to-five-minute video; the draft still needs verified author details and that video.
+The project report and paper draft are maintained separately from the runnable prototype. The implementation and evaluation scope are summarized below; the paper draft is supporting documentation rather than a claim of conference readiness.
 
 The main implementation/evaluation boundaries are:
 
 - Front ends, normalized representation, deterministic generation, and finite execution checks are implemented for the subsets in [`data/supported_subset.json`](./data/supported_subset.json).
 - A scoped primary-source audit and related-work reading list are documented in [`data/PROJECT_OBJECTIVES_AND_GAPS.md`](./data/PROJECT_OBJECTIVES_AND_GAPS.md). They partially address the survey/gap objectives; they are not an exhaustive or systematic review.
 - The LLM fallback can request a complete-program candidate for unsupported input and displays it separately from acceptance while retaining deterministic partial output. JavaScript candidates run in Node's permission mode; Python candidates receive syntax checks only. Candidates are never automatically accepted. Prompt v3 was confirmed in a fresh server from commit `ade68dc`; the refreshed paired run produced no candidate after three provider request attempts for the unsupported COBOL case per target. See [`data/EVIDENCE_V3_REFRESH.md`](./data/EVIDENCE_V3_REFRESH.md).
-- Contracts, risk assessments, failure fingerprints, learned-rule records, and the descriptive mapping catalogue are metadata/diagnostic features. They do not currently control acceptance or demonstrate improved correctness.
-- Metadata mechanisms (contracts, risk scores, failure records, learned-rule examples) are prototype diagnostics only; no causal benefit is claimed or measured.
+- Contracts gate local rule storage, risk profiles select repeatability checks and high-risk review, and learned statement templates can generate matching restricted programs. These safeguards and transformations have not yet shown a causal correctness improvement.
 - Scalability and multilingual-bias experiments were not conducted and are not claimed contributions or findings. The unidentified “Xu et al. 2026” citation was removed from the paper framing.
 
 ## Why this project matters
@@ -48,6 +47,15 @@ The supported-subset path is:
 ```text
 supported source → parse/normalize → deterministic target generation → finite I/O check
 ```
+
+## Rule-first, contracts, risk, and rule memory
+
+- **Rule-first generation:** the documented deterministic front ends and code generators run before any optional LLM fallback. Unsupported syntax is reported; an LLM result remains a separate candidate.
+- **Executable contract checks:** each result includes a source hash and checks for complete supported-source coverage, target execution, finite output agreement, and any risk-selected repeatability checks. “Satisfied” applies only to the tested inputs; the source-side oracle is the project interpreter, not a native compiler.
+- **Risk-aware validation:** source features select one, two, or three source/target executions to check repeatability. High-risk programs are marked for human review and are excluded from learned-rule storage. Repeated runs are a determinism check, not additional input coverage.
+- **Learned-rule memory:** a successful low/medium-risk deterministic example can induce a statement-pattern rule. The current learner handles flat assignment/print programs with single number, string, boolean, or identifier expressions. It abstracts the variable/literal values into slots, persists the rule locally in ignored `data/learned_rules.jsonl`, and revalidates each match. Loops, branches, compound expressions, and LLM candidates are not learned.
+
+The arithmetic “property validation” field is currently marked `not_run`; the prototype does not invent property-test expectations from source text.
 
 ## Research positioning
 
@@ -109,11 +117,54 @@ LLM_EXTRA_HEADERS={"HTTP-Referer":"https://localhost:8000","X-Title":"Mini Trans
 
 The UI's **Test LLM connection** button makes a real request to the configured endpoint. It reports the model, request ID and latency without exposing the secret key.
 
-## Run
+## Run with Docker
+
+The prototype walkthrough uses the included container, which provides Python and Node.js
+for both target paths. From the repository root:
 
 ```bash
-pip install -r requirements.txt
-python -m uvicorn backend.main:app --reload
+docker compose up --build
+```
+
+Open <http://127.0.0.1:8000>. Press Ctrl+C to stop. The first run builds the image and
+installs dependencies. The default Compose service does not load `.env`, so the demo
+cannot make external model requests. To explicitly enable the optional fallback, set
+`LLM_API_KEY` in a local `.env` file and start with
+`docker compose -f compose.yaml -f compose.llm.yaml up --build`. Never commit `.env`.
+
+After publishing a version tag and making the GitHub Container Registry package public,
+users can run the prebuilt image without building source:
+
+```bash
+docker compose -f compose.image.yaml up
+```
+
+The `v*` tag workflow publishes the versioned and `latest` images. The repository owner
+must publish a release tag and set the GHCR package visibility to public before this
+pull-based path is available.
+
+For the first release, after reviewing the final source and passing CI:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+Wait for **Publish demo container** to pass in GitHub Actions, make the generated
+`ghcr.io/yoshi-hue/transpiler` package public in the repository's Packages settings, and
+verify the `compose.image.yaml` pull path from a clean machine.
+
+The guided demo sequence is in [`DEMO_WALKTHROUGH.md`](./DEMO_WALKTHROUGH.md).
+
+## Run locally
+
+```bash
+python -m venv .venv
+# Windows PowerShell:
+.\.venv\Scripts\Activate.ps1
+# macOS/Linux: source .venv/bin/activate
+python -m pip install -r requirements.txt
+python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
 ```
 
 Open `http://127.0.0.1:8000`.
@@ -134,11 +185,21 @@ GitHub Pages only hosts static files; it cannot run this project's Python/FastAP
 
 1. Deploy the FastAPI app (`backend.main:app`) to a Python-capable host.
 2. Set `LLM_API_KEY` and any other LLM settings as environment variables on that host if you want LLM fallback. Never put the key in the frontend or GitHub Pages.
-3. Set `window.TRANSPILER_API_BASE_URL` in [`frontend/config.js`](./frontend/config.js) to the backend's public origin (for example, `https://your-backend.example.com`), then push the change. Do not include an API path or trailing slash.
+3. Set `CORS_ALLOWED_ORIGINS` on the backend to a comma-separated list of exact frontend origins (for example, `https://yoshi-hue.github.io`). Same-origin deployments do not need CORS. The API does not enable credentialed cross-origin requests.
+4. Set `window.TRANSPILER_API_BASE_URL` in [`frontend/config.js`](./frontend/config.js) to the backend's public origin (for example, `https://your-backend.example.com`), then push the change. Do not include an API path or trailing slash.
 
 The frontend and backend can still be run together locally using the instructions above; leave the API URL empty in `frontend/config.js` in that case.
 
 ## Evaluation
+
+Install the development dependencies and run the project suite with:
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m pytest -q
+```
+
+The release workflow runs this suite before publishing a container tag.
 
 Run the benchmark from the UI or:
 
@@ -204,14 +265,14 @@ For a future research evaluation, the desired ablation chain is:
 2. rule-first + configured LLM fallback
 3. rule-first + contracts + risk-aware validation + learned rules
 
-The third variant is a future experiment, not a currently implemented ablation. The
-current experiment only causally compares rule-only behavior with optional LLM
-candidate generation. LLM candidates replace deterministic partial output in configured
-hybrid runs, and
-contracts, risk scores, and learned-rule metadata do not currently change generation or
-acceptance. They must not be presented as ablated effectiveness improvements. The 95%
-Wilson interval is reported because this benchmark is small; larger independent
-collections are needed before making general claims.
+The third path is now implemented for a restricted assignment/print pattern, but the
+current experiment does not evaluate it as a separate ablation. Risk profiles select
+repeatability checks and a high-risk review gate; learned patterns can supply target
+templates for matching scalar assignment/print programs and are revalidated. No
+improvement from contracts, risk selection, or pattern reuse has been established.
+Configured hybrid runs may still display an LLM candidate in place of deterministic
+partial output. The 95% Wilson interval is reported because this benchmark is small;
+larger independent collections are needed before making general claims.
 
 Keep the model, prompt version, temperature, benchmark, runtime, and rule table fixed. See `LLM_EVALUATION.md` for the recommended protocol.
 

@@ -1,0 +1,5 @@
+services:
+  transpiler:
+    image: ghcr.io/yoshi-hue/transpiler:latest
+    ports:
+      - "127.0.0.1:8000:8000"

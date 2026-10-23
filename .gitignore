@@ -4,3 +4,4 @@ __pycache__/
 .pytest_cache/
 evaluation_result.json
 data/validated_examples.jsonl
+data/learned_rules.jsonl

@@ -70,7 +70,9 @@ def test_legacy_language_validation():
     for language, source in examples.items():
         result = transpile(source, language, 'JavaScript')
         assert result['validation']['status'] == 'passed'
-        assert result['pipeline_trace'][-1]['stage'] == 'validation'
+        stages = [item['stage'] for item in result['pipeline_trace']]
+        assert 'validation' in stages
+        assert stages[-1] == 'learned_rule'
         assert result['unsupported'] == []
 
 
@@ -408,7 +410,9 @@ def test_translation_contract_is_generated_for_valid_translation():
     assert contract['function'] == 'program'
     assert contract['output'] == 'number|string'
     assert 'source_api' in contract
-    assert contract['translation_status'] in ('verified', 'pending')
+    assert contract['translation_status'] in ('satisfied_for_tested_inputs', 'pending', 'review_required')
+    assert contract['confidence'] is None
+    assert contract['confidence_basis'] == 'not calibrated'
 
 
 def test_risk_assessment_and_failure_fingerprint_are_exposed():
@@ -419,11 +423,68 @@ def test_risk_assessment_and_failure_fingerprint_are_exposed():
     assert result['failure_fingerprint']['stage'] in ('syntax', 'unsupported')
 
 
-def test_rule_learning_tracks_verified_fallback_rules():
-    result = transpile('x = 2\nprint(x + 1)\n')
-    evolution = result['rule_evolution']
-    assert 'learned_rules' in evolution
-    assert 'rule_coverage_gain' in evolution
+def test_one_example_learns_a_generalized_rule_for_a_new_program(monkeypatch, tmp_path):
+    from backend import learned_rules
+    monkeypatch.setattr(learned_rules, 'RULE_STORE', tmp_path / 'learned_rules.jsonl')
+    first = transpile('10 LET A = 10\n20 PRINT A', 'BASIC', 'JavaScript')
+    second = transpile('10 LET B = 27\n20 PRINT B', 'BASIC', 'JavaScript')
+    assert first['validation']['status'] == 'passed'
+    assert first['learned_rule']['generalizes'] is True
+    assert second['rule_evolution']['reused'] is True
+    assert second['javascript'] == 'let B = 27;\nconsole.log(B);'
+    assert second['validation']['status'] == 'passed'
+    assert second['translation_contract']['checks']
+    assert len(second['learned_rule']['examples']) == 2
+
+
+def test_python_like_scalar_example_generalizes_to_new_identifiers_and_values(monkeypatch, tmp_path):
+    from backend import learned_rules
+    monkeypatch.setattr(learned_rules, 'RULE_STORE', tmp_path / 'learned_rules.jsonl')
+    first = transpile('value = 3\nprint(value)\n')
+    second = transpile('count = 8\nprint(count)\n')
+    assert first['learned_rule']['generalizes'] is True
+    assert second['rule_evolution']['reused'] is True
+    assert second['javascript'] == 'let count = 8;\nconsole.log(count);'
+    assert second['validation']['status'] == 'passed'
+
+
+def test_pattern_learner_refuses_compound_expressions(monkeypatch, tmp_path):
+    from backend import learned_rules
+    monkeypatch.setattr(learned_rules, 'RULE_STORE', tmp_path / 'learned_rules.jsonl')
+    result = transpile('10 LET A = 10 + 2\n20 PRINT A', 'BASIC', 'JavaScript')
+    assert result['validation']['status'] == 'passed'
+    assert result['learned_rule'] is None
+
+
+def test_high_risk_profile_requires_review_and_selects_repeated_checks():
+    result = transpile('10 GOTO 100\n100 END', 'BASIC', 'JavaScript')
+    risk = result['risk_assessment']
+    assert risk['level'] == 'high'
+    assert risk['validation_profile']['runtime_runs'] == 3
+    assert risk['validation_profile']['manual_review_required'] is True
+
+
+def test_medium_risk_validation_repeats_source_and_target():
+    from backend.transpiler import _risk_assessment, _validate_with_risk
+    risk = _risk_assessment('while x < 2', 'Python-like', 'JavaScript')
+    calls = {'source': 0, 'target': 0}
+
+    def source_runner():
+        calls['source'] += 1
+        return '2'
+
+    def target_runner():
+        calls['target'] += 1
+        return {'available': True, 'ok': True, 'output': '2', 'error': ''}
+
+    validation = _validate_with_risk(
+        '2', {'available': True, 'ok': True, 'output': '2', 'error': ''},
+        source_runner, target_runner, risk, 'JavaScript',
+    )
+    assert risk['level'] == 'medium'
+    assert calls == {'source': 1, 'target': 1}
+    assert validation['status'] == 'passed'
+    assert validation['checks'][0]['target_runs_completed'] == 2
 
 
 def test_type_mapping_and_contract_propagation_are_exposed():
@@ -443,7 +504,8 @@ def test_dependency_order_and_idiomatic_refactor_are_applied():
 def test_property_based_validation_is_exposed_for_numeric_programs():
     result = transpile('x = 2\nprint(x + 1)\n')
     assert 'property_validation' in result
-    assert 'generated_cases' in result['property_validation']
+    assert result['property_validation']['status'] == 'not_run'
+    assert result['property_validation']['generated_cases'] == []
 
 
 def test_llm_status_rejects_placeholder_credentials(monkeypatch):

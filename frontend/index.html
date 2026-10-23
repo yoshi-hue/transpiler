@@ -153,7 +153,8 @@ pre{height:220px;padding:14px;overflow:auto;white-space:pre-wrap}
       <div class="stage"><strong>1. Lexer + Parser</strong>Tokens and syntax tree</div>
       <div class="stage"><strong>2. Semantic + IR</strong>Symbols and shared IR</div>
       <div class="stage"><strong>3. Rule-first backend</strong>Feature mapping</div>
-      <div class="stage"><strong>4. Validation</strong>Finite I/O checks</div>
+      <div class="stage"><strong>4. Contract + risk checks</strong>Finite I/O and risk-selected repeatability</div>
+      <div class="stage"><strong>5. Learned patterns</strong>Bounded templates, revalidated per match</div>
     </div>
 
     <div class="editor-grid">
@@ -288,21 +289,19 @@ pre{height:220px;padding:14px;overflow:auto;white-space:pre-wrap}
 <script src="./config.js"></script>
 <script>
 const examples={
-COBOL:`       IDENTIFICATION DIVISION.
-       PROGRAM-ID. DEMO.
-       DATA DIVISION.
-       WORKING-STORAGE SECTION.
-       01 A PIC 999 VALUE 10.
-       01 B PIC 999 VALUE 20.
-       PROCEDURE DIVISION.
-       COMPUTE SUM = A + B.
-       DISPLAY SUM.
-       IF A < B
-           DISPLAY "A IS SMALLER"
-       ELSE
-           DISPLAY "B IS SMALLER"
-       END-IF.
-       STOP RUN.`,
+COBOL:`IDENTIFICATION DIVISION.
+PROGRAM-ID. EXT-MAX.
+DATA DIVISION.
+WORKING-STORAGE SECTION.
+01 A PIC 999 VALUE 17.
+01 B PIC 999 VALUE 25.
+PROCEDURE DIVISION.
+IF A > B
+ DISPLAY A
+ELSE
+ DISPLAY B
+END-IF.
+STOP RUN.`,
 FORTRAN:`PROGRAM DEMO
 INTEGER :: A, B, SUM, I
 A = 10
@@ -382,16 +381,31 @@ const BACKEND_ERROR_MESSAGE='Could not connect to the backend. Configure its pub
 let latestTranslation=null;
 let latestExperiment=null;
 let latestRulesReport=null;
-function loadExample(){ $('sourceCode').value=examples[$('source').value]; translateCode(); }
+function clearTranslation(message='Translate the current source to see generated code and validation evidence.'){
+ latestTranslation=null;
+ $('generatedCodeTitle').textContent='Generated target code';
+ $('javascript').textContent='';
+ $('llmCandidateNote').hidden=true;
+ $('deterministicPartialPanel').hidden=true;
+ $('llmCandidateDownload').hidden=true;
+ ['tokens','ir','symbols','rules','fallbackDetails','validationDetails','traceDetails'].forEach(id=>$(id).textContent='');
+ ['coverage','validation','fallback','unsupported','fallbackStatus','llmModel','generatedLines','irNodes','irEdges','irScopes','ruleTableVersion','failureClass'].forEach(id=>$(id).textContent='—');
+ $('decisionExplanation').textContent=message;
+ $('status').textContent='Ready.';
+ $('status').className='status';
+}
+function loadExample(){ $('sourceCode').value=examples[$('source').value]; clearTranslation('Example loaded. Press Translate to generate and validate the target.'); }
 function loadFailureExample(){ $('sourceCode').value=failureExample[$('source').value] || failureExample['Python-like']; translateCode(); }
 function loadLLMExample(){ $('sourceCode').value=llmExample[$('source').value] || llmExample['Python-like']; translateCode(); }
 $('source').addEventListener('change',loadExample);
+$('target').addEventListener('change',()=>clearTranslation('Target changed. Press Translate to run the source against the selected target.'));
 async function translateCode(){
+ clearTranslation('Translation in progress...');
  const status=$('status'); status.textContent='Translating...'; status.className='status';
  try{
   const response=await fetch(apiUrl('/transpile'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:$('sourceCode').value,source_language:$('source').value,target_language:$('target').value})});
   const data=await response.json();
-  if(!data.ok){status.textContent=data.error;status.className='status fail';return;}
+  if(!response.ok || !data.ok){status.textContent=data.error||data.detail||`Translation failed (HTTP ${response.status}).`;status.className='status fail';return;}
    const suggestions=(data.fallback_suggestions||[]).filter(item=>item.candidate && item.candidate_status!=='unsupported_or_refused');
   const candidateText=suggestions.map(item=>item.candidate).join('\n\n');
   const deterministicCode=data.deterministic_code || (data.code_origin==='llm_candidate'?'':data.javascript||'');
@@ -426,18 +440,21 @@ async function translateCode(){
   $('failureClass').textContent=data.validation.failure_class || 'none';
   $('fallbackDetails').textContent=JSON.stringify({status:fb,events:data.fallback_log||[],suggestions:data.fallback_suggestions||[]},null,2);
   const v=data.validation; $('validation').textContent=v.status;
-  $('validationDetails').textContent=JSON.stringify(v,null,2);
+  $('validationDetails').textContent=JSON.stringify({validation:v,contract:data.translation_contract,risk:data.risk_assessment,learned_rule:data.learned_rule},null,2);
   $('traceDetails').textContent=JSON.stringify(data.pipeline_trace||[],null,2);
   latestTranslation=data;
   const fallbackCount=(data.fallback_log||[]).length;
   const unsupportedCount=(data.unsupported||[]).length;
+  const riskReviewRequired=data.translation_contract?.translation_status==='review_required';
   $('decisionExplanation').textContent=v.status==='passed'
-    ? `Accepted: ${data.rule_coverage.translated_units} of ${data.rule_coverage.source_units} recognized source units were translated deterministically and validation passed.`
+    ? riskReviewRequired
+      ? `Finite I/O checks passed, but the high-risk profile requires human review before this result can be used. These checks do not prove semantic equivalence.`
+      : `Finite I/O check passed: ${data.rule_coverage.translated_units} of ${data.rule_coverage.source_units} recognized source units were translated deterministically. This is not proof of semantic equivalence.`
     : unsupportedCount
       ? `Held for review: ${unsupportedCount} unsupported construct(s) were reported. Any LLM candidate is displayed separately and remains unvalidated.`
       : `Held for review: validation status is ${v.status}. The generated output is evidence, not an accepted translation.`;
-  status.textContent=(data.language_support?data.language_support.source+' subset → '+data.language_support.target+'. ':'')+(v.message||'Translation complete.');
-  status.className='status '+(v.status==='passed'?'pass':v.status==='failed'?'fail':'neutral');
+  status.textContent=(data.language_support?data.language_support.source+' subset → '+data.language_support.target+'. ':'')+(v.message||'Translation complete.')+(riskReviewRequired?' High-risk review is required.':'');
+  status.className='status '+(riskReviewRequired?'neutral':v.status==='passed'?'pass':v.status==='failed'?'fail':'neutral');
  }catch(error){status.textContent=BACKEND_ERROR_MESSAGE;status.className='status fail';}
 }
 function downloadText(filename,content,type){
@@ -449,7 +466,7 @@ async function loadRulesReport(){
  try{
   const response=await fetch(apiUrl('/rules'));
   const data=await response.json();
-  if(!response.ok || !data.ok){throw new Error(data.error||`Rules endpoint returned HTTP ${response.status}.`);}
+  if(!response.ok || !data.ok){throw new Error(data.error||data.detail||`Rules endpoint returned HTTP ${response.status}.`);}
   latestRulesReport=data;
   $('rulesVersion').textContent=data.rule_table_version||'—';
   $('rulesTotal').textContent=data.total_rules??'—';
@@ -492,6 +509,7 @@ async function runBenchmark(){
   try{
     const r=await fetch(apiUrl('/benchmark?target='+encodeURIComponent($('target').value)));
     const d=await r.json();
+    if(!r.ok || !d.ok){box.textContent=d.error||d.detail||`Benchmark failed (HTTP ${r.status}).`;return;}
     $('benchmarkSuccess').textContent=(d.success_rate_percent ?? 0)+'%';
     $('benchmarkCases').textContent=d.total ?? '—';
     $('benchmarkPassed').textContent=d.passed ?? '—';
@@ -504,7 +522,7 @@ async function runExperiment(){
  try{
   const repeats=$('experimentRepeats').value;
   const r=await fetch(apiUrl('/experiment?target='+encodeURIComponent($('target').value)+'&repeats='+repeats)); const d=await r.json();
-  if(!d.ok){box.textContent=d.error||'Experiment failed.';return;}
+  if(!r.ok || !d.ok){box.textContent=d.error||d.detail||`Experiment failed (HTTP ${r.status}).`;return;}
   latestExperiment=d;
   const overall=d.summary.overall; const hybrid=d.hybrid; const languages=d.summary.by_language||{};
   $('ruleOnlySuccess').textContent=d.rule_only.success_rate_percent+'%';

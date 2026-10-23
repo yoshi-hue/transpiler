@@ -164,7 +164,7 @@ def _required_construct_coverage(language, case_name, rules_used, source=None):
 def _case_result(language, case_name, source, target, *, enable_llm):
     metadata = _case_metadata(language, case_name, source)
     try:
-        result = transpile(source, language, target, enable_llm=enable_llm)
+        result = transpile(source, language, target, enable_llm=enable_llm, enable_learned_rules=False)
     except Exception as exc:
         return {
             'language': language,
@@ -429,7 +429,7 @@ def run_benchmark(target='JavaScript', cases=None):
     results = []
     for language, case_name, source in run_cases:
         try:
-            r = transpile(source, language, target, enable_llm=False)
+            r = transpile(source, language, target, enable_llm=False, enable_learned_rules=False)
             results.append({
                 'language': language,
                 'case': case_name,
@@ -565,7 +565,7 @@ def run_experiment(target='JavaScript', cases=None, repeats=1):
         'ablation_scope': {
             'compared_component': 'complete-program LLM fallback generation, restricted target execution, and independent expected-output matching',
             'candidate_acceptance': 'Candidate oracle matches are counted for benchmark cases only; the translator never marks model candidates accepted automatically.',
-            'not_isolated': ['semantic contracts', 'risk assessment', 'learned-rule metadata do not currently alter code generation or acceptance decisions'],
+            'not_isolated': ['semantic contracts and risk-selected checks run in both variants and are not isolated; learned rules are disabled in both variants'],
         },
         'summary': summary,
     }

@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rule-First Legacy Modernizer</title>
+<style>
+:root{
+  --bg:#f3f1ee;
+  --panel:#edf2f3;
+  --card:#e9efef;
+  --ink:#1b2430;
+  --muted:#5a6470;
+  --soft:#dfe8eb;
+  --line:#d8e0e2;
+  --deep:#0f1a22;
+  --deep-2:#132934;
+  --blue:#1a3f54;
+  --teal:#3f8f8a;
+  --gold:#d7a15c;
+  --red:#9c4b3d;
+  --shadow:0 10px 22px rgba(9,24,31,0.08);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Arial,Helvetica,sans-serif}
+.research-shell{padding:0 0 28px}
+.research-header{padding:24px 48px 12px}
+.research-header .eyebrow{font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#d6912b;font-weight:700;margin:0 0 8px}
+.research-header h1{font-size:48px;line-height:1.05;margin:0 0 20px;font-weight:800;letter-spacing:-0.04em}
+.research-header .subtitle{font-size:20px;color:#49606d;max-width:1100px}
+.research-landing{max-width:1280px;margin:0 auto;padding:0 36px}
+.metrics-grid{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:28px;margin-top:28px}
+.metric-card{background:rgba(255,255,255,0.28);border:1px solid var(--line);border-radius:18px;padding:26px 24px 22px;min-height:190px;box-shadow:0 1px 0 rgba(0,0,0,0.02)}
+.metric-number{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:12px;background:var(--deep);color:#fff;font-weight:800;font-size:20px;line-height:1;margin-right:12px}
+.metric-card.teal .metric-number{background:var(--teal)}
+.metric-card.orange .metric-number{background:var(--gold)}
+.metric-card h3{display:inline-block;font-size:22px;margin:0 0 20px;vertical-align:middle;font-weight:700}
+.metric-card p{margin:0;color:#374958;font-size:17px;line-height:1.55}
+.benchmark-banner{margin-top:28px;border-radius:18px;background:linear-gradient(180deg, #0f1b25 0%, #0a1218 100%);color:#f4f6f4;padding:30px 28px;border:1px solid rgba(255,255,255,0.06);box-shadow:var(--shadow)}
+.benchmark-banner .label{font-size:14px;font-weight:700;color:#f1b36a;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:12px}
+.benchmark-banner h4{font-size:20px;margin:0 0 18px;color:#fff}
+.benchmark-banner p{margin:0;color:#d8e0e4;font-size:17px;line-height:1.65;max-width:1180px}
+.section-shell{max-width:1280px;margin:50px auto 0;padding:0 36px}
+.section-title{font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:#d6912b;font-weight:700;margin:0 0 8px}
+.section-header{font-size:64px;line-height:1.02;margin:0 0 28px;font-weight:800;letter-spacing:-0.05em}
+.phase-list{display:grid;grid-template-columns:1fr;gap:18px}
+.phase-row{display:grid;grid-template-columns: 240px 1fr;gap:28px;align-items:center;min-height:112px;padding:18px 26px;border:1px solid var(--line);background:rgba(255,255,255,0.18);border-radius:18px;box-shadow:0 1px 0 rgba(0,0,0,0.02)}
+.phase-badge{display:inline-flex;align-items:center;justify-content:center;min-width:140px;height:54px;padding:0 16px;border-radius:12px;background:var(--blue);color:#fff;font-size:14px;font-weight:700;letter-spacing:0.02em}
+.phase-row.teal .phase-badge{background:var(--teal)}
+.phase-row.gold .phase-badge{background:var(--gold);color:#122431}
+.phase-row.red .phase-badge{background:var(--red)}
+.phase-row h4{margin:0 0 6px;font-size:30px;font-weight:700;letter-spacing:-0.03em}
+.phase-row p{margin:0;color:#33475b;font-size:16px;line-height:1.6}
+.contribution-wrap{max-width:1280px;margin:56px auto 0;padding:0 36px}
+.contribution-wrap h2{margin:0 0 24px;font-size:64px;line-height:1.02;letter-spacing:-0.05em;font-weight:800}
+.table-wrap{overflow:hidden;border-radius:18px;border:1px solid var(--line);background:rgba(255,255,255,0.15);box-shadow:var(--shadow)}
+.table-wrap table{width:100%;border-collapse:collapse}
+.table-wrap th{background:var(--deep-2);color:#fff;text-align:left;padding:18px 20px;font-size:18px;font-weight:700}
+.table-wrap td{padding:22px 20px;background:rgba(255,255,255,0.08);border-top:1px solid var(--line);font-size:18px;line-height:1.55;color:#2a3a48;vertical-align:top}
+.table-wrap td:first-child{width:22%;font-weight:700;color:#1e2b34}
+.table-wrap td:last-child{width:78%}
+.app-shell{max-width:1280px;margin:72px auto 0;padding:0 36px 60px}
+header.app-header{background:#fff;border-bottom:1px solid #ddd;padding:22px 7%;margin:0 auto}
+header.app-header h1{font-size:25px;font-weight:600;margin:0 0 6px}
+header.app-header p{margin:0;color:#666;font-size:14px}
+main.app-main{max-width:1280px;margin:28px auto;padding:0 20px}
+.controls{display:flex;gap:12px;align-items:end;flex-wrap:wrap;margin-bottom:18px}
+label{font-size:12px;color:#666;display:block;margin-bottom:5px}
+select,button{font:inherit;border:1px solid #ccc;background:#fff;border-radius:6px;padding:9px 12px}
+button{cursor:pointer;background:#222;color:#fff;border-color:#222}
+button.secondary{background:#fff;color:#222}
+.editor-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{background:#fff;border:1px solid #ddd;border-radius:8px;overflow:hidden;margin-bottom:18px}
+.card-title{padding:11px 14px;border-bottom:1px solid #e5e5e5;font-size:13px;font-weight:600}
+textarea,pre{margin:0;width:100%;border:0;background:#fff;color:#252525;font:13px/1.55 Consolas,Monaco,monospace}
+textarea{height:340px;padding:15px;resize:vertical;outline:none}
+pre{height:220px;padding:14px;overflow:auto;white-space:pre-wrap}
+.output{background:#fafafa}
+.pipeline{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px}
+.stage{background:#fff;border:1px solid #ddd;border-radius:7px;padding:12px;text-align:center;font-size:12px}
+.stage strong{display:block;font-size:13px;margin-bottom:4px}
+.small{font-size:12px;color:#777}
+.metrics{display:flex;gap:12px;flex-wrap:wrap;padding:14px}
+.metric{border:1px solid #e2e2e2;border-radius:6px;padding:10px 12px;min-width:150px}
+.metric b{display:block;font-size:18px;margin-top:3px}
+.status{padding:12px 14px;border-top:1px solid #e5e5e5;font-size:13px}
+.pass{color:#267a3d}.fail{color:#b33b3b}.neutral{color:#8a6d1d}
+.view-nav{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:14px 7%;background:#0f1a22;border-bottom:1px solid #263842}
+.view-nav button{background:transparent;color:#dbe7e8;border-color:#52656c}
+.view-nav button.active{background:#d7a15c;color:#122431;border-color:#d7a15c}
+.view-hidden{display:none!important}
+.experiment-toolbar{display:flex;gap:10px;align-items:end;flex-wrap:wrap;padding:14px;border-bottom:1px solid #e5e5e5}
+.experiment-toolbar label{margin:0}
+.experiment-toolbar select{min-width:90px}
+.experiment-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;padding:14px}
+.experiment-card{border:1px solid #e2e2e2;border-radius:6px;padding:12px;background:#fbfcfc}
+.experiment-card span{display:block;color:#777;font-size:12px}
+.experiment-card b{display:block;font-size:22px;margin-top:4px}
+.experiment-table{border-collapse:collapse;margin:0 14px 14px;width:calc(100% - 28px)}
+.experiment-table th,.experiment-table td{text-align:left;border-bottom:1px solid #e5e5e5;padding:9px;font-size:12px}
+.experiment-table th{color:#555}
+.download-group{display:flex;gap:8px;flex-wrap:wrap;padding:0 14px 14px}
+.decision{margin:0 14px 14px;padding:12px 14px;border-left:4px solid var(--teal);background:#f3f8f8;color:#263b42;line-height:1.55}
+.failure-example{margin:0 14px 14px;padding:12px 14px;border-left:4px solid var(--red);background:#fff7f5;color:#5a2d26;line-height:1.55}
+.inspector-panel,.tools-panel{margin-bottom:18px}
+.inspector-panel>summary,.tools-panel>summary{cursor:pointer;list-style:none;background:#fff;border:1px solid #ddd;border-radius:8px;padding:13px 14px;font-size:13px;font-weight:600}
+.inspector-panel[open]>summary,.tools-panel[open]>summary{border-radius:8px 8px 0 0;border-bottom-color:#e5e5e5}
+.more-actions{position:relative;align-self:end}
+.more-actions>summary{cursor:pointer;list-style:none;border:1px solid #ccc;background:#fff;color:#222;border-radius:6px;padding:9px 12px;font-size:inherit}
+.more-actions-menu{position:absolute;z-index:5;top:calc(100% + 5px);left:0;display:flex;flex-direction:column;gap:6px;min-width:190px;padding:8px;background:#fff;border:1px solid #ddd;border-radius:6px;box-shadow:0 8px 18px rgba(0,0,0,0.12)}
+.metric-card,.benchmark-banner,.phase-row,.table-wrap,.card,.stage,.metric,.experiment-card,.inspector-panel>summary,.tools-panel>summary,.inspector-panel[open]>summary,.tools-panel[open]>summary{border-radius:0}
+.more-actions-menu button{text-align:left}
+@media (max-width:800px){.experiment-summary{grid-template-columns:repeat(2,minmax(0,1fr))}.experiment-table{display:block;overflow:auto;white-space:nowrap}}
+@media (max-width:980px){
+  .metrics-grid{grid-template-columns:1fr}
+  .section-header,.contribution-wrap h2{font-size:42px}
+  .phase-row{grid-template-columns:1fr;gap:12px;padding:18px 18px}
+}
+@media (max-width:800px){
+  .research-header{padding-left:18px;padding-right:18px}.research-header h1{font-size:38px}.research-landing,.section-shell,.contribution-wrap,.app-main{padding-left:18px;padding-right:18px}.app-main{padding:0 18px}
+  .editor-grid,.pipeline{grid-template-columns:1fr}.pipeline{gap:6px}
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <header class="app-header">
+    <h1>Multi-Language Code Translator</h1>
+    <p>Compiler Design prototype · legacy-language modernization with subset validation</p>
+  </header>
+
+  <main class="app-main">
+    <div class="controls">
+      <div><label>Source language</label><select id="source"><option>COBOL</option><option>FORTRAN</option><option>Pascal</option><option>BASIC</option><option>Python-like</option></select></div>
+      <div><label>Target language</label><select id="target"><option>JavaScript</option><option>Python</option></select></div>
+      <button onclick="translateCode()">Translate</button>
+      <button class="secondary" onclick="loadExample()">Load example</button>
+      <details class="more-actions">
+        <summary>More actions</summary>
+        <div class="more-actions-menu">
+          <button class="secondary" onclick="loadFailureExample()">Load failure example</button>
+          <button class="secondary" onclick="loadLLMExample()">Load LLM fallback example</button>
+          <button class="secondary" onclick="runBenchmark()">Run benchmark</button>
+          <button class="secondary" onclick="runExperiment()">Run rule vs hybrid</button>
+          <button class="secondary" onclick="testLLM()">Test LLM connection</button>
+        </div>
+      </details>
+    </div>
+
+    <div class="pipeline">
+      <div class="stage"><strong>1. Lexer + Parser</strong>Tokens and syntax tree</div>
+      <div class="stage"><strong>2. Semantic + IR</strong>Symbols and shared IR</div>
+      <div class="stage"><strong>3. Rule-first backend</strong>Feature mapping</div>
+      <div class="stage"><strong>4. Validation</strong>Finite I/O checks</div>
+    </div>
+
+    <div class="editor-grid">
+      <section class="card"><div class="card-title">Source code</div><textarea id="sourceCode" spellcheck="false"></textarea></section>
+      <section class="card">
+        <div id="generatedCodeTitle" class="card-title">Generated target code</div>
+        <pre id="javascript" class="output"></pre>
+        <div id="llmCandidateNote" class="decision" hidden>This model-generated program is not semantically validated. JavaScript is run with restricted permissions; a successful run is not proof of equivalence. Python candidates are syntax-checked only.</div>
+        <div id="deterministicPartialPanel" hidden>
+          <div class="card-title">Deterministic partial output (unsupported constructs remain)</div>
+          <pre id="deterministicPartialCode" class="output"></pre>
+        </div>
+        <div id="llmCandidateDownload" class="download-group" hidden><button class="secondary" onclick="downloadLLMCandidate()">Download LLM candidate</button></div>
+      </section>
+    </div>
+
+    <details class="inspector-panel">
+      <summary>Show compiler details and metrics</summary>
+      <div class="editor-grid">
+        <section class="card"><div class="card-title">Tokens</div><pre id="tokens"></pre></section>
+        <section class="card"><div class="card-title">Shared IR</div><pre id="ir"></pre></section>
+      </div>
+
+      <div class="editor-grid">
+        <section class="card"><div class="card-title">Symbol table</div><pre id="symbols"></pre></section>
+        <section class="card"><div class="card-title">Translation rules used</div><pre id="rules"></pre></section>
+      </div>
+
+      <div class="editor-grid">
+        <section class="card"><div class="card-title">LLM fallback</div><pre id="fallbackDetails"></pre></section>
+        <section class="card"><div class="card-title">Validation evidence</div><pre id="validationDetails"></pre></section>
+        <section class="card"><div class="card-title">Pipeline trace</div><pre id="traceDetails"></pre></section>
+      </div>
+
+      <section class="card">
+        <div class="card-title">Prototype evaluation</div>
+        <div class="metrics">
+          <div class="metric" title="Recognized source units translated deterministically; not the descriptive catalogue size.">Recognized source-unit coverage<b id="coverage">—</b></div>
+          <div class="metric">Validation<b id="validation">—</b></div>
+          <div class="metric" title="Fallback events include skipped attempts; they are not necessarily external model calls.">Fallback events<b id="fallback">—</b></div>
+          <div class="metric">Unsupported syntax<b id="unsupported">—</b></div>
+          <div class="metric">Fallback status<b id="fallbackStatus">—</b></div>
+          <div class="metric">LLM model<b id="llmModel">—</b></div>
+          <div class="metric">Generated lines<b id="generatedLines">—</b></div>
+          <div class="metric">IR nodes<b id="irNodes">—</b></div>
+          <div class="metric">IR edges<b id="irEdges">—</b></div>
+          <div class="metric">IR scopes<b id="irScopes">—</b></div>
+          <div class="metric">Rule table<b id="ruleTableVersion">—</b></div>
+          <div class="metric">Failure class<b id="failureClass">—</b></div>
+        </div>
+        <div id="status" class="status">Ready.</div>
+        <div id="decisionExplanation" class="decision">The system will explain deterministic validation status and whether unsupported constructs were reported. LLM candidates are displayed separately and are not merged into deterministic output or automatically accepted.</div>
+      </section>
+    </details>
+
+    <details class="tools-panel">
+      <summary>Show evaluation tools and downloads</summary>
+      <section class="card">
+        <div class="card-title">Project objectives and implementation status</div>
+        <div class="decision"><strong>Research question:</strong> could independently tested and human-reviewed model proposals help with constructs outside deterministic-rule coverage? This prototype does not establish that outcome; proposals remain unaccepted candidates.</div>
+        <table class="experiment-table">
+          <thead><tr><th>Objective</th><th>Current status</th></tr></thead>
+          <tbody>
+            <tr><td>Survey compiler, transpiler, and LLM translation approaches</td><td>Partial: selected primary sources checked; not a systematic survey</td></tr>
+            <tr><td>Identify evidence-backed research gaps</td><td>Scoped study findings; no field-wide claims</td></tr>
+            <tr><td>Build multi-language front end and shared representation</td><td>Implemented for documented subsets</td></tr>
+            <tr><td>Constrain hybrid backend with deterministic mappings</td><td>Partial: deterministic output with separately displayed, unvalidated fallback candidates</td></tr>
+            <tr><td>Check behavior with execution-based validation</td><td>Partial: finite I/O checks; not formal equivalence</td></tr>
+            <tr><td>Document contributions and limitations</td><td>Documented; no novelty claim without verified comparison</td></tr>
+          </tbody>
+        </table>
+        <div class="decision">The candidate research gaps and contribution-to-gap status are documented in <code>data/PROJECT_OBJECTIVES_AND_GAPS.md</code>. They are not findings established by this prototype.</div>
+      </section>
+      <section class="card">
+      <div class="card-title">Descriptive rule catalogue</div>
+      <div class="experiment-toolbar">
+        <button onclick="loadRulesReport()">Load catalogue</button>
+        <button class="secondary" onclick="downloadRulesReport()">Download rules JSON</button>
+      </div>
+      <div class="experiment-summary">
+        <div class="experiment-card"><span>Rule table version</span><b id="rulesVersion">—</b></div>
+        <div class="experiment-card"><span>Catalogue entries (not coverage)</span><b id="rulesTotal">—</b></div>
+        <div class="experiment-card"><span>Marked implemented in catalogue</span><b id="rulesImplemented">—</b></div>
+        <div class="experiment-card"><span>Language families</span><b id="rulesFamilies">—</b></div>
+      </div>
+      <div class="decision">This catalogue is descriptive; its size and status labels do not measure executable language coverage. Use benchmark pass rates and required-construct measurements for evidence.</div>
+      <pre id="rulesReportDetails" class="output" style="height:180px">Load the catalogue to view per-family counts and mapping descriptions.</pre>
+    </section>
+
+      <section class="card">
+        <div class="card-title">Failure-mode walkthrough</div>
+        <div class="failure-example">Use “Load LLM fallback example” from More actions to see an unsupported construct reach the optional suggestion path. Without provider settings, the request is recorded and skipped; with a provider, a suggestion may be generated and displayed separately, but it is not merged into deterministic output or automatically accepted.</div>
+      </section>
+      <section class="card">
+      <div class="card-title">In-project benchmark</div>
+      <div class="experiment-summary">
+        <div class="experiment-card"><span>Benchmark success</span><b id="benchmarkSuccess">—</b></div>
+        <div class="experiment-card"><span>Cases</span><b id="benchmarkCases">—</b></div>
+        <div class="experiment-card"><span>Passed</span><b id="benchmarkPassed">—</b></div>
+        <div class="experiment-card"><span>Failed</span><b id="benchmarkFailed">—</b></div>
+      </div>
+      <pre id="benchmarkDetails" class="output" style="height:180px">Run the benchmark to evaluate the curated cross-language test set.</pre>
+    </section>
+
+    <section class="card">
+      <div class="card-title">Controlled rule-only vs hybrid experiment</div>
+      <div class="experiment-toolbar">
+        <div><label for="experimentRepeats">Repeats</label><select id="experimentRepeats"><option>1</option><option>2</option><option>3</option></select></div>
+        <button onclick="runExperiment()">Run experiment</button>
+        <button class="secondary" onclick="downloadExperimentCsv()">Download CSV</button>
+      </div>
+      <div class="experiment-summary">
+        <div class="experiment-card"><span>Rule-only success</span><b id="ruleOnlySuccess">—</b></div>
+        <div class="experiment-card"><span>Hybrid success</span><b id="hybridSuccess">—</b></div>
+        <div class="experiment-card"><span>Improvement</span><b id="experimentDelta">—</b></div>
+        <div class="experiment-card"><span>Fallback frequency</span><b id="experimentFallback">—</b></div>
+      </div>
+      <table class="experiment-table"><thead><tr><th>Language</th><th>Rule-only</th><th>Hybrid</th><th>Fallbacks</th></tr></thead><tbody id="experimentLanguages"><tr><td colspan="4">Run the experiment to populate the controlled comparison.</td></tr></tbody></table>
+      <pre id="experimentDetails" class="output" style="height:180px">The full experiment record will appear here.</pre>
+    </section>
+
+    <section class="card">
+      <div class="card-title">Download artifacts</div>
+      <div class="download-group">
+        <button onclick="downloadGeneratedCode()">Download target code</button>
+        <button class="secondary" onclick="downloadProvenance()">Download provenance JSON</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="./config.js"></script>
+<script>
+const examples={
+COBOL:`       IDENTIFICATION DIVISION.
+       PROGRAM-ID. DEMO.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 A PIC 999 VALUE 10.
+       01 B PIC 999 VALUE 20.
+       PROCEDURE DIVISION.
+       COMPUTE SUM = A + B.
+       DISPLAY SUM.
+       IF A < B
+           DISPLAY "A IS SMALLER"
+       ELSE
+           DISPLAY "B IS SMALLER"
+       END-IF.
+       STOP RUN.`,
+FORTRAN:`PROGRAM DEMO
+INTEGER :: A, B, SUM, I
+A = 10
+B = 20
+SUM = A + B
+PRINT *, SUM
+IF (A < B) THEN
+  PRINT *, "A IS SMALLER"
+ELSE
+  PRINT *, "B IS SMALLER"
+END IF
+DO I = 1, 3
+  PRINT *, I
+END DO
+END PROGRAM DEMO`,
+Pascal:`program demo;
+var a, b, sum: integer;
+begin
+a := 10;
+b := 20;
+sum := a + b;
+writeln(sum);
+end.`,
+BASIC:`10 LET A = 10
+20 LET B = 20
+30 PRINT A + B
+40 IF A < B THEN PRINT "A IS SMALLER"
+50 FOR I = 1 TO 3
+60 PRINT I
+70 NEXT I
+80 END`,
+'Python-like':`x = 10
+y = 20
+if x < y:
+    print("x is smaller")
+else:
+    print("y is smaller")`};
+const failureExample={
+  'BASIC':`10 GOTO 100
+100 END`,
+  'COBOL':`IDENTIFICATION DIVISION.
+PROGRAM-ID. FAILURE.
+PROCEDURE DIVISION.
+GO TO UNKNOWN-PARAGRAPH.
+STOP RUN.`,
+  'FORTRAN':`PROGRAM FAILURE
+CALL UNKNOWN_SUBROUTINE
+END PROGRAM FAILURE`,
+  'Pascal':`program failure;
+begin
+goto missing_label;
+end.`,
+  'Python-like':`x = 1
+raise UnsupportedOperation("demo failure")`};
+const llmExample={
+  'BASIC':`10 GOTO 100
+20 PRINT "This construct needs fallback"
+100 END`,
+  'COBOL':`IDENTIFICATION DIVISION.
+PROGRAM-ID. LLM-DEMO.
+PROCEDURE DIVISION.
+CALL "EXTERNAL-ROUTINE".
+STOP RUN.`,
+  'FORTRAN':`PROGRAM LLMDEMO
+CALL EXTERNAL_ROUTINE
+END PROGRAM LLMDEMO`,
+  'Pascal':`program llmdemo;
+begin
+goto external_label;
+end.`,
+  'Python-like':`x = 1
+raise UnsupportedOperation("requires scoped fallback")`};
+const $=id=>document.getElementById(id);
+const API_BASE_URL=(window.TRANSPILER_API_BASE_URL||'').replace(/\/+$/,'');
+const apiUrl=path=>`${API_BASE_URL}${path}`;
+const BACKEND_ERROR_MESSAGE='Could not connect to the backend. Configure its public URL in frontend/config.js and deploy the FastAPI backend separately.';
+let latestTranslation=null;
+let latestExperiment=null;
+let latestRulesReport=null;
+function loadExample(){ $('sourceCode').value=examples[$('source').value]; translateCode(); }
+function loadFailureExample(){ $('sourceCode').value=failureExample[$('source').value] || failureExample['Python-like']; translateCode(); }
+function loadLLMExample(){ $('sourceCode').value=llmExample[$('source').value] || llmExample['Python-like']; translateCode(); }
+$('source').addEventListener('change',loadExample);
+async function translateCode(){
+ const status=$('status'); status.textContent='Translating...'; status.className='status';
+ try{
+  const response=await fetch(apiUrl('/transpile'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:$('sourceCode').value,source_language:$('source').value,target_language:$('target').value})});
+  const data=await response.json();
+  if(!data.ok){status.textContent=data.error;status.className='status fail';return;}
+   const suggestions=(data.fallback_suggestions||[]).filter(item=>item.candidate && item.candidate_status!=='unsupported_or_refused');
+  const candidateText=suggestions.map(item=>item.candidate).join('\n\n');
+  const deterministicCode=data.deterministic_code || (data.code_origin==='llm_candidate'?'':data.javascript||'');
+  const hasDeterministicCode=Boolean(deterministicCode.trim());
+  const llmOnly=data.code_origin==='llm_candidate';
+  $('generatedCodeTitle').textContent=llmOnly?'LLM candidate (unvalidated)':'Generated target code';
+  $('javascript').textContent=data.javascript || candidateText || 'No target code was generated. See the unsupported-construct details for the reason.';
+  $('llmCandidateNote').hidden=!candidateText;
+  if(candidateText){
+   const candidateStatuses=suggestions.map(item=>item.validation_status||'not_run');
+   const runtimePolicy=data.language_support.target==='Python'?'Python candidates are syntax-checked only.':'JavaScript candidates run with restricted Node permissions.';
+   $('llmCandidateNote').textContent=`Model candidate status: ${candidateStatuses.join(', ')}. It is not semantically validated or automatically accepted. ${runtimePolicy}`;
+  }
+  $('deterministicPartialPanel').hidden=!llmOnly || !hasDeterministicCode;
+  $('deterministicPartialCode').textContent=deterministicCode;
+  $('llmCandidateDownload').hidden=!candidateText;
+  $('tokens').textContent=data.tokens.map(t=>`${t.type}\t${t.value}`).join('\n');
+  $('ir').textContent=JSON.stringify(data.ir,null,2);
+  $('symbols').textContent=JSON.stringify(data.symbol_table,null,2);
+  $('rules').textContent=data.rules_used.length?data.rules_used.join('\n'):'No rules used.';
+  $('coverage').textContent=data.rule_coverage.coverage_percent+'%';
+  $('fallback').textContent=data.fallback_log.length;
+  $('unsupported').textContent=(data.unsupported||[]).length;
+  const fb=data.fallback_status||{};
+  $('fallbackStatus').textContent=fb.configured?'configured':'not configured';
+  $('llmModel').textContent=fb.model || '—';
+  $('generatedLines').textContent=data.generated_lines ?? (data.javascript||'').split('\n').filter(Boolean).length;
+  $('irNodes').textContent=(data.ir||[]).length || (data.ir && data.ir.nodes ? data.ir.nodes.length : 0);
+  $('irEdges').textContent=data.ir && data.ir.edge_count != null ? data.ir.edge_count : '—';
+  $('irScopes').textContent=data.ir && data.ir.scopes ? data.ir.scopes.length : '—';
+  $('ruleTableVersion').textContent=data.rule_table_version || '—';
+  $('failureClass').textContent=data.validation.failure_class || 'none';
+  $('fallbackDetails').textContent=JSON.stringify({status:fb,events:data.fallback_log||[],suggestions:data.fallback_suggestions||[]},null,2);
+  const v=data.validation; $('validation').textContent=v.status;
+  $('validationDetails').textContent=JSON.stringify(v,null,2);
+  $('traceDetails').textContent=JSON.stringify(data.pipeline_trace||[],null,2);
+  latestTranslation=data;
+  const fallbackCount=(data.fallback_log||[]).length;
+  const unsupportedCount=(data.unsupported||[]).length;
+  $('decisionExplanation').textContent=v.status==='passed'
+    ? `Accepted: ${data.rule_coverage.translated_units} of ${data.rule_coverage.source_units} recognized source units were translated deterministically and validation passed.`
+    : unsupportedCount
+      ? `Held for review: ${unsupportedCount} unsupported construct(s) were reported. Any LLM candidate is displayed separately and remains unvalidated.`
+      : `Held for review: validation status is ${v.status}. The generated output is evidence, not an accepted translation.`;
+  status.textContent=(data.language_support?data.language_support.source+' subset → '+data.language_support.target+'. ':'')+(v.message||'Translation complete.');
+  status.className='status '+(v.status==='passed'?'pass':v.status==='failed'?'fail':'neutral');
+ }catch(error){status.textContent=BACKEND_ERROR_MESSAGE;status.className='status fail';}
+}
+function downloadText(filename,content,type){
+ const blob=new Blob([content],{type}); const url=URL.createObjectURL(blob); const link=document.createElement('a');
+ link.href=url; link.download=filename; link.click(); URL.revokeObjectURL(url);
+}
+async function loadRulesReport(){
+ const box=$('rulesReportDetails'); box.textContent='Loading rule coverage...';
+ try{
+  const response=await fetch(apiUrl('/rules'));
+  const data=await response.json();
+  if(!response.ok || !data.ok){throw new Error(data.error||`Rules endpoint returned HTTP ${response.status}.`);}
+  latestRulesReport=data;
+  $('rulesVersion').textContent=data.rule_table_version||'—';
+  $('rulesTotal').textContent=data.total_rules??'—';
+  $('rulesImplemented').textContent=data.implemented_rules??'—';
+  $('rulesFamilies').textContent=Object.keys(data.family_counts||{}).length;
+  box.textContent=JSON.stringify({family_counts:data.family_counts,status_counts:data.status_counts,rules:data.rules},null,2);
+ }catch(error){box.textContent=error.message||BACKEND_ERROR_MESSAGE;}
+}
+function downloadRulesReport(){
+ if(!latestRulesReport){$('rulesReportDetails').textContent='Load the rule coverage report before downloading it.';return;}
+ downloadText('transpiler-rules.json',JSON.stringify(latestRulesReport,null,2),'application/json');
+}
+function downloadGeneratedCode(){
+ if(!latestTranslation){ $('status').textContent='Translate a program before downloading target code.'; $('status').className='status neutral'; return; }
+ if(!latestTranslation.javascript){ $('status').textContent='No deterministic target code is available. Use “Download LLM candidate” to download the unvalidated suggestion.'; $('status').className='status neutral'; return; }
+ downloadText(`translated-${$('target').value.toLowerCase()}.txt`,latestTranslation.javascript||'','text/plain');
+}
+function downloadLLMCandidate(){
+ if(!latestTranslation){ $('status').textContent='Translate a program before downloading an LLM candidate.'; $('status').className='status neutral'; return; }
+ const candidate=(latestTranslation.fallback_suggestions||[]).filter(item=>item.candidate_status!=='unsupported_or_refused').map(item=>item.candidate).filter(Boolean).join('\n\n');
+ if(!candidate){ $('status').textContent='No LLM candidate was generated for this translation.'; $('status').className='status neutral'; return; }
+ downloadText(`llm-candidate-${$('target').value.toLowerCase()}.txt`,candidate,'text/plain');
+}
+function downloadProvenance(){
+ if(!latestTranslation){ $('status').textContent='Translate a program before downloading provenance.'; $('status').className='status neutral'; return; }
+ const provenance={source_language:$('source').value,target_language:$('target').value,source_code:$('sourceCode').value,rule_table_version:latestTranslation.rule_table_version,rule_coverage:latestTranslation.rule_coverage,unsupported:latestTranslation.unsupported,fallback_log:latestTranslation.fallback_log,validation:latestTranslation.validation,pipeline_trace:latestTranslation.pipeline_trace};
+ downloadText('translation-provenance.json',JSON.stringify(provenance,null,2),'application/json');
+}
+async function testLLM(){
+  const status=$('status'); status.textContent='Testing the configured external LLM...'; status.className='status';
+  try{
+    const r=await fetch(apiUrl('/llm/test'),{method:'POST'}); const d=await r.json();
+    if(d.ok){ status.textContent=`Live LLM request completed (${d.model || 'configured model'}) in ${d.latency_ms ?? '—'} ms. Request ${d.request_id || '—'}.`; status.className='status pass'; }
+    else { status.textContent=d.error || d.message || 'LLM test failed.'; status.className='status fail'; }
+    $('fallbackDetails').textContent=JSON.stringify(d,null,2);
+  }catch(e){ status.textContent=BACKEND_ERROR_MESSAGE; status.className='status fail'; }
+}
+async function runBenchmark(){
+  const box=$('benchmarkDetails'); box.textContent='Running benchmark...';
+  try{
+    const r=await fetch(apiUrl('/benchmark?target='+encodeURIComponent($('target').value)));
+    const d=await r.json();
+    $('benchmarkSuccess').textContent=(d.success_rate_percent ?? 0)+'%';
+    $('benchmarkCases').textContent=d.total ?? '—';
+    $('benchmarkPassed').textContent=d.passed ?? '—';
+    $('benchmarkFailed').textContent=d.failed ?? '—';
+    box.textContent=JSON.stringify({target:d.target,total:d.total,passed:d.passed,failed:d.failed,cases:d.cases},null,2);
+  }catch(e){box.textContent=BACKEND_ERROR_MESSAGE;}
+}
+async function runExperiment(){
+ const box=$('experimentDetails'); box.textContent='Running controlled rule-only vs hybrid experiment...';
+ try{
+  const repeats=$('experimentRepeats').value;
+  const r=await fetch(apiUrl('/experiment?target='+encodeURIComponent($('target').value)+'&repeats='+repeats)); const d=await r.json();
+  if(!d.ok){box.textContent=d.error||'Experiment failed.';return;}
+  latestExperiment=d;
+  const overall=d.summary.overall; const hybrid=d.hybrid; const languages=d.summary.by_language||{};
+  $('ruleOnlySuccess').textContent=d.rule_only.success_rate_percent+'%';
+  $('hybridSuccess').textContent=hybrid.success_rate_percent+'%';
+  $('experimentDelta').textContent=overall.delta_success_rate_percent+'%';
+  $('experimentFallback').textContent=hybrid.fallback_frequency_percent+'%';
+  $('experimentLanguages').innerHTML=Object.entries(languages).map(([language,value])=>`<tr><td>${language}</td><td>${value.rule_only.success_rate_percent}%</td><td>${value.hybrid.success_rate_percent}%</td><td>${value.hybrid.llm_calls||0}</td></tr>`).join('');
+  box.textContent=JSON.stringify({benchmark_version:d.benchmark_version,target:d.target,repeats:d.repeats,summary:d.summary,rule_only:d.rule_only.metrics,hybrid:d.hybrid.metrics},null,2);
+ }catch(e){box.textContent=BACKEND_ERROR_MESSAGE;}
+}
+function downloadExperimentCsv(){
+ if(!latestExperiment){ $('experimentDetails').textContent='Run the experiment before downloading CSV.'; return; }
+ const rows=[['language','rule_only_success_percent','hybrid_success_percent','hybrid_fallback_calls']];
+ Object.entries(latestExperiment.summary.by_language||{}).forEach(([language,value])=>rows.push([language,value.rule_only.success_rate_percent,value.hybrid.success_rate_percent,value.hybrid.llm_calls||0]));
+ downloadText('experiment-by-language.csv',rows.map(row=>row.join(',')).join('\n'),'text/csv');
+}
+loadExample();
+</script>
+</body>
+</html>

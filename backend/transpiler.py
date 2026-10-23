@@ -1,19 +1,22 @@
 import ast
+import hashlib
 import re
 
 from .legacy import legacy_transpile, LANGUAGES, SUBSETS
 from .validator import run_javascript, run_python, compare
 from .corpus import save_validated_example
 from .llm_fallback import create_fallback_log, fallback_status, translate_construct
+from .learned_rules import (
+    apply_generalized_rule,
+    find_generalized_rule,
+    learn_generalized_rule,
+)
 from .rules import RULE_TABLE_VERSION
 
 TARGETS = {
     'JavaScript': 'Executable with Node.js',
     'Python': 'Executable with Python 3',
 }
-
-LEARNED_RULES = []
-
 
 def _extract_api_hints(source):
     lowered = source.lower()
@@ -39,7 +42,37 @@ def _translation_contract(source, source_language, target_language, target_code,
         output_hint = 'list'
     if 'input' in source.lower() or 'read' in source.lower():
         output_hint = 'input stream'
+    check_details = validation.get('checks', [])
+    checks = [
+        {'name': 'complete_source_coverage', 'passed': validation.get('status') != 'not_run'},
+        {
+            'name': 'target_execution_succeeded',
+            'passed': validation.get('status') in ('passed', 'failed')
+            and validation.get('failure_class') not in ('target_runtime_error', 'runtime_unavailable'),
+        },
+        {
+            'name': 'finite_stdout_matches_source_oracle',
+            'passed': validation.get('status') == 'passed',
+            'source_output': validation.get('source_output'),
+            'target_output': validation.get('target_output'),
+        },
+        *check_details,
+    ]
+    checks_passed = sum(check.get('passed') is True for check in checks)
+    checks_failed = sum(check.get('passed') is False for check in checks)
+    review_required = bool(validation.get('manual_review_required'))
+    if validation.get('status') == 'not_run':
+        status = 'pending'
+    elif validation.get('status') != 'passed' or checks_failed:
+        status = 'failed'
+    elif review_required:
+        status = 'review_required'
+    else:
+        status = 'satisfied_for_tested_inputs'
+    source_hash = hashlib.sha256(source.encode('utf-8')).hexdigest()
     contract = {
+        'contract_id': hashlib.sha256(f'{source_language}\0{target_language}\0{source_hash}'.encode()).hexdigest()[:20],
+        'source_sha256': source_hash,
         'function': 'program',
         'inputs': ['source fragment'],
         'output': output_hint,
@@ -47,9 +80,12 @@ def _translation_contract(source, source_language, target_language, target_code,
         'raises': ['unsupported construct'] if 'goto' in source.lower() else [],
         'source_api': _extract_api_hints(source),
         'target_api': ['console.log', 'let', 'if', 'function', 'return'] if target_language == 'JavaScript' else ['print', 'assignment', 'if', 'def', 'return'],
-        'tests_passed': 1 if validation.get('status') == 'passed' else 0,
-        'translation_status': 'verified' if validation.get('status') == 'passed' else ('pending' if validation.get('status') in ('not_run', 'failed') else 'rejected'),
-        'confidence': 0.98 if validation.get('status') == 'passed' else 0.55,
+        'tests_passed': checks_passed,
+        'tests_failed': checks_failed,
+        'checks': checks,
+        'translation_status': status,
+        'confidence': None,
+        'confidence_basis': 'not calibrated',
         'target_code_preview': (target_code[:180] + '…') if target_code and len(target_code) > 180 else target_code,
     }
     return contract
@@ -57,40 +93,72 @@ def _translation_contract(source, source_language, target_language, target_code,
 
 def _risk_assessment(source, source_language, target_language, validation=None):
     lowered = source.lower()
-    data_flow = 0.3 if any(token in lowered for token in ('for', 'while', 'loop', 'goto')) else 0.1
-    api_uncertainty = 0.35 if any(token in lowered for token in ('display', 'print', 'input', 'read', 'open', 'write')) else 0.15
-    side_effect = 0.45 if any(token in lowered for token in ('print', 'display', 'open', 'write', 'file', 'goto')) else 0.1
-    control_flow = 0.5 if any(token in lowered for token in ('if', 'goto', 'for', 'while', 'case', 'else')) else 0.1
-    type_mismatch = 0.4 if source_language != 'Python-like' and target_language in ('JavaScript', 'Python') else 0.1
-
-    score = 0.25 * data_flow + 0.20 * api_uncertainty + 0.20 * side_effect + 0.20 * control_flow + 0.15 * type_mismatch
-    score = max(0.0, min(score, 1.0))
-    if score >= 0.75:
-        level = 'high'
-        validation_policy = 'LLM fallback, generated mutation tests, and manual review'
-    elif score >= 0.4:
-        level = 'medium'
-        validation_policy = 'Rule-based translation plus generated tests and graph comparison'
-    else:
-        level = 'low'
-        validation_policy = 'Rule-based translation and ordinary validation'
-
-    reasons = []
-    if 'goto' in lowered:
-        reasons.append('unstructured control flow')
-    if any(token in lowered for token in ('open', 'write', 'read', 'file')):
-        reasons.append('side effect or I/O')
-    if 'if' in lowered or 'for' in lowered or 'while' in lowered:
-        reasons.append('branch or loop complexity')
-    if not reasons:
-        reasons.append('simple arithmetic or assignment flow')
-
+    features = {
+        'loop': bool(re.search(r'\b(for|while|do|perform)\b', lowered)),
+        'branch': bool(re.search(r'\b(if|else|case|switch)\b', lowered)),
+        'unstructured_control': bool(re.search(r'\b(goto|call)\b', lowered)),
+        'external_or_file_io': bool(re.search(r'\b(open|read|write|file|call)\b', lowered)),
+        'cross_language': source_language != 'Python-like',
+    }
+    weights = {'loop': 0.2, 'branch': 0.15, 'unstructured_control': 0.55,
+               'external_or_file_io': 0.3, 'cross_language': 0.1}
+    score = min(1.0, sum(weights[name] for name, active in features.items() if active))
+    level = 'high' if score >= 0.6 else 'medium' if score >= 0.2 else 'low'
+    repeats = {'low': 1, 'medium': 2, 'high': 3}[level]
+    review_required = level == 'high'
+    reasons = [name.replace('_', ' ') for name, active in features.items() if active]
     return {
         'score': round(score, 2),
         'level': level,
-        'reasons': reasons,
-        'validation_policy': validation_policy,
+        'features': features,
+        'reasons': reasons or ['straight-line subset program'],
+        'validation_profile': {
+            'runtime_runs': repeats,
+            'check_determinism': repeats > 1,
+            'manual_review_required': review_required,
+        },
+        'validation_policy': (
+            f'Run target and source oracle {repeats} times; '
+            + ('require human review before acceptance.' if review_required else 'compare finite I/O outputs.')
+        ),
     }
+
+
+def _validate_with_risk(source_output, target_run, source_runner, target_runner, risk, target_language):
+    """Compare outputs and apply the risk-selected repeatability checks."""
+    profile = risk['validation_profile']
+    expected_runs = profile['runtime_runs']
+    source_outputs = [source_output]
+    target_outputs = [target_run.get('output', '')]
+    checks = []
+    if target_run.get('available') and target_run.get('ok'):
+        for _ in range(expected_runs - 1):
+            source_outputs.append(source_runner())
+            repeated = target_runner()
+            if not repeated.get('available') or not repeated.get('ok'):
+                checks.append({'name': 'repeat_target_execution', 'passed': False,
+                               'error': repeated.get('error') or 'Target runtime unavailable.'})
+                break
+            target_outputs.append(repeated.get('output', ''))
+    deterministic = len(set(source_outputs)) == 1 and len(set(target_outputs)) == 1
+    checks.append({
+        'name': 'runtime_determinism',
+        'runs_requested': expected_runs,
+        'source_runs_completed': len(source_outputs),
+        'target_runs_completed': len(target_outputs),
+        'passed': deterministic and len(source_outputs) == expected_runs and len(target_outputs) == expected_runs,
+    })
+    validation = compare(source_output, target_run, target_language)
+    if validation['status'] == 'passed' and not checks[-1]['passed']:
+        validation.update({
+            'status': 'failed',
+            'failure_class': 'nondeterministic_runtime',
+            'message': 'Risk-selected repeatability check failed or could not complete.',
+        })
+    validation['risk_level'] = risk['level']
+    validation['checks'] = checks
+    validation['manual_review_required'] = profile['manual_review_required']
+    return validation
 
 
 def _failure_fingerprint(source, validation, source_language, target_language):
@@ -101,7 +169,7 @@ def _failure_fingerprint(source, validation, source_language, target_language):
             'source_construct': 'none',
             'target_construct': target_language,
             'failure_type': 'none',
-            'detected_by': 'execution equivalence',
+            'detected_by': 'finite I/O comparison',
             'suggested_fix': 'No failure detected.',
         }
 
@@ -143,35 +211,13 @@ def _failure_fingerprint(source, validation, source_language, target_language):
     }
 
 
-def _record_rule(source_language, target_language, source_construct, target_fragment, validation):
-    if validation.get('status') != 'passed':
-        return None
-    rule = {
-        'source_language': source_language,
-        'target_language': target_language,
-        'source_pattern': source_construct,
-        'target_pattern': target_fragment,
-        'language_pair': f'{source_language}->{target_language}',
-        'validation_status': 'verified',
-    }
-    existing = next((entry for entry in LEARNED_RULES if entry['language_pair'] == rule['language_pair'] and entry['source_pattern'] == rule['source_pattern']), None)
-    if existing is None:
-        LEARNED_RULES.append(rule)
-    return rule
-
-
-def _rule_evolution(source_language, target_language, validation, fallback_suggestions=None):
-    learned_rules = [dict(rule) for rule in LEARNED_RULES]
-    if fallback_suggestions:
-        for suggestion in fallback_suggestions:
-            if suggestion.get('candidate'):
-                _record_rule(source_language, target_language, suggestion.get('source_construct', 'unsupported constructor'), suggestion.get('candidate', ''), validation)
-        learned_rules = [dict(rule) for rule in LEARNED_RULES]
-    coverage_gain = round(min(100.0, len(learned_rules) * 10.0), 1)
+def _rule_evolution(rule, reused=False, generalized=False):
     return {
-        'learned_rules': learned_rules,
-        'approved_rule_count': len(learned_rules),
-        'rule_coverage_gain': coverage_gain,
+        'learned_rule': rule,
+        'reused': reused,
+        'generalizes': generalized,
+        'description': ('A bounded statement-pattern rule.' if generalized
+                        else 'No generalized rule matched or was learned for this program.'),
     }
 
 
@@ -254,35 +300,11 @@ def _safe_eval_expression(expression, variables):
 
 
 def _property_validation(source, target_language):
-    lines = [line.strip() for line in source.splitlines() if line.strip()]
-    values = {'x': [-3, -1, 0, 1, 5, 10]}
-    variable_bindings = {}
-    for line in lines:
-        match = re.match(r'^([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.+)$', line)
-        if match:
-            name, value = match.groups()
-            if re.fullmatch(r'-?\d+(?:\.\d+)?', value.strip()):
-                variable_bindings[name] = float(value) if '.' in value else int(value)
-    if not variable_bindings:
-        variable_bindings = {'x': 0}
-    generated = []
-    for name, scalar_values in values.items():
-        if name in variable_bindings:
-            numeric_values = [variable_bindings[name]] + scalar_values
-        else:
-            numeric_values = scalar_values
-        for value in numeric_values:
-            sample = {name: value}
-            generated.append({
-                'input': sample,
-                'expected_output': value if 'print' not in source.lower() else value + 1,
-                'description': 'edge-value arithmetic property check',
-            })
     return {
-        'status': 'generated',
-        'method': 'safe arithmetic property validation',
+        'status': 'not_run',
+        'method': 'No source-input model is available to derive sound property cases.',
         'target_language': target_language,
-        'generated_cases': generated[:8],
+        'generated_cases': [],
     }
 
 
@@ -317,11 +339,20 @@ def _is_unsupported_candidate(candidate):
     return False
 
 
-def transpile(source, source_language='Python-like', target_language='JavaScript', *, enable_llm=None):
+def transpile(source, source_language='Python-like', target_language='JavaScript', *, enable_llm=None, enable_learned_rules=True):
     if source_language != 'Python-like':
         if target_language not in TARGETS:
             raise ValueError('Unsupported target language. Choose JavaScript or Python.')
         result = legacy_transpile(source_language, source, target_language)
+        risk_assessment = _risk_assessment(source, source_language, target_language)
+        generalized_rule = find_generalized_rule(source_language, target_language, result.ir) if enable_learned_rules else None
+        generalized_code = apply_generalized_rule(generalized_rule, result.ir) if generalized_rule else None
+        learned_rule_reused = bool(generalized_code and not result.unsupported)
+        learned_rule = generalized_rule
+        rule_is_generalized = bool(learned_rule and learned_rule.get('generalizes'))
+        if not result.unsupported:
+            if generalized_code:
+                result.javascript = generalized_code
         fallback = create_fallback_log()
         fallback_info = fallback_status(enabled=enable_llm)
         fallback_suggestions = []
@@ -450,23 +481,41 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
             'status':'not_run',
             'message':'Validation requires complete deterministic source coverage; unsupported constructs need review.',
             'source_output':'', 'target_output':'', 'target_runtime':target_language,
-            'failure_class':'unsupported_source_syntax'
+            'failure_class':'unsupported_source_syntax',
+            'risk_level': risk_assessment['level'],
+            'manual_review_required': risk_assessment['validation_profile']['manual_review_required'],
         }
         if not result.unsupported:
-            source_output = '\n'.join(_run_normalized(result.source_program))
-            validation = compare(source_output, target_run, target_language)
-            if validation['status']=='passed':
+            source_runner = lambda: '\n'.join(_run_normalized(result.source_program))
+            target_runner = (lambda: run_javascript(result.javascript)) if target_language == 'JavaScript' else (lambda: run_python(result.javascript))
+            source_output = source_runner()
+            validation = _validate_with_risk(
+                source_output, target_run, source_runner, target_runner,
+                risk_assessment, target_language,
+            )
+            if validation['status']=='passed' and not validation.get('manual_review_required'):
                 save_validated_example(source,result.javascript,result.ir,validation)
         trace.append({'stage':'validation', 'status':validation['status'], 'detail':validation['message']})
 
-        contract = _contract_with_metadata(source, source_language, target_language, result.javascript, validation)
-        risk_assessment = _risk_assessment(source, source_language, target_language, validation)
         failure_fingerprint = _failure_fingerprint(source, validation, source_language, target_language)
-        rule_evolution = _rule_evolution(source_language, target_language, validation, fallback_suggestions)
         type_map = _type_map_for_pair(source_language, target_language, source)
         dependency_order = _dependency_order(source)
         idiomatic_refactor = _idiomatic_refactor(result.javascript, target_language)
         property_validation = _property_validation(source, target_language)
+        contract = _contract_with_metadata(source, source_language, target_language, result.javascript, validation)
+        if (enable_learned_rules and validation.get('status') == 'passed'
+                and not validation.get('manual_review_required') and not result.unsupported
+                and not has_llm_candidate):
+            learned_rule = learn_generalized_rule(
+                source_language, target_language, source, result.ir, result.javascript, contract,
+            )
+            rule_is_generalized = bool(learned_rule and learned_rule.get('generalizes'))
+        trace.append({
+            'stage': 'learned_rule',
+            'status': 'reused' if learned_rule_reused else 'recorded' if learned_rule else 'not_applicable',
+            'detail': 'Learned target templates are revalidated; only flat assignment/print schemas are generalized.',
+        })
+        rule_evolution = _rule_evolution(learned_rule, learned_rule_reused, rule_is_generalized)
 
         return {
             'language_support':{'source':source_language,'target':target_language,'subset':SUBSETS[source_language]},
@@ -484,6 +533,7 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
             'risk_assessment': risk_assessment,
             'failure_fingerprint': failure_fingerprint,
             'rule_evolution': rule_evolution,
+            'learned_rule': learned_rule,
             'type_map': type_map,
             'dependency_order': dependency_order,
             'idiomatic_refactor': idiomatic_refactor,
@@ -501,8 +551,16 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
     from .ast_nodes import ast_to_dict
     from .interpreter import run_source
     tokens=Lexer(source).tokenize(); ast=Parser(tokens).parse(); symbols=SemanticAnalyzer().analyze(ast); ir=SharedIR(ast)
-    generator=CodeGenerator(); javascript=generator.generate(ast); fallback=create_fallback_log(); source_output=run_source(ast); target=run_javascript(javascript)
-    validation=compare(source_output,target,'JavaScript')
+    generator=CodeGenerator(); javascript=generator.generate(ast); fallback=create_fallback_log(); source_runner=lambda: run_source(ast)
+    learning_ir = _python_ast_learning_ir(ast)
+    learned_rule = find_generalized_rule('Python-like', target_language, learning_ir) if enable_learned_rules and learning_ir else None
+    generalized_code = apply_generalized_rule(learned_rule, learning_ir) if learned_rule else None
+    learned_rule_reused = bool(generalized_code)
+    if generalized_code:
+        javascript = generalized_code
+    risk_assessment = _risk_assessment(source, 'Python-like', target_language)
+    source_output=source_runner(); target_runner=lambda: run_javascript(javascript); target=target_runner()
+    validation=_validate_with_risk(source_output,target,source_runner,target_runner,risk_assessment,'JavaScript')
     def count_statement_units(statements):
         count = 0
         for statement in statements:
@@ -523,18 +581,60 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
         'coverage_percent':100.0,
         'coverage_breakdown':sorted(set(generator.rules_used)),
     }
-    if validation['status']=='passed': save_validated_example(source,javascript,ir.to_dict(),validation)
+    if validation['status']=='passed' and not validation.get('manual_review_required'):
+        save_validated_example(source,javascript,ir.to_dict(),validation)
     contract = _contract_with_metadata(source, 'Python-like', target_language, javascript, validation)
-    risk_assessment = _risk_assessment(source, 'Python-like', target_language, validation)
     failure_fingerprint = _failure_fingerprint(source, validation, 'Python-like', target_language)
-    rule_evolution = _rule_evolution('Python-like', target_language, validation)
     type_map = _type_map_for_pair('Python-like', target_language, source)
     dependency_order = _dependency_order(source)
     idiomatic_refactor = _idiomatic_refactor(javascript, target_language)
     property_validation = _property_validation(source, target_language)
-    return {'language_support':{'source':'Python-like','target':'JavaScript','subset':'Existing prototype subset'},'tokens':[{'type':t.type,'value':t.value,'line':t.line,'column':t.column} for t in tokens if t.type not in ('NEWLINE','INDENT','DEDENT','EOF')],'ast':ast_to_dict(ast),'ir':ir.to_dict(),'symbol_table':symbols.as_dict(),'javascript':javascript,'target_code':javascript,'deterministic_code':javascript,'rules_used':generator.rules_used,'rule_table_version':RULE_TABLE_VERSION,'rule_coverage':coverage,'fallback_log':fallback.entries,'fallback_status':fallback_status(enabled=enable_llm),'fallback_suggestions':[],'validation':validation,'unsupported':[],'notes':['Original Python-like demonstration pipeline retained.'],'pipeline_trace':[{'stage':'front_end','status':'completed','detail':'Python-like lexer/parser/semantic analysis completed.'},{'stage':'shared_ir','status':'completed','detail':'Shared IR constructed.'},{'stage':'rule_first','status':'completed','detail':'Deterministic JavaScript code generation completed.'},{'stage':'llm_fallback','status':'not_needed','detail':'No unsupported constructs in the current subset.'},{'stage':'validation','status':validation['status'],'detail':validation['message']}],'target_runtime':target,'generated_lines':len([x for x in javascript.splitlines() if x.strip()]),'translation_contract':contract,'risk_assessment':risk_assessment,'failure_fingerprint':failure_fingerprint,'rule_evolution':rule_evolution,'type_map':type_map,'dependency_order':dependency_order,'idiomatic_refactor':idiomatic_refactor,'property_validation':property_validation}
+    if (enable_learned_rules and learning_ir and validation.get('status') == 'passed'
+            and not validation.get('manual_review_required')):
+        learned_rule = learn_generalized_rule(
+            'Python-like', target_language, source, learning_ir, javascript, contract,
+        )
+    rule_evolution = _rule_evolution(
+        learned_rule, learned_rule_reused,
+        bool(learned_rule and learned_rule.get('generalizes')),
+    )
+    return {'language_support':{'source':'Python-like','target':'JavaScript','subset':'Existing prototype subset'},'tokens':[{'type':t.type,'value':t.value,'line':t.line,'column':t.column} for t in tokens if t.type not in ('NEWLINE','INDENT','DEDENT','EOF')],'ast':ast_to_dict(ast),'ir':ir.to_dict(),'symbol_table':symbols.as_dict(),'javascript':javascript,'target_code':javascript,'deterministic_code':javascript,'rules_used':generator.rules_used,'rule_table_version':RULE_TABLE_VERSION,'rule_coverage':coverage,'fallback_log':fallback.entries,'fallback_status':fallback_status(enabled=enable_llm),'fallback_suggestions':[],'validation':validation,'unsupported':[],'notes':['Original Python-like demonstration pipeline retained.'],'pipeline_trace':[{'stage':'front_end','status':'completed','detail':'Python-like lexer/parser/semantic analysis completed.'},{'stage':'shared_ir','status':'completed','detail':'Shared IR constructed.'},{'stage':'rule_first','status':'completed','detail':'Deterministic JavaScript code generation completed.'},{'stage':'learned_rule','status':'reused' if learned_rule_reused else 'recorded' if learned_rule else 'not_applicable','detail':'Bounded assignment/print patterns only; generated output is revalidated.'},{'stage':'llm_fallback','status':'not_needed','detail':'No unsupported constructs in the current subset.'},{'stage':'validation','status':validation['status'],'detail':validation['message']}],'target_runtime':target,'generated_lines':len([x for x in javascript.splitlines() if x.strip()]),'translation_contract':contract,'risk_assessment':risk_assessment,'failure_fingerprint':failure_fingerprint,'rule_evolution':rule_evolution,'learned_rule':learned_rule,'type_map':type_map,'dependency_order':dependency_order,'idiomatic_refactor':idiomatic_refactor,'property_validation':property_validation}
 
 
 def _run_normalized(nodes):
     from .legacy import run_nodes
     out=[]; run_nodes(nodes,{},out); return out
+
+
+def _python_ast_learning_ir(program):
+    """Expose only flat scalar assignment/print statements to the pattern learner."""
+    import json
+    from .ast_nodes import Assignment, Boolean, Name, Number, PrintStatement, String
+
+    def atom_text(node):
+        if isinstance(node, Number):
+            return str(node.value)
+        if isinstance(node, String):
+            return json.dumps(node.value)
+        if isinstance(node, Boolean):
+            return 'True' if node.value else 'False'
+        if isinstance(node, Name):
+            return node.value
+        return None
+
+    nodes = []
+    for statement in program.statements:
+        if isinstance(statement, Assignment):
+            expression = atom_text(statement.value)
+            kind = 'assign'
+            attributes = {'kind': kind, 'name': statement.name, 'expr': expression}
+        elif isinstance(statement, PrintStatement):
+            expression = atom_text(statement.expression)
+            kind = 'print'
+            attributes = {'kind': kind, 'expr': expression}
+        else:
+            return None
+        if expression is None:
+            return None
+        nodes.append({'kind': kind, 'parent': None, 'attributes': attributes})
+    return nodes or None

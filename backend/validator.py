@@ -48,10 +48,6 @@ def check_javascript_syntax(code):
     return _run(['node', '--check'], 'translated.js', code)
 
 
-def check_javascript_syntax(code):
-    return _run(['node', '--check'], 'translated.js', code)
-
-
 def _outputs_equivalent(source_output, target_output):
     if source_output == target_output:
         return True
@@ -88,7 +84,7 @@ def compare(source_output, target, target_language='JavaScript'):
         message = 'Generated target program failed during execution.'
     elif same:
         failure = None
-        message = 'Input/output equivalence check passed.'
+        message = 'Finite input/output comparison passed for this run.'
     else:
         failure = 'output_mismatch'
         message = 'Source and target outputs differ.'

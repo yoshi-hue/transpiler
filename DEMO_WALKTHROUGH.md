@@ -1,0 +1,48 @@
+# Prototype walkthrough
+
+This walkthrough shows one supported translation and one unsupported construct. It
+takes about four minutes. Deterministic translation works without an LLM key; model
+fallback is optional and depends on the configured provider.
+
+## Start the prototype
+
+From the repository root:
+
+```bash
+docker compose up --build
+```
+
+Open <http://127.0.0.1:8000> and stop the server with Ctrl+C. The container includes
+Python and Node.js so both target paths are available. The default Compose setup does
+not pass `.env` into the container. For local development, see **Run locally** in
+`README.md`.
+
+## Walkthrough
+
+1. **State the scope (30 seconds).** This prototype translates documented subsets of
+   COBOL, FORTRAN, Pascal, BASIC, and a project-specific Python-like language. It
+   exposes unsupported syntax and reports finite target-side checks. It is not a
+   general-purpose migration system.
+2. **Show a supported translation (90 seconds).** Select COBOL and JavaScript, load
+   the built-in example, and translate. The example computes the maximum of 17 and
+   25, producing `25`. Open the compiler details to show tokens, normalized IR,
+   translation rules, and validation output. This is a fixed example, not evidence of
+   general semantic equivalence.
+3. **Show an unsupported construct (90 seconds).** Load the LLM fallback example.
+   Point out the unsupported external `CALL`, the deterministic partial output, and
+   the separate fallback status. Without a configured provider, the request is
+   skipped. With a provider, any returned candidate is still unaccepted and requires
+   the review process in `CANDIDATE_ACCEPTANCE.md`.
+4. **State the evidence boundary (30 seconds).** The held-out pilot contains 20
+   records from two task groups. Seventeen supported outputs matched project-authored
+   expected outputs for each target; three unsupported COBOL loop cases were
+   recognized. The expected outputs have not been checked with native source
+   compilers or a second human reviewer. The pilot does not establish general
+   semantic equivalence or an effectiveness gain from model fallback.
+
+## Recording notes
+
+- Keep source code, metrics, and validation messages readable on screen.
+- Do not present a model response as guaranteed or semantically validated.
+- If showing a live provider request, ensure credentials are not visible and narrate
+  only the result observed in that run.

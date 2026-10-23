@@ -49,3 +49,16 @@ process or on the host filesystem.
 No model candidate has passed this policy. The v3 refresh returned no candidate in the
 paired JavaScript or Python run. The one-candidate v2 result is historical and was
 validated on only one fixed input; it is not accepted translation evidence.
+
+## Learned-rule behavior
+
+The current implementation can induce an experimental statement-pattern rule from one
+deterministic translation that passes the configured finite checks at low or medium
+risk. The supported schema is limited to flat assignment/print programs whose
+expressions are single literals or identifiers. Variable and literal values become
+slots in the target template. The rule is keyed by source language, target language,
+schema, and deterministic rule-table version; every match is revalidated. Loops,
+branches, compound expressions, high-risk cases, and model candidates are not learned.
+This restricted rule induction is not the human-reviewed candidate acceptance
+workflow described above, and passing finite checks does not establish semantic
+correctness for every program matched by the pattern.
