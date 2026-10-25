@@ -46,11 +46,20 @@ and matched one predeclared expected output. The separate Python review report r
 three fixture-variant matches, but source review and human review remain pending. The COBOL
 source has not been checked with a native compiler, and neither candidate is accepted.
 These are smoke-trial observations, not evidence of a general effectiveness improvement.
-The strengthened held-out subset has
-20 examples from two task groups; 17 supported target outputs matched separately
-authored expected outputs in both targets, while three COBOL loops were correctly
-reported unsupported. The expected outputs match a separate reference evaluator (20/20), but have not been
-cross-checked against native source compilers or a second human reviewer. Full provenance and raw case files are in
-[`data/EVIDENCE_V3_REFRESH.md`](./data/EVIDENCE_V3_REFRESH.md) and
-[`data/evaluation_v3_javascript.json`](./data/evaluation_v3_javascript.json),
-[`data/evaluation_v3_python.json`](./data/evaluation_v3_python.json).
+The held-out subset has 23 examples from five task groups; 19 supported target outputs
+matched separately authored expected outputs in both targets, while four unsupported
+cases were correctly recognized (three COBOL loops and one CodeNet Fortran array-input
+case). The original 20 expected outputs match a separate reference evaluator (20/20).
+CodeNet p02600 has 17 declared scalar inputs, p02606 has five, and p02607 has two official
+and two derived array fixtures; all three native Fortran builds passed. The remaining task-derived cases have
+not been cross-checked against native source compilers or a second human reviewer. The
+owner's independent source/oracle/license reviews for the CodeNet cases are pending. The current 23-case
+deterministic outputs are [`data/reproduced_test_23_javascript.json`](./data/reproduced_test_23_javascript.json)
+and [`data/reproduced_test_23_python.json`](./data/reproduced_test_23_python.json);
+CodeNet evidence is recorded in the p02600, p02606, and p02607 case-review JSON files.
+The guarded v6 five-repeat ablation reran the same 23 cases. It yielded 95/115 passes
+per arm and target, but all 15 eligible provider requests per target failed with
+connection errors; it generated and accepted no candidates. CodeNet inputs were withheld
+from the provider. The preserved v4 run attempted CodeNet requests before that guard;
+provider receipt of those payloads is unknown. See the v6 ablation reports and
+`data/codenet_case_review_p02607.json`.

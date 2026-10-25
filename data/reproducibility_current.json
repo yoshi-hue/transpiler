@@ -1,0 +1,340 @@
+{
+  "schema_version": "2.0",
+  "run_date": "2026-10-25",
+  "environment": {
+    "os": "Windows PowerShell, Docker Desktop Linux containers",
+    "python": "3.13.1",
+    "node": "v24.20.0",
+    "docker": "29.9.2, build a82e528",
+    "native_source_compiler": "GNU Fortran 14.3.0 in gcc:14-bookworm"
+  },
+  "clean_python_setup": {
+    "status": "previous clean-install check predates the current corpus expansion and MOD change; current post-change full suite passed in the active Python 3.13.1 environment",
+    "historical_install_command": "python -m pip install -r requirements-dev.txt"
+  },
+  "current_test_suite": {
+    "command": "python -m pytest -q --basetemp=.pytest-run-v10",
+    "collected": 58,
+    "passed": 58,
+    "failed": 0,
+    "exit_code": 0
+  },
+  "corpus_validation": {
+    "command": "python tools/corpus.py validate-manifest",
+    "ok": true,
+    "records": 42,
+    "development": 16,
+    "test": 26,
+    "test_groups": 8
+  },
+  "oracle_check": {
+    "command": "python tools/check_benchmark_oracles.py --output data/oracle_current_check.json",
+    "expected_output_cases": 25,
+    "case_matches": 25,
+    "fixtures": 38,
+    "fixture_matches": 38,
+    "independent_human_review": "pending"
+  },
+  "deterministic_evaluation": {
+    "reports": [
+      "reproduced_test_26_javascript.json",
+      "reproduced_test_26_python.json"
+    ],
+    "each_target": {
+      "cases": 26,
+      "supported_translations_passed": 22,
+      "supported_expected_outputs_matched": 22,
+      "supported_fixtures_matched": 34,
+      "supported_fixtures_total": 34,
+      "expected_unsupported": 4,
+      "unsupported_recognized": 4
+    }
+  },
+  "latest_live_ablation": {
+    "reports": [
+      "controlled_ablation_live_v9_javascript.json",
+      "controlled_ablation_live_v8_python.json"
+    ],
+    "settings": {
+      "corpus_cases": 26,
+      "test_groups": 8,
+      "repeats_per_arm": 5,
+      "provider": "Google Gemini",
+      "model": "gemini-3.1-flash-lite",
+      "prompt_version": "legacy-modernizer-llm-v3",
+      "temperature": 0,
+      "CodeNet_sources_sent_to_provider": false
+    },
+    "by_target": {
+      "JavaScript": {
+        "report": "controlled_ablation_live_v9_javascript.json",
+        "target": "JavaScript",
+        "corpus_sha256": "832607a99c5ff81f32deaa86fd967fad337f671594a6fbae6edc2d305af608b2",
+        "subset_sha256": "3a58bd772faef12dbf24eb9544f7712b3a3b77660a28d8832d1fa1feb9a92388",
+        "implementation_sha256_at_run": "fd3c4e06ad4625d4b1f4f176ff49c5f0cd458f521c28057526010749d59fbc88",
+        "provider": {
+          "configured": true,
+          "provider": "Google Gemini",
+          "model": "gemini-3.1-flash-lite",
+          "prompt_version": "legacy-modernizer-llm-v3"
+        },
+        "repeats": 5,
+        "case_count": 26,
+        "development_excluded": 16,
+        "arms": {
+          "rule_only": {
+            "observations": 130,
+            "passed": 110,
+            "supported_cases_passed": 110,
+            "supported_case_trials": 110,
+            "supported_fixture_matches": 170,
+            "supported_fixture_total": 170,
+            "expected_unsupported_recognized": 20,
+            "expected_unsupported_trials": 20,
+            "candidate_generated": 0,
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_output_matches": 0,
+            "accepted": 0,
+            "learned_rule_reuses": 0,
+            "failure_class_counts": {
+              "input_fixture_required": 5,
+              "none": 110,
+              "unsupported_source_syntax": 15
+            },
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "human_review_effort_minutes": null
+          },
+          "hybrid": {
+            "observations": 130,
+            "passed": 110,
+            "supported_cases_passed": 110,
+            "supported_case_trials": 110,
+            "supported_fixture_matches": 170,
+            "supported_fixture_total": 170,
+            "expected_unsupported_recognized": 20,
+            "expected_unsupported_trials": 20,
+            "candidate_generated": 15,
+            "candidate_syntax_valid": 15,
+            "candidate_runtime_valid": 15,
+            "candidate_output_matches": 15,
+            "accepted": 0,
+            "learned_rule_reuses": 0,
+            "failure_class_counts": {
+              "input_fixture_required": 5,
+              "none": 110,
+              "unsupported_source_syntax": 15
+            },
+            "median_llm_latency_ms": 1130.8,
+            "mean_llm_latency_ms": 4703.4,
+            "human_review_effort_minutes": null
+          },
+          "contracts_risk_learned_rules": {
+            "observations": 130,
+            "passed": 110,
+            "supported_cases_passed": 110,
+            "supported_case_trials": 110,
+            "supported_fixture_matches": 170,
+            "supported_fixture_total": 170,
+            "expected_unsupported_recognized": 20,
+            "expected_unsupported_trials": 20,
+            "candidate_generated": 0,
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_output_matches": 0,
+            "accepted": 0,
+            "learned_rule_reuses": 0,
+            "failure_class_counts": {
+              "input_fixture_required": 5,
+              "none": 110,
+              "unsupported_source_syntax": 15
+            },
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "human_review_effort_minutes": null
+          }
+        }
+      },
+      "Python": {
+        "report": "controlled_ablation_live_v8_python.json",
+        "target": "Python",
+        "corpus_sha256": "832607a99c5ff81f32deaa86fd967fad337f671594a6fbae6edc2d305af608b2",
+        "subset_sha256": "3a58bd772faef12dbf24eb9544f7712b3a3b77660a28d8832d1fa1feb9a92388",
+        "implementation_sha256_at_run": "fd3c4e06ad4625d4b1f4f176ff49c5f0cd458f521c28057526010749d59fbc88",
+        "provider": {
+          "configured": true,
+          "provider": "Google Gemini",
+          "model": "gemini-3.1-flash-lite",
+          "prompt_version": "legacy-modernizer-llm-v3"
+        },
+        "repeats": 5,
+        "case_count": 26,
+        "development_excluded": 16,
+        "arms": {
+          "rule_only": {
+            "observations": 130,
+            "passed": 110,
+            "supported_cases_passed": 110,
+            "supported_case_trials": 110,
+            "supported_fixture_matches": 170,
+            "supported_fixture_total": 170,
+            "expected_unsupported_recognized": 20,
+            "expected_unsupported_trials": 20,
+            "candidate_generated": 0,
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_output_matches": 0,
+            "accepted": 0,
+            "learned_rule_reuses": 0,
+            "failure_class_counts": {
+              "input_fixture_required": 5,
+              "none": 110,
+              "unsupported_source_syntax": 15
+            },
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "human_review_effort_minutes": null
+          },
+          "hybrid": {
+            "observations": 130,
+            "passed": 110,
+            "supported_cases_passed": 110,
+            "supported_case_trials": 110,
+            "supported_fixture_matches": 170,
+            "supported_fixture_total": 170,
+            "expected_unsupported_recognized": 20,
+            "expected_unsupported_trials": 20,
+            "candidate_generated": 15,
+            "candidate_syntax_valid": 15,
+            "candidate_runtime_valid": 15,
+            "candidate_output_matches": 15,
+            "accepted": 0,
+            "learned_rule_reuses": 0,
+            "failure_class_counts": {
+              "input_fixture_required": 5,
+              "none": 110,
+              "unsupported_source_syntax": 15
+            },
+            "median_llm_latency_ms": 1067.7,
+            "mean_llm_latency_ms": 1629.9,
+            "human_review_effort_minutes": null
+          },
+          "contracts_risk_learned_rules": {
+            "observations": 130,
+            "passed": 110,
+            "supported_cases_passed": 110,
+            "supported_case_trials": 110,
+            "supported_fixture_matches": 170,
+            "supported_fixture_total": 170,
+            "expected_unsupported_recognized": 20,
+            "expected_unsupported_trials": 20,
+            "candidate_generated": 0,
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_output_matches": 0,
+            "accepted": 0,
+            "learned_rule_reuses": 0,
+            "failure_class_counts": {
+              "input_fixture_required": 5,
+              "none": 110,
+              "unsupported_source_syntax": 15
+            },
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "human_review_effort_minutes": null
+          }
+        }
+      }
+    },
+    "interpretation": "Both targets generated 15 candidates in the hybrid arm; 15/15 per target passed syntax, runtime, and expected-output checks, but zero were accepted. All arms had equal pass counts and learned-rule reuse was zero. Reviewer effort is null. This establishes provider connectivity and candidate checks on repeated project-authored COBOL inputs, not an improvement."
+  },
+  "provider_access": "Live comparison commands ran with explicit provider network permission; credentials were read locally from ignored .env and not written to reports.",
+  "native_codenet_builds": [
+    {
+      "case_id": "codenet-p02600-s098305279",
+      "source_sha256": "42d176af444979844386308baf5f56081f3e2be81b80cdc0f749539d255524b7",
+      "source_file": "s098305279.f",
+      "fixture_outputs": "17 outputs, all matched"
+    },
+    {
+      "case_id": "codenet-p02606-s368691152",
+      "source_sha256": "00b4403a1f9ecb3620b45d111cbaca3513cc9f0bce88f64f9ced8c0c81b81eaf",
+      "source_file": "s368691152.f",
+      "fixture_outputs": "3, 2, 100, 3, 4; all matched"
+    },
+    {
+      "case_id": "codenet-p02607-s779285219",
+      "source_sha256": "969fe29546989cd0f97dbbfeafb4d8a584d2cebd2a39a63fa16188b51e4079bc",
+      "source_file": "s779285219.f",
+      "fixture_outputs": "2 official and 2 derived; all matched"
+    },
+    {
+      "case_id": "codenet-p03997-s040559345",
+      "source_sha256": "da9e516bc4c2aec8e66cb0fe59e9aecbf541a82c431ef887e1681406f7f72d55",
+      "source_file": "s040559345.f",
+      "fixture_outputs": [
+        "7",
+        "16",
+        "5000",
+        "2"
+      ]
+    },
+    {
+      "case_id": "codenet-p02724-s408275047",
+      "source_sha256": "9d008988fda3400c2b9160943fa58fee9a14aa950b192cb351b4ac810a434f15",
+      "source_file": "s408275047.f",
+      "fixture_outputs": [
+        "2020",
+        "0",
+        "495",
+        "1000",
+        "2000000000"
+      ]
+    },
+    {
+      "case_id": "codenet-p03238-s608868631",
+      "source_sha256": "a1601f490fafde05343a57b8f779ef24a6d7161a1797c398e5b3427ae8aaeb4f",
+      "source_file": "s608868631.f",
+      "fixture_outputs": [
+        "Hello World",
+        "8",
+        "10"
+      ]
+    }
+  ],
+  "independent_reviews": {
+    "corpus_queue": "independent_oracle_review_queue_v2.json",
+    "corpus_cases_pending": 26,
+    "llm_candidate_queue": "llm_candidate_review_queue_v9.json",
+    "unique_llm_candidates_pending": 6,
+    "llm_candidate_observations": 30,
+    "candidate_accepted": 0,
+    "review_minutes_recorded": false
+  },
+  "limitations": [
+    "Eight held-out task groups are far below the planned 100-group target.",
+    "The user has not yet completed the independent corpus review.",
+    "LLM candidates remain unaccepted pending all human and technical gates.",
+    "The clean-install check predates this change set; the post-change full test suite was run in the active environment.",
+    "The older v4 run predates the CodeNet provider guard; source payload receipt is unknown."
+  ],
+  "artifacts": [
+    "external_task_cases.jsonl",
+    "corpus_manifest.jsonl",
+    "supported_subset.json",
+    "oracle_current_check.json",
+    "reproduced_test_26_javascript.json",
+    "reproduced_test_26_python.json",
+    "controlled_ablation_live_v9_javascript.json",
+    "controlled_ablation_live_v8_python.json",
+    "provider_trial_connectivity_20261025.json",
+    "provider_trial_connectivity_20261025_javascript.json",
+    "independent_oracle_review_queue_v2.json",
+    "llm_candidate_review_queue_v9.json",
+    "codenet_case_review_p03997.json",
+    "codenet_case_review_p02724.json",
+    "codenet_case_review_p03238.json"
+  ],
+  "credential_handling": "LLM credentials were read locally from the ignored .env; no credentials are included in generated reports."
+}

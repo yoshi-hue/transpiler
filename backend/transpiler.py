@@ -408,11 +408,14 @@ def _is_unsupported_candidate(candidate):
     return False
 
 
-def transpile(source, source_language='Python-like', target_language='JavaScript', *, enable_llm=None, enable_learned_rules=True, store_validated_example=True):
+def transpile(source, source_language='Python-like', target_language='JavaScript', *, input_data=None, enable_llm=None, enable_learned_rules=True, store_validated_example=True):
     if source_language != 'Python-like':
         if target_language not in TARGETS:
             raise ValueError('Unsupported target language. Choose JavaScript or Python.')
         result = legacy_transpile(source_language, source, target_language)
+        def contains_input(nodes):
+            return any(node.get('kind') == 'input' or any(contains_input(node.get(key, [])) for key in ('then', 'else', 'body')) for node in nodes)
+        needs_input = contains_input(result.source_program)
         risk_assessment = _risk_assessment(source, source_language, target_language)
         generalized_rule = find_generalized_rule(source_language, target_language, result.ir) if enable_learned_rules else None
         generalized_code = apply_generalized_rule(generalized_rule, result.ir) if generalized_rule else None
@@ -550,27 +553,36 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
                     'status': candidate_validation_status,
                     'detail': 'Candidate checks are reported separately; no LLM candidate is automatically accepted.',
                 })
+        elif needs_input and input_data is None:
+            target_run = {'available': False, 'ok': None, 'output': '', 'error': 'Provide program input to run validation.'}
         elif target_language == 'JavaScript':
-            target_run = run_javascript(result.javascript)
+            target_run = run_javascript(result.javascript, stdin_data=input_data)
         else:
-            target_run = run_python(result.javascript)
+            target_run = run_python(result.javascript, stdin_data=input_data)
 
         validation = {
             'status':'not_run',
-            'message':'Validation requires complete deterministic source coverage; unsupported constructs need review.',
+            'message':('Enter whitespace-separated stdin values to run finite I/O validation.' if needs_input and input_data is None else 'Validation requires complete deterministic source coverage; unsupported constructs need review.'),
             'source_output':'', 'target_output':'', 'target_runtime':target_language,
-            'failure_class':'unsupported_source_syntax',
+            'failure_class':'input_fixture_required' if needs_input and input_data is None else 'unsupported_source_syntax',
             'risk_level': risk_assessment['level'],
             'manual_review_required': risk_assessment['validation_profile']['manual_review_required'],
         }
-        if not result.unsupported:
-            source_runner = lambda: '\n'.join(_run_normalized(result.source_program))
-            target_runner = (lambda: run_javascript(result.javascript)) if target_language == 'JavaScript' else (lambda: run_python(result.javascript))
-            source_output = source_runner()
-            validation = _validate_with_risk(
-                source_output, target_run, source_runner, target_runner,
-                risk_assessment, target_language,
-            )
+        if not result.unsupported and not (needs_input and input_data is None):
+            source_runner = lambda: '\n'.join(_run_normalized(result.source_program, input_data))
+            target_runner = (lambda: run_javascript(result.javascript, stdin_data=input_data)) if target_language == 'JavaScript' else (lambda: run_python(result.javascript, stdin_data=input_data))
+            try:
+                source_output = source_runner()
+                validation = _validate_with_risk(
+                    source_output, target_run, source_runner, target_runner,
+                    risk_assessment, target_language,
+                )
+            except Exception as exc:
+                validation.update({
+                    'status': 'failed',
+                    'message': f'Source-side execution failed; check the supplied input fixture: {exc}',
+                    'failure_class': 'source_interpreter_error',
+                })
         trace.append({'stage':'validation', 'status':validation['status'], 'detail':validation['message']})
 
         failure_fingerprint = _failure_fingerprint(source, validation, source_language, target_language)
@@ -681,9 +693,9 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
     return {'language_support':{'source':'Python-like','target':'JavaScript','subset':'Existing prototype subset'},'tokens':[{'type':t.type,'value':t.value,'line':t.line,'column':t.column} for t in tokens if t.type not in ('NEWLINE','INDENT','DEDENT','EOF')],'ast':ast_to_dict(ast),'ir':ir.to_dict(),'symbol_table':symbols.as_dict(),'javascript':javascript,'target_code':javascript,'deterministic_code':javascript,'rules_used':generator.rules_used,'rule_table_version':RULE_TABLE_VERSION,'rule_coverage':coverage,'fallback_log':fallback.entries,'fallback_status':fallback_status(enabled=enable_llm),'fallback_suggestions':[],'validation':validation,'unsupported':[],'notes':['Original Python-like demonstration pipeline retained.'],'pipeline_trace':[{'stage':'front_end','status':'completed','detail':'Python-like lexer/parser/semantic analysis completed.'},{'stage':'shared_ir','status':'completed','detail':'Shared IR constructed.'},{'stage':'rule_first','status':'completed','detail':'Deterministic JavaScript code generation completed.'},{'stage':'learned_rule','status':'reused' if learned_rule_reused else 'recorded' if learned_rule else 'not_applicable','detail':'Bounded assignment/print templates are recorded only when contract and risk gates allow; reused output is revalidated.'},{'stage':'llm_fallback','status':'not_needed','detail':'No unsupported constructs in the current subset.'},{'stage':'validation','status':validation['status'],'detail':validation['message']}],'target_runtime':target,'generated_lines':len([x for x in javascript.splitlines() if x.strip()]),'translation_contract':contract,'acceptance_policy':acceptance,'candidate_acceptance':None,'risk_assessment':risk_assessment,'failure_fingerprint':failure_fingerprint,'rule_evolution':rule_evolution,'learned_rule':learned_rule,'type_map':type_map,'dependency_order':dependency_order,'idiomatic_refactor':idiomatic_refactor,'property_validation':property_validation}
 
 
-def _run_normalized(nodes):
+def _run_normalized(nodes, input_data=None):
     from .legacy import run_nodes
-    out=[]; run_nodes(nodes,{},out); return out
+    out=[]; run_nodes(nodes,{},out,input_data.split() if input_data is not None else None); return out
 
 
 def _python_ast_learning_ir(program):

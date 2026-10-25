@@ -179,6 +179,11 @@ pre{height:220px;padding:14px;overflow:auto;white-space:pre-wrap}
         <div id="llmCandidateDownload" class="download-group" hidden><button class="secondary" onclick="downloadLLMCandidate()">Download LLM candidate</button></div>
       </section>
     </div>
+    <section class="card" style="margin-top:14px">
+      <div class="card-title">Program input (stdin)</div>
+      <textarea id="stdinData" spellcheck="false" style="height:90px" placeholder="Optional whitespace-separated input values for supported READ statements"></textarea>
+      <div class="decision">Fortran scalar list-directed READ is supported in the current input-aware subset. Validation stays pending until you provide input for programs that read from stdin.</div>
+    </section>
 
     <details class="inspector-panel">
       <summary>Show compiler details and metrics</summary>
@@ -422,7 +427,8 @@ async function translateCode(){
  clearTranslation('Translation in progress...');
  const status=$('status'); status.textContent='Translating...'; status.className='status';
  try{
-  const response=await fetch(apiUrl('/transpile'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:$('sourceCode').value,source_language:$('source').value,target_language:$('target').value})});
+  const inputData=$('stdinData').value;
+  const response=await fetch(apiUrl('/transpile'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:$('sourceCode').value,source_language:$('source').value,target_language:$('target').value,input_data:inputData.trim()?inputData:null})});
   const data=await response.json();
   if(!response.ok || !data.ok){status.textContent=data.error||data.detail||`Translation failed (HTTP ${response.status}).`;status.className='status fail';return;}
    const suggestions=(data.fallback_suggestions||[]).filter(item=>item.candidate && item.candidate_status!=='unsupported_or_refused');

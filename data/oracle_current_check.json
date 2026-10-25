@@ -1,0 +1,558 @@
+{
+  "schema_version": "2.0",
+  "method": "separate regex input extraction plus direct max/range/repetition calculation; no transpiler or source interpreter imports",
+  "limitation": "Not an independently executed native compiler and not an independent human review.",
+  "benchmark_sha256": "832607a99c5ff81f32deaa86fd967fad337f671594a6fbae6edc2d305af608b2",
+  "checker_sha256": "e9522e5942fe75f2dcf3da5b0245d25f24011107105c33770c7fcb5e731ce7ab",
+  "cases": 25,
+  "case_output_matches": 25,
+  "fixture_count": 38,
+  "fixture_matches": 38,
+  "matches": 25,
+  "results": [
+    {
+      "case": "rosetta-maximum-cobol",
+      "task_group": "Maximum of two numbers",
+      "language": "COBOL",
+      "expected_output": "25",
+      "reference_output": "25",
+      "match": true
+    },
+    {
+      "case": "rosetta-maximum-fortran",
+      "task_group": "Maximum of two numbers",
+      "language": "FORTRAN",
+      "expected_output": "25",
+      "reference_output": "25",
+      "match": true
+    },
+    {
+      "case": "rosetta-maximum-pascal",
+      "task_group": "Maximum of two numbers",
+      "language": "Pascal",
+      "expected_output": "25",
+      "reference_output": "25",
+      "match": true
+    },
+    {
+      "case": "rosetta-maximum-basic",
+      "task_group": "Maximum of two numbers",
+      "language": "BASIC",
+      "expected_output": "25",
+      "reference_output": "25",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-cobol",
+      "task_group": "Loops/For",
+      "language": "COBOL",
+      "expected_output": "STEP\nSTEP\nSTEP",
+      "reference_output": "STEP\nSTEP\nSTEP",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-fortran",
+      "task_group": "Loops/For",
+      "language": "FORTRAN",
+      "expected_output": "1\n2\n3",
+      "reference_output": "1\n2\n3",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-pascal",
+      "task_group": "Loops/For",
+      "language": "Pascal",
+      "expected_output": "1\n2\n3",
+      "reference_output": "1\n2\n3",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-basic",
+      "task_group": "Loops/For",
+      "language": "BASIC",
+      "expected_output": "2\n3\n4",
+      "reference_output": "2\n3\n4",
+      "match": true
+    },
+    {
+      "case": "rosetta-maximum-tie-cobol",
+      "task_group": "Maximum of two numbers",
+      "language": "COBOL",
+      "expected_output": "7",
+      "reference_output": "7",
+      "match": true
+    },
+    {
+      "case": "rosetta-maximum-tie-fortran",
+      "task_group": "Maximum of two numbers",
+      "language": "FORTRAN",
+      "expected_output": "7",
+      "reference_output": "7",
+      "match": true
+    },
+    {
+      "case": "rosetta-maximum-tie-pascal",
+      "task_group": "Maximum of two numbers",
+      "language": "Pascal",
+      "expected_output": "7",
+      "reference_output": "7",
+      "match": true
+    },
+    {
+      "case": "rosetta-maximum-tie-basic",
+      "task_group": "Maximum of two numbers",
+      "language": "BASIC",
+      "expected_output": "7",
+      "reference_output": "7",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-singleton-cobol",
+      "task_group": "Loops/For",
+      "language": "COBOL",
+      "expected_output": "X",
+      "reference_output": "X",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-four-cobol",
+      "task_group": "Loops/For",
+      "language": "COBOL",
+      "expected_output": "X\nX\nX\nX",
+      "reference_output": "X\nX\nX\nX",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-singleton-fortran",
+      "task_group": "Loops/For",
+      "language": "FORTRAN",
+      "expected_output": "2",
+      "reference_output": "2",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-expanded-fortran",
+      "task_group": "Loops/For",
+      "language": "FORTRAN",
+      "expected_output": "2\n3\n4\n5",
+      "reference_output": "2\n3\n4\n5",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-singleton-pascal",
+      "task_group": "Loops/For",
+      "language": "Pascal",
+      "expected_output": "2",
+      "reference_output": "2",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-expanded-pascal",
+      "task_group": "Loops/For",
+      "language": "Pascal",
+      "expected_output": "2\n3\n4\n5",
+      "reference_output": "2\n3\n4\n5",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-singleton-basic",
+      "task_group": "Loops/For",
+      "language": "BASIC",
+      "expected_output": "2",
+      "reference_output": "2",
+      "match": true
+    },
+    {
+      "case": "rosetta-loops-for-expanded-basic",
+      "task_group": "Loops/For",
+      "language": "BASIC",
+      "expected_output": "2\n3\n4\n5",
+      "reference_output": "2\n3\n4\n5",
+      "match": true
+    },
+    {
+      "case": "codenet-p02600-s098305279",
+      "task_group": "Kyu in AtCoder",
+      "language": "FORTRAN",
+      "expected_output": "7",
+      "reference_output": "7",
+      "match": true
+    },
+    {
+      "case": "codenet-p02606-s368691152",
+      "task_group": "AIsing Programming Contest 2020 - A: Number of Multiples",
+      "language": "FORTRAN",
+      "expected_output": "3",
+      "reference_output": "3",
+      "match": true
+    },
+    {
+      "case": "codenet-p03997-s040559345",
+      "task_group": "Trapezoids",
+      "language": "FORTRAN",
+      "expected_output": "7",
+      "reference_output": "7",
+      "match": true
+    },
+    {
+      "case": "codenet-p02724-s408275047",
+      "task_group": "Golden Coins",
+      "language": "FORTRAN",
+      "expected_output": "2020",
+      "reference_output": "2020",
+      "match": true
+    },
+    {
+      "case": "codenet-p03238-s608868631",
+      "task_group": "Programming Education",
+      "language": "FORTRAN",
+      "expected_output": "Hello World",
+      "reference_output": "Hello World",
+      "match": true
+    }
+  ],
+  "fixture_results": [
+    {
+      "case": "codenet-p02607-s779285219",
+      "task_group": "AIsing Programming Contest 2020 - B: An Odd Problem",
+      "fixture_id": "atcoder-p02607-sample-1",
+      "oracle_status": "official_problem_sample",
+      "expected_output": "2",
+      "reference_output": "2",
+      "match": true
+    },
+    {
+      "case": "codenet-p02607-s779285219",
+      "task_group": "AIsing Programming Contest 2020 - B: An Odd Problem",
+      "fixture_id": "atcoder-p02607-sample-2",
+      "oracle_status": "official_problem_sample",
+      "expected_output": "3",
+      "reference_output": "3",
+      "match": true
+    },
+    {
+      "case": "codenet-p02607-s779285219",
+      "task_group": "AIsing Programming Contest 2020 - B: An Odd Problem",
+      "fixture_id": "odd-problem-singleton-v1",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "1",
+      "reference_output": "1",
+      "match": true
+    },
+    {
+      "case": "codenet-p02607-s779285219",
+      "task_group": "AIsing Programming Contest 2020 - B: An Odd Problem",
+      "fixture_id": "odd-problem-even-index-v1",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "2",
+      "reference_output": "2",
+      "match": true
+    },
+    {
+      "case": "codenet-p02600-s098305279",
+      "task_group": "Kyu in AtCoder",
+      "fixture_id": "atcoder-msolutions2020-a-sample-1",
+      "oracle_status": "official_problem_sample",
+      "expected_output": "7",
+      "reference_output": "7",
+      "match": true
+    },
+    {
+      "case": "codenet-p02600-s098305279",
+      "task_group": "Kyu in AtCoder",
+      "fixture_id": "atcoder-msolutions2020-a-sample-2",
+      "oracle_status": "official_problem_sample",
+      "expected_output": "2",
+      "reference_output": "2",
+      "match": true
+    },
+    {
+      "case": "codenet-p02600-s098305279",
+      "task_group": "Kyu in AtCoder",
+      "fixture_id": "atcoder-msolutions2020-a-boundary-01",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "8",
+      "reference_output": "8",
+      "match": true
+    },
+    {
+      "case": "codenet-p02600-s098305279",
+      "task_group": "Kyu in AtCoder",
+      "fixture_id": "atcoder-msolutions2020-a-boundary-02",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "8",
+      "reference_output": "8",
+      "match": true
+    },
+    {
+      "case": "codenet-p02600-s098305279",
+      "task_group": "Kyu in AtCoder",
+      "fixture_id": "atcoder-msolutions2020-a-boundary-03",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "7",
+      "reference_output": "7",
+      "match": true
+    },
+    {
+      "case": "codenet-p02600-s098305279",
+      "task_group": "Kyu in AtCoder",
+      "fixture_id": "atcoder-msolutions2020-a-boundary-04",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "7",
+      "reference_output": "7",
+      "match": true
+    },
+    {
+      "case": "codenet-p02600-s098305279",
+      "task_group": "Kyu in AtCoder",
+      "fixture_id": "atcoder-msolutions2020-a-boundary-05",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "6",
+      "reference_output": "6",
+      "match": true
+    },
+    {
+      "case": "codenet-p02600-s098305279",
+      "task_group": "Kyu in AtCoder",
+      "fixture_id": "atcoder-msolutions2020-a-boundary-06",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "6",
+      "reference_output": "6",
+      "match": true
+    },
+    {
+      "case": "codenet-p02600-s098305279",
+      "task_group": "Kyu in AtCoder",
+      "fixture_id": "atcoder-msolutions2020-a-boundary-07",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "5",
+      "reference_output": "5",
+      "match": true
+    },
+    {
+      "case": "codenet-p02600-s098305279",
+      "task_group": "Kyu in AtCoder",
+      "fixture_id": "atcoder-msolutions2020-a-boundary-08",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "5",
+      "reference_output": "5",
+      "match": true
+    },
+    {
+      "case": "codenet-p02600-s098305279",
+      "task_group": "Kyu in AtCoder",
+      "fixture_id": "atcoder-msolutions2020-a-boundary-09",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "4",
+      "reference_output": "4",
+      "match": true
+    },
+    {
+      "case": "codenet-p02600-s098305279",
+      "task_group": "Kyu in AtCoder",
+      "fixture_id": "atcoder-msolutions2020-a-boundary-10",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "4",
+      "reference_output": "4",
+      "match": true
+    },
+    {
+      "case": "codenet-p02600-s098305279",
+      "task_group": "Kyu in AtCoder",
+      "fixture_id": "atcoder-msolutions2020-a-boundary-11",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "3",
+      "reference_output": "3",
+      "match": true
+    },
+    {
+      "case": "codenet-p02600-s098305279",
+      "task_group": "Kyu in AtCoder",
+      "fixture_id": "atcoder-msolutions2020-a-boundary-12",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "3",
+      "reference_output": "3",
+      "match": true
+    },
+    {
+      "case": "codenet-p02600-s098305279",
+      "task_group": "Kyu in AtCoder",
+      "fixture_id": "atcoder-msolutions2020-a-boundary-13",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "2",
+      "reference_output": "2",
+      "match": true
+    },
+    {
+      "case": "codenet-p02600-s098305279",
+      "task_group": "Kyu in AtCoder",
+      "fixture_id": "atcoder-msolutions2020-a-boundary-14",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "1",
+      "reference_output": "1",
+      "match": true
+    },
+    {
+      "case": "codenet-p02600-s098305279",
+      "task_group": "Kyu in AtCoder",
+      "fixture_id": "atcoder-msolutions2020-a-boundary-15",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "1",
+      "reference_output": "1",
+      "match": true
+    },
+    {
+      "case": "codenet-p02606-s368691152",
+      "task_group": "AIsing Programming Contest 2020 - A: Number of Multiples",
+      "fixture_id": "atcoder-aising2020-a-sample-1",
+      "oracle_status": "official_problem_sample",
+      "expected_output": "3",
+      "reference_output": "3",
+      "match": true
+    },
+    {
+      "case": "codenet-p02606-s368691152",
+      "task_group": "AIsing Programming Contest 2020 - A: Number of Multiples",
+      "fixture_id": "atcoder-aising2020-a-sample-2",
+      "oracle_status": "official_problem_sample",
+      "expected_output": "2",
+      "reference_output": "2",
+      "match": true
+    },
+    {
+      "case": "codenet-p02606-s368691152",
+      "task_group": "AIsing Programming Contest 2020 - A: Number of Multiples",
+      "fixture_id": "atcoder-aising2020-a-sample-3",
+      "oracle_status": "official_problem_sample",
+      "expected_output": "100",
+      "reference_output": "100",
+      "match": true
+    },
+    {
+      "case": "codenet-p02606-s368691152",
+      "task_group": "AIsing Programming Contest 2020 - A: Number of Multiples",
+      "fixture_id": "atcoder-aising2020-a-derived-01",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "3",
+      "reference_output": "3",
+      "match": true
+    },
+    {
+      "case": "codenet-p02606-s368691152",
+      "task_group": "AIsing Programming Contest 2020 - A: Number of Multiples",
+      "fixture_id": "atcoder-aising2020-a-derived-02",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "4",
+      "reference_output": "4",
+      "match": true
+    },
+    {
+      "case": "codenet-p03997-s040559345",
+      "task_group": "Trapezoids",
+      "fixture_id": "atcoder-p03997-official-sample-1",
+      "oracle_status": "official_problem_sample",
+      "expected_output": "7",
+      "reference_output": "7",
+      "match": true
+    },
+    {
+      "case": "codenet-p03997-s040559345",
+      "task_group": "Trapezoids",
+      "fixture_id": "atcoder-p03997-official-sample-2",
+      "oracle_status": "official_problem_sample",
+      "expected_output": "16",
+      "reference_output": "16",
+      "match": true
+    },
+    {
+      "case": "codenet-p03997-s040559345",
+      "task_group": "Trapezoids",
+      "fixture_id": "atcoder-p03997-derived-small",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "5000",
+      "reference_output": "5000",
+      "match": true
+    },
+    {
+      "case": "codenet-p03997-s040559345",
+      "task_group": "Trapezoids",
+      "fixture_id": "atcoder-p03997-derived-odd",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "2",
+      "reference_output": "2",
+      "match": true
+    },
+    {
+      "case": "codenet-p02724-s408275047",
+      "task_group": "Golden Coins",
+      "fixture_id": "atcoder-p02724-official-sample-1",
+      "oracle_status": "official_problem_sample",
+      "expected_output": "2020",
+      "reference_output": "2020",
+      "match": true
+    },
+    {
+      "case": "codenet-p02724-s408275047",
+      "task_group": "Golden Coins",
+      "fixture_id": "atcoder-p02724-derived-zero",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "0",
+      "reference_output": "0",
+      "match": true
+    },
+    {
+      "case": "codenet-p02724-s408275047",
+      "task_group": "Golden Coins",
+      "fixture_id": "atcoder-p02724-derived-below-500",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "495",
+      "reference_output": "495",
+      "match": true
+    },
+    {
+      "case": "codenet-p02724-s408275047",
+      "task_group": "Golden Coins",
+      "fixture_id": "atcoder-p02724-derived-500",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "1000",
+      "reference_output": "1000",
+      "match": true
+    },
+    {
+      "case": "codenet-p02724-s408275047",
+      "task_group": "Golden Coins",
+      "fixture_id": "atcoder-p02724-derived-large",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "2000000000",
+      "reference_output": "2000000000",
+      "match": true
+    },
+    {
+      "case": "codenet-p03238-s608868631",
+      "task_group": "Programming Education",
+      "fixture_id": "atcoder-p03238-official-sample-1",
+      "oracle_status": "official_problem_sample",
+      "expected_output": "Hello World",
+      "reference_output": "Hello World",
+      "match": true
+    },
+    {
+      "case": "codenet-p03238-s608868631",
+      "task_group": "Programming Education",
+      "fixture_id": "atcoder-p03238-official-sample-2",
+      "oracle_status": "official_problem_sample",
+      "expected_output": "8",
+      "reference_output": "8",
+      "match": true
+    },
+    {
+      "case": "codenet-p03238-s608868631",
+      "task_group": "Programming Education",
+      "fixture_id": "atcoder-p03238-derived-sum",
+      "oracle_status": "independently_derived_from_problem_definition",
+      "expected_output": "10",
+      "reference_output": "10",
+      "match": true
+    }
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0",
+  "experiment_id": "controlled-ablation-live-v6",
+  "review_policy": "Candidates remain unaccepted until independent fixture evidence and named human decisions are complete.",
+  "live_ablation": {
+    "javascript_report": "data/controlled_ablation_live_v6_javascript.json",
+    "python_report": "data/controlled_ablation_live_v6_python.json",
+    "settings": "Same frozen 23-case/five-group test split, five repeats per arm/target, temperature 0; CodeNet-origin model requests disabled.",
+    "result": "95/115 validation passes per arm/target; 15 eligible project-authored fallback requests failed with connection_error per target; zero candidates generated or accepted; zero learned-rule reuse; zero CodeNet model calls.",
+    "human_review_effort_minutes": null,
+    "effectiveness_conclusion": "No LLM effectiveness result: provider connectivity failed before candidate generation."
+  },
+  "candidates": [
+    {
+      "trial_id": "cobol-perform-three-times-v1",
+      "source_language": "COBOL",
+      "target_language": "Python",
+      "source_sha256": "356c6f3c1d5aff1bab49d3df472be557e08a94acad6bff791c90c45a4f890e32",
+      "candidate_sha256": "12672db5b78c9c0c55f5c07d94be97e838700584b11b3aeb8c78f7f2b05715d8",
+      "candidate_code": "for _ in range(3):\n    print(\"STEP\")",
+      "provider_trial": "data/provider_trial_latest_python.json",
+      "automatically_accepted": false,
+      "gates": {
+        "target_toolchain": {"status": "passed", "evidence": "data/llm_candidate_regression_v4.json"},
+        "fixed_candidate_regression": {"status": "passed", "scope": "One fixed-output fixture only; not an independent fixture-set gate.", "evidence": "data/llm_candidate_regression_v4.json"},
+        "static_ast_screen": {"status": "passed_machine_screen_only", "human_security_review": "pending", "evidence": "data/llm_candidate_regression_v4.json"},
+        "independent_fixture_set": {"status": "pending", "evidence": null},
+        "source_semantics_review": {"status": "pending", "reviewer": null, "decision": null},
+        "target_and_security_human_review": {"status": "pending", "reviewer": null, "decision": null},
+        "review_minutes": null
+      },
+      "acceptance": {"accepted": false, "blockers": ["independent_fixture_set", "source_semantics_review", "target_human_review", "security_human_review"]}
+    }
+  ],
+  "code_net_case_reviews_pending": [
+    "data/codenet_case_review_p02600.json",
+    "data/codenet_case_review.json",
+    "data/codenet_case_review_p02607.json"
+  ]
+}

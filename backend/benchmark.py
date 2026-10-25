@@ -31,7 +31,7 @@ CASES = [
     ('BASIC', 'comparison', '''10 LET A = 8\n20 LET B = 2\n30 IF A <> B THEN PRINT "NE"\n40 IF A <= B THEN PRINT "LE"\n50 IF A >= B THEN PRINT "GE"\n60 END'''),
 ]
 
-EXTERNAL_DATASET_ID = 'rosettacode-task-adaptations-v2'
+EXTERNAL_DATASET_ID = 'pilot-task-derived-codenet-v1'
 EXTERNAL_CASES = []
 _EXTERNAL_CASE_METADATA = {}
 _TEST_SPLIT_TASKS = {'Maximum of two numbers', 'Loops/For'}
@@ -50,8 +50,8 @@ with _external_cases_path.open(encoding='utf-8') as _dataset_file:
         if _case_key in _EXTERNAL_CASE_METADATA:
             raise ValueError(f'Duplicate external benchmark case id on line {_line_number}: {_case["id"]}.')
         _task = _case.get('provenance', {}).get('task')
-        _case['split'] = 'test' if _task in _TEST_SPLIT_TASKS else 'development'
-        _case['split_group'] = f'rosettacode:{_task}'
+        _case['split'] = _case.get('split', 'test' if _task in _TEST_SPLIT_TASKS else 'development')
+        _case['split_group'] = _case.get('split_group', f'rosettacode:{_task}')
         _case.setdefault(
             'oracle_status',
             'separately_authored_expected_output' if _case.get('expected_output') is not None else 'unsupported_expected',
@@ -101,6 +101,66 @@ def _oracle_match(actual_output, expected_output):
     return normalize(actual_output) == normalize(expected_output)
 
 
+def _transpile_benchmark_case(language, case_name, source, target, *, enable_llm,
+                              enable_learned_rules=False):
+    """Run each predeclared stdin fixture and aggregate case-level validation."""
+    metadata = _case_metadata(language, case_name, source)
+    fixtures = metadata.get('input_fixtures') or []
+    if metadata.get('expected_outcome', 'translated') != 'translated' or not fixtures:
+        return transpile(
+            source, language, target,
+            enable_llm=enable_llm,
+            enable_learned_rules=enable_learned_rules,
+            store_validated_example=False,
+        )
+
+    fixture_results = []
+    runs = []
+    for fixture in fixtures:
+        run = transpile(
+            source, language, target,
+            input_data=fixture['stdin'],
+            enable_llm=enable_llm,
+            enable_learned_rules=enable_learned_rules,
+            store_validated_example=False,
+        )
+        runs.append(run)
+        runtime = run.get('target_runtime', {})
+        matched = bool(
+            not run.get('unsupported')
+            and run.get('validation', {}).get('status') == 'passed'
+            and runtime.get('available')
+            and runtime.get('ok')
+            and _oracle_match(runtime.get('output'), fixture['expected_output'])
+        )
+        fixture_results.append({
+            'fixture_id': fixture['fixture_id'],
+            'stdin': fixture['stdin'],
+            'expected_output': fixture['expected_output'],
+            'observed_output': runtime.get('output'),
+            'status': run.get('validation', {}).get('status'),
+            'failure_class': run.get('validation', {}).get('failure_class'),
+            'matched': matched,
+        })
+
+    result = runs[-1]
+    validation = dict(result.get('validation', {}))
+    failed_fixture = next((item for item in fixture_results if not item['matched']), None)
+    if failed_fixture:
+        validation['status'] = 'failed'
+        validation['failure_class'] = failed_fixture.get('failure_class') or 'fixture_output_mismatch'
+        validation['message'] = f"Input fixture {failed_fixture['fixture_id']} failed."
+    else:
+        validation['status'] = 'passed'
+        validation['failure_class'] = None
+        validation['message'] = f"All {len(fixture_results)} predeclared input fixtures passed."
+    result['validation'] = validation
+    result['benchmark_fixture_results'] = fixture_results
+    result['benchmark_fixture_count'] = len(fixture_results)
+    result['benchmark_fixture_matches'] = sum(item['matched'] for item in fixture_results)
+    return result
+
+
 def _fallback_failure_summary(entry):
     """Retain actionable failure provenance without copying provider response bodies."""
     result = str(entry.get('result', ''))
@@ -114,6 +174,11 @@ def _fallback_failure_summary(entry):
         category, http_status = 'connection_error', None
     else:
         category, http_status = 'request_error', None
+    heldout_group_count = len({
+        _case_metadata(language, case_name, source).get('split_group')
+        for language, case_name, source in run_cases
+        if _case_metadata(language, case_name, source).get('split_group')
+    })
     return {
         'category': category,
         'http_status': http_status,
@@ -139,6 +204,8 @@ def _rule_categories(rules_used):
         prefix = rule.split('→', 1)[0].strip().lower()
         if prefix in ('assignment', 'output', 'conditional', 'loop'):
             categories.add(prefix)
+        elif prefix in ('list-directed input', 'scalar input'):
+            categories.add('input')
         elif prefix == 'arithmetic':
             categories.add('arithmetic')
         elif prefix == 'comparison':
@@ -166,12 +233,15 @@ def _required_construct_coverage(language, case_name, rules_used, source=None):
 
 def _case_result(language, case_name, source, target, *, enable_llm, enable_learned_rules=False):
     metadata = _case_metadata(language, case_name, source)
+    # Do not transmit third-party CodeNet source to an external model provider unless
+    # source-specific provider-processing terms have been separately reviewed.
+    llm_disabled_by_source_policy = bool(enable_llm and metadata.get('origin') == 'codenet')
+    case_llm_enabled = bool(enable_llm and not llm_disabled_by_source_policy)
     try:
-        result = transpile(
-            source, language, target,
-            enable_llm=enable_llm,
+        result = _transpile_benchmark_case(
+            language, case_name, source, target,
+            enable_llm=case_llm_enabled,
             enable_learned_rules=enable_learned_rules,
-            store_validated_example=False,
         )
     except Exception as exc:
         return {
@@ -198,6 +268,7 @@ def _case_result(language, case_name, source, target, *, enable_llm, enable_lear
             'candidate_generated': 0,
             'accepted_llm_candidates': 0,
             'llm_configured': False,
+            'llm_disabled_by_source_policy': llm_disabled_by_source_policy,
             'gold_output_match': None,
         }
     validation = result.get('validation', {})
@@ -220,7 +291,9 @@ def _case_result(language, case_name, source, target, *, enable_llm, enable_lear
     suggestions = result.get('fallback_suggestions', [])
     target_runtime = result.get('target_runtime', {})
     gold_output_match = None
-    if (
+    if result.get('benchmark_fixture_results'):
+        gold_output_match = all(item['matched'] for item in result['benchmark_fixture_results'])
+    elif (
         not result.get('unsupported')
         and target_runtime.get('available')
         and target_runtime.get('ok')
@@ -230,7 +303,6 @@ def _case_result(language, case_name, source, target, *, enable_llm, enable_lear
     if (
         suggestions
         and metadata.get('expected_output') is not None
-        and target == 'JavaScript'
         and target_runtime.get('available')
     ):
         candidate_oracle_match = bool(
@@ -248,6 +320,9 @@ def _case_result(language, case_name, source, target, *, enable_llm, enable_lear
         'source_construct_coverage_percent': result.get('rule_coverage', {}).get('coverage_percent'),
         'required_construct_coverage': _required_construct_coverage(language, case_name, rules_used, source),
         'llm_configured': result.get('fallback_status', {}).get('configured', False),
+        'llm_disabled_by_source_policy': llm_disabled_by_source_policy,
+        'provider': next((suggestion.get('provider') for suggestion in suggestions if suggestion.get('provider')),
+                         result.get('fallback_status', {}).get('provider')),
         'model': result.get('fallback_status', {}).get('model'),
         'prompt_version': result.get('fallback_status', {}).get('prompt_version'),
         'generated_lines': result.get('generated_lines', 0),
@@ -261,6 +336,29 @@ def _case_result(language, case_name, source, target, *, enable_llm, enable_lear
             hashlib.sha256(suggestion['candidate'].encode('utf-8')).hexdigest()
             for suggestion in suggestions
             if isinstance(suggestion.get('candidate'), str)
+        ],
+        'candidate_artifacts': [
+            {
+                'candidate_code': suggestion.get('candidate'),
+                'candidate_sha256': hashlib.sha256(suggestion['candidate'].encode('utf-8')).hexdigest()
+                if isinstance(suggestion.get('candidate'), str) else None,
+                'candidate_status': suggestion.get('candidate_status'),
+                'target_syntax_valid': suggestion.get('target_syntax_valid'),
+                'target_runtime_valid': suggestion.get('target_runtime_valid'),
+                'provider': suggestion.get('provider'),
+                'model': suggestion.get('model'),
+                'prompt_version': suggestion.get('prompt_version'),
+                'prompt_hash': suggestion.get('prompt_hash'),
+                'request_id': suggestion.get('request_id'),
+                'attempts': suggestion.get('attempts'),
+                'latency_ms': suggestion.get('latency_ms'),
+                'observed_output': target_runtime.get('output') if suggestion.get('candidate') else None,
+                'expected_output': metadata.get('expected_output'),
+                'oracle_match': candidate_oracle_match,
+                'accepted': False,
+                'acceptance_record': suggestion.get('acceptance_record'),
+            }
+            for suggestion in suggestions
         ],
         'candidate_syntax_valid': sum(bool(suggestion.get('target_syntax_valid')) for suggestion in suggestions),
         'candidate_runtime_valid': sum(bool(suggestion.get('target_runtime_valid')) for suggestion in suggestions),
@@ -280,6 +378,9 @@ def _case_result(language, case_name, source, target, *, enable_llm, enable_lear
         'expected_output': metadata.get('expected_output'),
         'expected_outcome': metadata.get('expected_outcome', 'translated'),
         'gold_output_match': gold_output_match,
+        'input_fixture_count': result.get('benchmark_fixture_count', 0),
+        'input_fixtures_matched': result.get('benchmark_fixture_matches', 0),
+        'input_fixture_results': result.get('benchmark_fixture_results', []),
         'outcome_correct': (
             validation.get('status') == 'passed'
             if metadata.get('expected_outcome', 'translated') == 'translated'
@@ -427,6 +528,8 @@ def _summarize_variant(results, variant_name):
         'gold_output_cases': len(gold_output_cases),
         'gold_output_matches': gold_output_matches,
         'gold_output_accuracy_percent': round((gold_output_matches / len(gold_output_cases)) * 100, 1) if gold_output_cases else None,
+        'input_fixtures': sum(item.get('input_fixture_count', 0) for item in results),
+        'input_fixtures_matched': sum(item.get('input_fixtures_matched', 0) for item in results),
         'fallback_frequency_percent': fallback_frequency,
         'metrics': {
             'llm_calls': llm_calls,
@@ -456,12 +559,24 @@ def run_benchmark(target='JavaScript', cases=None):
     results = []
     for language, case_name, source in run_cases:
         try:
-            r = transpile(
-                source, language, target,
+            r = _transpile_benchmark_case(
+                language, case_name, source, target,
                 enable_llm=False,
                 enable_learned_rules=False,
-                store_validated_example=False,
             )
+            if r.get('benchmark_fixture_results'):
+                case_gold_match = all(item['matched'] for item in r['benchmark_fixture_results'])
+            elif (
+                not r.get('unsupported')
+                and r.get('target_runtime', {}).get('available')
+                and r.get('target_runtime', {}).get('ok')
+            ):
+                case_gold_match = _oracle_match(
+                    r.get('target_runtime', {}).get('output'),
+                    _case_metadata(language, case_name, source).get('expected_output'),
+                )
+            else:
+                case_gold_match = None
             results.append({
                 'language': language,
                 'case': case_name,
@@ -475,18 +590,10 @@ def run_benchmark(target='JavaScript', cases=None):
                 'split_group': _case_metadata(language, case_name, source).get('split_group'),
                 'oracle_status': _case_metadata(language, case_name, source).get('oracle_status'),
                 'expected_output': _case_metadata(language, case_name, source).get('expected_output'),
-                'gold_output_match': (
-                    _oracle_match(
-                        r.get('target_runtime', {}).get('output'),
-                        _case_metadata(language, case_name, source).get('expected_output'),
-                    )
-                    if (
-                        not r.get('unsupported')
-                        and r.get('target_runtime', {}).get('available')
-                        and r.get('target_runtime', {}).get('ok')
-                    )
-                    else None
-                ),
+                'gold_output_match': case_gold_match,
+                'input_fixture_count': r.get('benchmark_fixture_count', 0),
+                'input_fixtures_matched': r.get('benchmark_fixture_matches', 0),
+                'input_fixture_results': r.get('benchmark_fixture_results', []),
                 'expected_outcome': _case_metadata(language, case_name, source).get('expected_outcome', 'translated'),
                 'outcome_correct': (
                     r['validation']['status'] == 'passed'
@@ -540,6 +647,8 @@ def run_benchmark(target='JavaScript', cases=None):
         'gold_output_cases': len(gold_output_cases),
         'gold_output_matches': gold_output_matches,
         'gold_output_accuracy_percent': round((gold_output_matches / len(gold_output_cases)) * 100.0, 1) if gold_output_cases else None,
+        'input_fixtures': sum(x.get('input_fixture_count', 0) for x in results),
+        'input_fixtures_matched': sum(x.get('input_fixtures_matched', 0) for x in results),
         'cases': results,
     }
 
@@ -605,11 +714,11 @@ def run_experiment(target='JavaScript', cases=None, repeats=1, enable_llm=False)
         'hybrid': hybrid,
         'contracts_risk_learned_rules': safeguards,
         'ablation_scope': {
-            'compared_component': 'three arms: deterministic rules; deterministic rules plus optional LLM fallback; and deterministic rules with contracts, risk gates, and learned-rule memory',
+            'compared_component': 'three arms: deterministic rules; deterministic rules plus optional LLM fallback; and deterministic rules with development-seeded learned-rule memory',
             'candidate_acceptance': 'Model candidates remain unaccepted. Executable validity and expected-output matches are separate metrics. human reviewer effort is not collected and is reported as null.',
-            'learned_rule_protocol': 'The safeguards arm seeds its local learned-rule store from development cases only, then evaluates held-out cases. No held-out case is used to teach a later held-out case.',
-            'shared_mechanisms': ['risk-aware finite validation and contract reporting are part of the common translator path and cannot be disabled safely; this experiment does not estimate their individual causal effects'],
-            'limitations': ['The pilot has only two held-out task groups and project-authored task adaptations; results are descriptive, not a generalization estimate.'],
+            'learned_rule_protocol': 'The safeguards arm seeds its local learned-rule store from development cases only. The development-seeded store is restored before every held-out case and repeat; held-out cases cannot teach later cases.',
+            'shared_mechanisms': ['Risk-aware finite validation and contract reporting are common to all arms and cannot be disabled safely; their individual effects are not estimated.'],
+            'limitations': [f'The pilot has only {heldout_group_count} held-out task groups and remains too small for broad generalization claims.'],
             'live_provider_replayability': 'Provider-enabled runs can vary across requests. Candidate hashes, provider/model/prompt metadata, request IDs, and case results are recorded; they do not make model generation deterministic.',
         },
         'summary': summary,
@@ -641,8 +750,13 @@ def _run_safeguards_arm(run_cases, target, repeats, *, seed_development):
                         enable_learned_rules=True,
                         store_validated_example=False,
                     )
+            seed_bytes = learned_rules.RULE_STORE.read_bytes() if learned_rules.RULE_STORE.exists() else None
             for _ in range(repeats):
                 for language, case_name, source in run_cases:
+                    if seed_bytes is None:
+                        learned_rules.RULE_STORE.unlink(missing_ok=True)
+                    else:
+                        learned_rules.RULE_STORE.write_bytes(seed_bytes)
                     results.append(_case_result(language, case_name, source, target,
                                                 enable_llm=False, enable_learned_rules=True))
     finally:

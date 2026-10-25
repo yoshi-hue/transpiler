@@ -1,0 +1,69 @@
+{
+  "schema_version": "1.0",
+  "case_id": "codenet-p03238-s608868631",
+  "source_sha256": "a1601f490fafde05343a57b8f779ef24a6d7161a1797c398e5b3427ae8aaeb4f",
+  "problem": {
+    "name": "ABC112 A: Programming Education",
+    "source": "AtCoder",
+    "url": "https://atcoder.jp/contests/abc112/tasks/abc112_a?lang=en",
+    "oracle_basis": "Official task examples plus independently derived fixtures; formulas are checked by tools/check_benchmark_oracles.py and remain pending owner review."
+  },
+  "submission": {
+    "submission_id": "608868631",
+    "archive_path": "data/p03238/Fortran/s608868631.f",
+    "source_sha256": "a1601f490fafde05343a57b8f779ef24a6d7161a1797c398e5b3427ae8aaeb4f",
+    "status": "Accepted (CodeNet metadata)",
+    "compiler_metadata": "GNU Fortran 9.2.1 (CodeNet metadata)",
+    "source_form": "free-form Fortran stored with .f extension",
+    "file_level_license_header_found": false
+  },
+  "license_review": {
+    "status": "dataset_level_license_documented",
+    "license": "CDLA-Permissive-2.0",
+    "license_url": "https://cdla.dev/permissive-2-0/",
+    "scope_basis": "CodeNet dataset license and CDLA FAQ; license copy is included in repository.",
+    "faq_url": "https://cdla.dev/faq-resources/faq/",
+    "atcoder_terms_note": "No source-specific license header found; project owner review of dataset terms, attribution, and reuse for this exact source remains pending.",
+    "license_copy": "data/licenses/CDLA-Permissive-2.0.txt",
+    "owner_decision": null
+  },
+  "native_build": {
+    "compiler": "GNU Fortran 14.3.0 (gcc:14-bookworm)",
+    "command": "gfortran -ffree-form -std=f2008 -Wall -Wextra -fcheck=all /src/s608868631.f -o /tmp/case",
+    "network": "none",
+    "source_mount": "read-only",
+    "result": "passed",
+    "fixture_outputs_in_manifest_order": [
+      "Hello World",
+      "8",
+      "10"
+    ],
+    "fixture_count": 3,
+    "fixture_results": "all outputs matched the manifest"
+  },
+  "prototype_evaluation": {
+    "targets": {
+      "JavaScript": {
+        "fixtures_passed": 3,
+        "fixtures_total": 3
+      },
+      "Python": {
+        "fixtures_passed": 3,
+        "fixtures_total": 3
+      }
+    },
+    "test_split": "test",
+    "split_group": "codenet:AtCoder:p03238:p03238",
+    "expected_outcome": "translated"
+  },
+  "independent_review": {
+    "status": "pending",
+    "assigned_reviewer": "project owner (user)",
+    "reviewer_name": null,
+    "source_and_task_semantics": "pending",
+    "fixture_expected_outputs": "pending",
+    "reuse_terms_and_attribution": "pending",
+    "review_minutes": null,
+    "review_notes": null
+  }
+}

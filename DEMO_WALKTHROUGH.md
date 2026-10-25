@@ -1,7 +1,7 @@
 # Prototype walkthrough
 
 This walkthrough shows one supported translation and one unsupported construct. It
-takes about four minutes. Deterministic translation works without an LLM key; model
+takes about five minutes. Deterministic translation works without an LLM key; model
 fallback is optional and depends on the configured provider.
 
 ## Start the prototype
@@ -34,6 +34,10 @@ not pass `.env` into the container. For local development, see **Run locally** i
    target twice; high risk uses three runs and requires human review. High-risk,
    failed-contract, unsupported, or model-candidate results cannot enter learned-rule
    memory. These gates control prototype use and storage; they do not certify correctness.
+   For an input-driven example, select FORTRAN and enter whitespace-separated values
+   in **Program input (stdin)**. The subset supports scalar list-directed `READ(*,*)`
+   and scalar formatted `WRITE`; without supplied values, code is generated but runtime
+   validation stays pending.
 3. **Show an unsupported construct (90 seconds).** Load the LLM fallback example.
    Point out the unsupported external `CALL`, the deterministic partial output, and
    the separate fallback status. Without a configured provider, the request is
@@ -44,12 +48,18 @@ not pass `.env` into the container. For local development, see **Run locally** i
    output, while the Python review report records 3/3 fixture-variant matches. State that
    these are one-source smoke results, the source was not native-compiler checked, and
    required reviews remain pending.
-4. **State the evidence boundary (30 seconds).** The held-out pilot contains 20
-   records from two task groups. Seventeen supported outputs matched project-authored
-   expected outputs for each target; three unsupported COBOL loop cases were
-   recognized. The expected outputs have not been checked with native source
-   compilers or a second human reviewer. The pilot does not establish general
-   semantic equivalence or an effectiveness gain from model fallback.
+4. **State the evidence boundary (30 seconds).** The held-out pilot contains 23
+   records across five task groups: 19 expected-translatable and four expected-
+   unsupported cases. Nineteen supported outputs matched the expected outputs for
+   each target; all four unsupported cases (three COBOL loops and one CodeNet Fortran
+   array-input case) were recognized. CodeNet p02600 passed 17 fixtures and p02606
+   passed five fixtures and a native Fortran build; p02607 passed two official and two
+   derived fixtures under a native Fortran build. The owner's independent CodeNet reviews remain pending. The other task-derived outputs have
+   not had native source-compiler checks or a second human review. This pilot does not
+   establish general semantic equivalence or an effectiveness gain from model fallback.
+   The current v6 live ablation on these same cases had no provider candidates because
+   all eligible project-authored requests failed to connect; CodeNet input was withheld
+   from the provider. Do not present it as evidence of model improvement.
 
 ## Recording notes
 

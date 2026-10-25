@@ -8,12 +8,12 @@ import tempfile
 from pathlib import Path
 
 
-def _run(command, filename, code, timeout=5, env=None):
+def _run(command, filename, code, timeout=5, env=None, stdin_data=None):
     with tempfile.TemporaryDirectory() as d:
         path = Path(d) / filename
         path.write_text(code, encoding='utf-8')
         try:
-            p = subprocess.run(command + [str(path)], capture_output=True, text=True, timeout=timeout, env=env)
+            p = subprocess.run(command + [str(path)], capture_output=True, text=True, timeout=timeout, env=env, input=stdin_data)
         except FileNotFoundError:
             return {'available': False, 'ok': None, 'output': '', 'error': f'{command[0]} is not installed.'}
         except subprocess.TimeoutExpired:
@@ -21,7 +21,7 @@ def _run(command, filename, code, timeout=5, env=None):
         return {'available': True, 'ok': p.returncode == 0, 'output': p.stdout.strip(), 'error': p.stderr.strip()}
 
 
-def run_javascript(code, *, restricted=False):
+def run_javascript(code, *, restricted=False, stdin_data=None):
     command = ['node']
     env = None
     if restricted:
@@ -31,11 +31,11 @@ def run_javascript(code, *, restricted=False):
             for key in ('PATH', 'SystemRoot', 'WINDIR', 'TEMP', 'TMP')
             if os.environ.get(key)
         }
-    return _run(command, 'translated.js', code, env=env)
+    return _run(command, 'translated.js', code, env=env, stdin_data=stdin_data)
 
 
-def run_python(code):
-    return _run(['python'], 'translated.py', code)
+def run_python(code, *, stdin_data=None):
+    return _run(['python'], 'translated.py', code, stdin_data=stdin_data)
 
 
 def run_python_isolated(code, *, timeout=5):

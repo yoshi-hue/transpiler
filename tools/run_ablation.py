@@ -1,7 +1,8 @@
-"""Run and archive the three-arm held-out ablation without implicit dotenv loading.
+"""Run and archive the three-arm held-out ablation.
 
 LLM requests are disabled unless --enable-llm is explicitly passed. The default
-report is deterministic for a fixed source tree and target toolchain.
+report is deterministic for a fixed source tree and target toolchain. Live trials can
+explicitly load the repository-local .env without ever writing its values to the report.
 """
 import argparse
 import hashlib
@@ -16,6 +17,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from backend.benchmark import run_experiment
+from backend.llm_fallback import fallback_status
 
 
 def _sha256(path):
@@ -46,7 +48,13 @@ parser.add_argument('--target', required=True, choices=['JavaScript', 'Python'])
 parser.add_argument('--output', required=True)
 parser.add_argument('--repeats', type=int, default=1)
 parser.add_argument('--enable-llm', action='store_true', help='Allow live provider requests using process environment variables.')
+parser.add_argument('--load-dotenv', action='store_true', help='Explicitly load repository .env for a live provider run; secrets are never included in output.')
 args = parser.parse_args()
+if args.load_dotenv:
+    from dotenv import load_dotenv
+    load_dotenv(ROOT / '.env', override=False)
+if args.load_dotenv and not args.enable_llm:
+    parser.error('--load-dotenv requires --enable-llm')
 if not 1 <= args.repeats <= 10:
     parser.error('--repeats must be between 1 and 10')
 
@@ -73,8 +81,23 @@ record = {
         'llm_enabled': args.enable_llm,
         'split': 'test',
         'dotenv_autoload': False,
+        'dotenv_explicitly_loaded': args.load_dotenv,
+        'temperature': 0 if args.enable_llm else None,
     },
     'ablation': report,
+        'provider': {
+            'configured': report.get('hybrid', {}).get('llm_configured_cases', 0) > 0,
+            'provider': next((case.get('provider') for case in report.get('hybrid', {}).get('cases', []) if case.get('provider')), None),
+            'model': next((case.get('model') for case in report.get('hybrid', {}).get('cases', []) if case.get('model')), None),
+            'prompt_version': next((case.get('prompt_version') for case in report.get('hybrid', {}).get('cases', []) if case.get('prompt_version')), None),
+        } if args.enable_llm else {'configured': False},
+    'provider_configuration': {
+        **{
+            key: fallback_status(enabled=True).get(key)
+            for key in ('provider', 'model', 'api_mode', 'prompt_version', 'timeout_seconds', 'max_retries', 'enabled_for_request')
+        },
+        'temperature': 0,
+    } if args.enable_llm else None,
 }
 output = Path(args.output)
 if not output.is_absolute():

@@ -6,6 +6,15 @@ A compiler-design prototype for:
 
 The prototype supports documented subsets of COBOL, FORTRAN, Pascal, BASIC, and the earlier Python-like language. JavaScript and Python are available as targets for the implemented subset. When configured, the LLM fallback produces a complete target-program candidate for inputs with unsupported constructs. The candidate is shown as target output, the deterministic partial output is retained separately for review, and the candidate is not automatically accepted.
 
+The FORTRAN subset accepts scalar list-directed input (`READ(*,*)`) and scalar
+`WRITE(*, '(format)')` output; the format descriptor itself is not reproduced. Integer
+division over declared integer variables truncates toward zero. For programs that read stdin, enter
+whitespace-separated values in **Program input (stdin)** before translating; without
+input, code is generated but execution validation remains pending. This adds a path for
+simple CodeNet-style input/output tasks, not general CodeNet compatibility. The CodeNet
+audit still requires fixtures and independent oracles before a sample can be counted as
+a successful case.
+
 ## Project objectives and evidence status
 
 The project objectives are to survey translation approaches, identify evidence-backed research gaps, build a multi-language front end and shared representation, investigate a constrained hybrid backend, validate behavior by execution, and document contributions and limitations. Their current implementation status and the presentation's candidate gap claims are tracked in [`data/PROJECT_OBJECTIVES_AND_GAPS.md`](./data/PROJECT_OBJECTIVES_AND_GAPS.md).
@@ -75,14 +84,14 @@ The risk profile selects repeatability runs, and the acceptance policy gates eli
 
 ## Evaluation strategy and benchmark design
 
-The manifest has 36 records: 12 local smoke cases, four development task adaptations, and a 20-case held-out set grouped into two tasks. The held-out set adds tie, singleton-range, and expanded-range cases; three COBOL `PERFORM` variants remain expected-unsupported. Expected outputs are separately authored from fixed constants and loop semantics and checked by a separate reference evaluator (20/20); they have not been checked against native source compilers. This remains a small task-derived benchmark, not a representative corpus. The historical v3 paired run is a 24-case baseline; the later one-source provider smoke trial generated and runtime-checked a candidate for each target but did not satisfy acceptance gates.
+The manifest has 42 records: 16 development cases and 26 held-out cases across eight task groups. The held-out split has 22 supported translations and four expected-unsupported cases. Six CodeNet Fortran cases cover p02600, p02606, p02607, p03997 (Trapezoids), p02724 (Golden Coins), and p03238 (Programming Education); each source has a recorded native GNU Fortran 14.3.0 build. The separate oracle checker matches 25 expected-output cases and 38 declared fixtures. The independent owner review of CodeNet terms and task/oracle behavior is still pending. The frozen review packet is [`data/independent_oracle_review_queue_v2.json`](./data/independent_oracle_review_queue_v2.json); it is not a completed review. Adding three CodeNet task groups increased the test split from five to eight groups, but this remains a small pilot, not a representative corpus.
 
 Reproduce the held-out benchmark and its separate expected-output check with:
 
 ```powershell
-python tools\check_benchmark_oracles.py --output data\oracle_v2_check.json
-python tools\run_test_benchmark.py --target JavaScript --output data\benchmark_v2_javascript.json
-python tools\run_test_benchmark.py --target Python --output data\benchmark_v2_python.json
+python tools\check_benchmark_oracles.py --output data\oracle_current_check.json
+python tools\run_test_benchmark.py --target JavaScript --output data\reproduced_test_26_javascript.json
+python tools\run_test_benchmark.py --target Python --output data\reproduced_test_26_python.json
 ```
 
 Candidate review requirements are in [CANDIDATE_ACCEPTANCE.md](./CANDIDATE_ACCEPTANCE.md), and the sample-size and metadata ablation decision are in [BENCHMARK_AND_ABLATION_PROTOCOL.md](./BENCHMARK_AND_ABLATION_PROTOCOL.md).
@@ -215,6 +224,9 @@ python -m pytest -q
 ```
 
 The release workflow runs this suite before publishing a container tag.
+The current clean-environment commands, exact tool versions, test result, Docker
+startup check, benchmark reports, and remaining review gates are archived in
+[`data/reproducibility_current.json`](./data/reproducibility_current.json).
 
 Run the benchmark from the UI or:
 
@@ -222,19 +234,24 @@ Run the benchmark from the UI or:
 GET /benchmark?target=JavaScript
 ```
 
-The held-out benchmark evaluates 20 task-derived cases based on independently published
-Rosetta Code prompts. The complete manifest also retains 12 local smoke cases and four
-development task adaptations, which are excluded from held-out scoring. The adapted
-source, task URLs, expected
-unsupported outcomes, independently authored expected outputs, and required construct labels are in
-[`data/external_task_cases.jsonl`](./data/external_task_cases.jsonl). These are
-task-derived adaptations, not independently collected legacy source programs. Reported
-correctness includes executable source/target I/O agreement and comparison against
-separately specified expected outputs on supported cases, plus expected unsupported-syntax
-recognition; it is not evidence of full-language coverage. Required
+The held-out benchmark evaluates 26 cases across eight task groups: 20 project-authored
+adaptations of independently published Rosetta Code prompts and six CodeNet Fortran
+submissions from six task groups. The complete manifest also retains 12 local smoke cases
+and four development task adaptations, all excluded from held-out scoring. The adapted sources, task URLs, expected outcomes, expected outputs, and
+required construct labels are in [`data/external_task_cases.jsonl`](./data/external_task_cases.jsonl).
+The Rosetta Code examples are task-derived adaptations, not independently collected
+legacy source programs. Reported correctness includes executable source/target I/O
+agreement and separately specified expected outputs for supported cases, plus expected
+unsupported-syntax recognition; it is not evidence of full-language coverage. Required
 construct coverage matches declared per-case requirements to emitted rule categories.
 Per-input source-unit coverage counts parsed IR statement nodes plus parser-reported
-unsupported constructs.
+unsupported constructs. The CodeNet native builds and fixtures are documented in
+[`data/codenet_case_review_p02600.json`](./data/codenet_case_review_p02600.json),
+[`data/codenet_case_review.json`](./data/codenet_case_review.json) for p02606,
+[`data/codenet_case_review_p02607.json`](./data/codenet_case_review_p02607.json), and the
+new hash-bound reviews for [p03997](./data/codenet_case_review_p03997.json),
+[p02724](./data/codenet_case_review_p02724.json), and
+[p03238](./data/codenet_case_review_p03238.json).
 
 The `/rules` endpoint is a descriptive mapping catalogue, not an executable rule-coverage
 measure. Do not use its entry count or status labels as evidence of language support.
@@ -243,9 +260,10 @@ measure. Do not use its entry count or status labels as evidence of language sup
 
 The implemented subset is enumerated in [`data/supported_subset.json`](./data/supported_subset.json);
 screening and oracle policy are in [`data/CORPUS_PROTOCOL.md`](./data/CORPUS_PROTOCOL.md).
-[`data/corpus_manifest.jsonl`](./data/corpus_manifest.jsonl) records the current 36 cases,
-source hashes, provenance, expected output/outcome, license status, and task-group split.
-The current set is a pilot, not an independent corpus.
+[`data/corpus_manifest.jsonl`](./data/corpus_manifest.jsonl) records 42 entries: 16
+development and 26 held-out records across eight task groups, with source hashes,
+provenance, expected outcomes/outputs, license status, and task-group splits. The
+current set is a pilot, not an independent corpus.
 
 Validate the committed manifest:
 
@@ -257,11 +275,11 @@ Recreate stable benchmark reports (no timestamps, secrets, or local worktree sta
 written into the JSON):
 
 ```powershell
-python tools\check_benchmark_oracles.py --output data\oracle_v3_check.json
-python tools\run_test_benchmark.py --target JavaScript --output data\reproducible_benchmark_v1_javascript.json
-python tools\run_test_benchmark.py --target Python --output data\reproducible_benchmark_v1_python.json
-python tools\run_ablation.py --target JavaScript --output data\reproducible_ablation_v1_javascript.json
-python tools\run_ablation.py --target Python --output data\reproducible_ablation_v1_python.json
+python tools\check_benchmark_oracles.py --output data\oracle_current_check.json
+python tools\run_test_benchmark.py --target JavaScript --output data\reproduced_test_26_javascript.json
+python tools\run_test_benchmark.py --target Python --output data\reproduced_test_26_python.json
+python tools\run_ablation.py --target JavaScript --output data\reproduced_ablation_26_javascript.json
+python tools\run_ablation.py --target Python --output data\reproduced_ablation_26_python.json
 ```
 
 The ablation command disables LLM requests unless `--enable-llm` is explicitly supplied.
@@ -269,6 +287,16 @@ The offline report is reproducible for the same source hashes and Python/Node ve
 Live provider results can vary and must be treated as separate trials. Docker Compose setup
 also has a local capture/profile exclusion in `.dockerignore`; do not commit `.env`, browser
 profiles, screenshots, or local debug logs.
+
+For an explicit live provider ablation from the local `.env`, opt in to both the request
+and dotenv loading:
+
+```powershell
+python tools\run_ablation.py --target JavaScript --output data\my_live_ablation_javascript.json --repeats 5 --enable-llm --load-dotenv
+python tools\run_ablation.py --target Python --output data\my_live_ablation_python.json --repeats 5 --enable-llm --load-dotenv
+```
+
+The latest live ablation uses the frozen 26-case, eight-group test split and five repeats per arm. With provider network access enabled, both targets generated 15 candidates for the three project-authored COBOL loop variants; all 15 per target passed syntax, target runtime, and predeclared output checks. No candidate was accepted. Each arm had 110/130 supported validation passes (22/22 supported cases per repeat), while expected-unsupported recognition was 20/20. Learned-rule reuse was zero, and the third arm matched the rule-only and hybrid pass counts. This does not establish an improvement. See [the protocol and latest results](./BENCHMARK_AND_ABLATION_PROTOCOL.md), [JavaScript](./data/controlled_ablation_live_v9_javascript.json), and [Python](./data/controlled_ablation_live_v8_python.json).
 
 For a CodeNet audit, first obtain and extract the official archive yourself; the
 documented full archive is 7.8 GB. Then run:
@@ -283,10 +311,11 @@ python tools\corpus.py audit-codenet --root C:\datasets\Project_CodeNet `
 The audit counts metadata submissions and accepted submissions with source files by
 language, then deterministically samples up to 100 per matching legacy language for a
 conservative parser/translation screen. It does not download or copy source files.
-CodeNet repository licensing does not settle rights to every third-party submission;
-the audit marks licensing as review-required. A screened candidate is not publication-
-ready until its source-site terms, original build status, input fixtures, and independent
-oracle have been checked.
+Project CodeNet's full dataset is distributed under CDLA-Permissive-2.0; the CDLA FAQ
+says the agreement is intended to cover both datasets and their individual contents.
+Redistribution requires making the agreement text available with the data. The
+repository's Apache license covers repository code, not the dataset. Source-site
+provenance, build status, fixtures, and oracle evidence still need case-level review.
 
 IBM's published statistics workbook reports 15,059 Fortran submissions (8,018 accepted),
 8,727 Pascal (4,820 accepted), and 1,277 COBOL (727 accepted). It reports Visual Basic
@@ -294,16 +323,49 @@ separately (2,116; 1,087 accepted), with no plain BASIC row. These are metadata 
 not source-present or supported-subset sample counts; details and limitations are in
 [`data/CORPUS_PROTOCOL.md`](./data/CORPUS_PROTOCOL.md).
 
+The local CodeNet audit has now scanned 4,053 metadata files (13,916,868 submissions;
+7,460,588 marked accepted). It found source files for all accepted COBOL, Fortran, and
+Pascal records in those metadata labels (13,565 total). A deterministic sample of 10
+per language yielded 27 parser/pipeline errors and 3 unsupported-syntax results, with
+zero prototype-screen passes at that time. A later rescreen of the same 30 archived
+sources after scalar Fortran stdin/output support produced one fixture-backed prototype
+pass on five fixtures (three official AtCoder examples and two derived boundary cases),
+24 parser/pipeline errors, and five unsupported results. CodeNet metadata records GNU
+Fortran 9.2.1 and Accepted status. A local GNU Fortran 14.3.0 build passed with
+explicit free-form mode and all three official plus two derived fixtures. Project
+CodeNet's dataset is released under CDLA-Permissive-2.0; the CDLA FAQ says the license
+covers a dataset and its individual contents. AtCoder says authors retain copyright,
+which does not itself negate a dataset license. No separate file-level license header
+was found for this sample. A second submission, p02607/s779285219 ("B: An Odd Problem"),
+is now in the held-out expected-unsupported set: its array input is outside the
+documented subset, and it passed a local GNU Fortran 14.3.0 build against two official
+samples and two derived fixtures. The CDLA agreement text is included at
+[`data/licenses/CDLA-Permissive-2.0.txt`](./data/licenses/CDLA-Permissive-2.0.txt).
+See the saved
+[`audit report`](./data/codenet_audit.json) and
+[`candidate metadata`](./data/codenet_candidate_manifest.jsonl), plus
+[`rescreen report`](./data/codenet_rescreen_v1.json),
+[`local screening manifest`](./data/codenet_local_screening_manifest.jsonl), and
+[`case build and rights review`](./data/codenet_case_review.json) and
+[`second CodeNet case review`](./data/codenet_case_review_p02607.json).
+
+The current deterministic outputs are archived for
+[`JavaScript`](./data/reproduced_test_26_javascript.json) and
+[`Python`](./data/reproduced_test_26_python.json): 22/22 supported cases passed, with all 34
+fixtures matched, and 4/4 expected-unsupported cases were recognized. The test set has
+eight task groups and remains too small for broad generalization claims.
+
 The experiment endpoint reports three matched arms:
 1. rule-only baseline
 2. rule-first + configured LLM fallback
-3. rule-first + contracts + risk-aware validation + learned rules
+3. rule-first + development-seeded learned-rule memory (contracts/risk are shared)
 
 The learned-rule arm seeds a temporary store from development cases and evaluates the
-held-out cases without allowing test-to-test learning. Risk-aware validation and contract
-reporting are common to all arms, so this experiment does not estimate their individual
-effects. LLM candidates remain unaccepted. Reviewer effort is not collected and is
-reported as unavailable. Current one-repeat reports are archived in
+held-out cases without allowing test-to-test learning. Contracts and risk behavior are
+shared across arms, so this experiment does not estimate their individual effects. LLM
+candidates remain unaccepted. Reviewer effort is not collected and is reported as
+unavailable. The following one-repeat reports are historical 20-case
+baselines from before the CodeNet case was added; they are archived in
 [`data/ablation_v1_javascript.json`](./data/ablation_v1_javascript.json) and
 [`data/ablation_v1_python.json`](./data/ablation_v1_python.json). Both used the same 20
 held-out cases from two task groups; no LLM provider was configured and no learned-rule
@@ -311,6 +373,14 @@ reuse occurred. All arms had 17/20 overall passes, 17/17 supported-case passes, 
 3/3 expected-unsupported cases recognized. These runs show no observed difference and
 do not establish effectiveness. The 95% Wilson interval is reported because this
 benchmark is small; larger independent collections are needed before general claims.
+
+The latest five-repeat live ablations use the same 26 cases and eight groups for both
+targets: [JavaScript v9](./data/controlled_ablation_live_v9_javascript.json) and
+[Python v8](./data/controlled_ablation_live_v8_python.json). Each arm has 130 observations:
+110 supported-case passes and 20 expected-unsupported recognitions. The hybrid arm
+produced 15 candidates per target, all passing syntax/runtime and output checks, but none
+were accepted. Learned-rule reuse was zero. Provider network access was explicitly enabled
+and CodeNet sources were withheld from requests. Human review effort remains unmeasured.
 
 Keep the model, prompt version, temperature, benchmark, runtime, and rule table fixed. See `LLM_EVALUATION.md` for the recommended protocol.
 

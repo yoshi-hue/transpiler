@@ -1,48 +1,39 @@
-# Conference readiness: ICSE 2027 Tool Demonstration
+# Project readiness and evidence status
 
-## Defensible paper claim
+## Current contribution
 
 The project is an inspectable compiler-design prototype for documented subsets of
-COBOL, FORTRAN, Pascal, BASIC, and a project-specific Python-like language. It exposes a
-rule-first translation path, normalized intermediate data, unsupported-syntax reporting,
-optional complete-program model proposals, and finite target checks. The contribution
-is the tool and its visible translation/validation boundary, not a new translation
-algorithm or a demonstrated accuracy improvement.
+COBOL, FORTRAN, Pascal, BASIC, and a project-specific Python-like language. It has a
+shared intermediate representation, deterministic rule-first translation, unsupported
+syntax reporting, optional complete-program LLM proposals, finite validation, contracts
+and risk-aware eligibility rules, and bounded exact-schema learned-rule memory.
+This is an engineering prototype; it does not establish a new translation algorithm,
+generalization, production readiness, or an accuracy improvement.
 
-## Current evidence
+## Current evidence snapshot
 
-- Deterministic held-out pilot: 20 cases from two task groups; 17 supported outputs
-  matched separately authored expected outputs for both JavaScript and Python; three
-  COBOL `PERFORM` cases were recognized as outside the supported subset.
-- The expected outputs match a separate reference evaluator (20/20) but have not been
-  executed against native source-language compilers or reviewed by a second human. The
-  two-task test set is not representative and does not establish general semantic
-  equivalence.
-- The historical prompt-v3 paired benchmark at pushed commit `ade68dc` returned no
-  candidate after three provider attempts for either target. A later fixed, single-input
-  provider trial generated JavaScript and Python candidates; both passed their recorded
-  runtime check and matched one predeclared output. The Python review record also reports
-  three fixture-variant matches. These trial candidates remain unaccepted: source and
-  human review gates are pending, and the COBOL source was not checked with a native
-  compiler. Neither run establishes fallback effectiveness.
-- Contract and risk checks gate finite-test eligibility and learned-rule storage; the
-  learned-rule store only reuses matching templates. Their benefit has not been measured,
-  and no ablation or causal improvement is claimed.
-- No scalability or multilingual-bias experiment was performed; neither is a paper
-  contribution or finding.
+- The corpus manifest has 42 records: 16 development and 26 held-out cases across eight task groups. The held-out split has 22 supported translations and four expected-unsupported programs.
+- Deterministic JavaScript and Python runs each matched all 22 supported outputs and 34/34 supported fixtures, and recognized 4/4 unsupported cases. The separate task-formula checker matched 25 expected-output records and 38 fixtures. This small pilot is not a generalization estimate.
+- Six CodeNet Fortran cases cover six task groups (p02600, p02606, p02607, p03997, p02724, p03238). Hash-bound records document GNU Fortran 14.3.0 source builds and fixture outputs. The dataset-level CDLA-Permissive-2.0 basis is included; owner review of task semantics, expected outputs, attribution, and reuse terms remains pending in `data/independent_oracle_review_queue_v2.json`.
+- The latest live five-repeat comparison used the same 26-case hash and settings for both targets. Each arm had 110/130 observations: 22/22 supported passes per repeat and 20/20 expected-unsupported recognitions. The hybrid generated 15 candidates per target; all 15 per target passed syntax, isolated/restricted runtime, and fixed output checks. Zero candidates were accepted, learned-rule reuse was zero, and reviewer effort was not measured. Arms had identical outcomes, so no improvement is established. CodeNet inputs were excluded from provider requests.
+- The clean setup record predates the current corpus/code changes. A fresh full-suite result is being recorded after these changes; the previous 57-test result is historical. Docker Compose startup was previously verified. See `data/reproducibility_current.json` for archived commands, versions, and reports.
+- Candidate review gates remain pending. Contracts/risk are shared across arms, so their individual effects remain unestimated. The preserved v4 run attempted CodeNet requests before the source guard; payload receipt is unknown.
+See [`data/PROJECT_OBJECTIVES_AND_GAPS.md`](data/PROJECT_OBJECTIVES_AND_GAPS.md),
+[`BENCHMARK_AND_ABLATION_PROTOCOL.md`](BENCHMARK_AND_ABLATION_PROTOCOL.md), and
+[`data/CORPUS_PROTOCOL.md`](data/CORPUS_PROTOCOL.md) for the objective matrix, current
+protocol, provenance, and artifact links. Report exact denominators and distinguish
+supported translation from unsupported recognition.
 
-## Submission package
+## Work remaining
 
-The user has said this is not currently being prepared for ICSE submission. The checklist
-below is retained only if a submission package is requested later; it is separate from
-the prototype's reproducibility and evidence-polish work.
+1. Complete the independent held-out case review in `data/independent_oracle_review_queue_v2.json`.
+2. Complete source/target, independent fixture, security, regression, and human review for the six unique LLM candidate programs, then record actual review effort.
+3. Expand the group-held-out corpus toward the planned 100 groups; eight groups remain a small pilot.
+4. Establish native or independently executed source oracles for project-authored task adaptations.
+5. Isolate contract and risk mechanisms where safe, and rerun controlled comparisons on the expanded frozen corpus.
+6. Reconcile and author-review the course report and demo. Paper/demo files remain drafts.
 
-The track-specific source is [`ICSE_2027_TOOL_DEMO.tex`](./ICSE_2027_TOOL_DEMO.tex).
-The track requires IEEE conference format, a maximum of four pages including
-references, identified authors, a public artifact and usage instructions, and a public
-three-to-five-minute YouTube video. The deadline is 23 October 2026 AoE. See the
-[official call](https://conf.researchr.org/track/icse-2027/icse-2027-demonstrations).
-
-Author identities and video URL are placeholders, and this workspace has no LaTeX
-compiler, so a final page-count-verified PDF has not been produced. The final paper also
-needs a final author review. No submission has been made.
+The status matrix describes the remaining research and engineering objectives. An ICSE
+submission package is not currently being prepared; author identities, a public video,
+PDF/page-count verification, and final author approval would be separate requirements if
+that changes.

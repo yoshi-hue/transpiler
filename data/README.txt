@@ -10,3 +10,10 @@ Each case records its task URL, adaptation, and a separately authored expected o
 when translation is expected. This is external-task-derived evidence,
 not a large independently collected corpus, and the small set is not sufficient to
 support broad generalization claims.
+
+The current manifest has 42 records: 16 development and 26 held-out across eight task
+groups. The held-out set has 22 supported cases and four expected-unsupported cases.
+Six CodeNet Fortran cases span six task groups. Their hash-bound source/build/fixture
+records are in the codenet_case_review*.json files. The separate oracle checker matches
+25 expected-output records and 38 fixtures. Independent owner review remains pending.
+See CORPUS_PROTOCOL.md for current counts, license scope, inclusion criteria, and limits.

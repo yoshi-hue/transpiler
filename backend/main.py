@@ -42,6 +42,7 @@ class TranspileRequest(BaseModel):
     code: str = Field(min_length=1, max_length=MAX_SOURCE_CHARS)
     source_language: str = Field(default='Python-like', min_length=1, max_length=40)
     target_language: str = Field(default='JavaScript', min_length=1, max_length=40)
+    input_data: str | None = Field(default=None, max_length=50_000)
 
 
 @app.get('/')
@@ -112,7 +113,7 @@ def do_transpile(request: TranspileRequest):
     try:
         return {
             'ok': True,
-            **transpile(request.code, request.source_language, request.target_language),
+            **transpile(request.code, request.source_language, request.target_language, input_data=request.input_data),
         }
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc

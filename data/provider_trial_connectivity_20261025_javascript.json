@@ -1,0 +1,55 @@
+{
+  "schema_version": "1",
+  "timestamp_utc": "2026-10-25T13:37:07.983576+00:00",
+  "trial_id": "cobol-perform-three-times-v1",
+  "source_language": "COBOL",
+  "target_language": "JavaScript",
+  "source_sha256": "356c6f3c1d5aff1bab49d3df472be557e08a94acad6bff791c90c45a4f890e32",
+  "expected_output": "STEP\nSTEP\nSTEP",
+  "oracle": "predeclared fixed-count output expectation; not a native COBOL execution",
+  "provider_status_before": {
+    "configured": true,
+    "provider_configured": true,
+    "enabled_for_request": true,
+    "provider": "Google Gemini",
+    "model": "gemini-3.1-flash-lite",
+    "endpoint_set": true,
+    "key_set": true,
+    "api_mode": "chat",
+    "prompt_version": "legacy-modernizer-llm-v3",
+    "timeout_seconds": 45.0,
+    "max_retries": 2
+  },
+  "status": "no_candidate",
+  "candidate_generated": false,
+  "candidate_code": null,
+  "candidate_sha256": null,
+  "request_id": null,
+  "provider": "Google Gemini",
+  "model": "gemini-3.1-flash-lite",
+  "prompt_version": "legacy-modernizer-llm-v3",
+  "prompt_hash": null,
+  "attempts": null,
+  "latency_ms": null,
+  "syntax_valid": null,
+  "runtime_valid": null,
+  "runtime_validation": {
+    "available": false,
+    "ok": null,
+    "error": "Incomplete translation was not executed.",
+    "sandbox": null
+  },
+  "observed_output": null,
+  "independent_oracle_match": null,
+  "candidate_acceptance": null,
+  "candidate_accepted": false,
+  "fallback_failures": [
+    {
+      "category": "connection_error",
+      "http_status": null,
+      "attempts": 3,
+      "latency_ms": 1610.7,
+      "request_id": "acc99be9-f16c-4ec9-a02c-7ade2cd74a9f"
+    }
+  ]
+}

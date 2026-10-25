@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 from backend.legacy import LANGUAGES
+from tools import corpus
 from tools.corpus import audit_codenet, validate_manifest
 
 
@@ -10,17 +11,21 @@ def test_checked_in_corpus_manifest_has_hashes_and_task_isolated_splits():
     manifest = Path(__file__).resolve().parents[1] / 'data' / 'corpus_manifest.jsonl'
     report = validate_manifest(manifest)
     assert report['ok'] is True
-    assert report['records'] == 36
+    assert report['records'] == 42
     assert report['split_counts']['development'] == 16
-    assert report['split_counts']['test'] == 20
+    assert report['split_counts']['test'] == 26
+    assert report['split_counts'].get('challenge', 0) == 0
 
 
 def test_heldout_expected_outputs_match_separate_reference_evaluator():
     root = Path(__file__).resolve().parents[1]
-    check = json.loads((root / 'data' / 'oracle_v2_check.json').read_text(encoding='utf-8'))
-    assert check['cases'] == 20
-    assert check['matches'] == 20
+    check = json.loads((root / 'data' / 'oracle_current_check.json').read_text(encoding='utf-8'))
+    assert check['cases'] == 25
+    assert check['matches'] == 25
+    assert check['fixture_count'] == 38
+    assert check['fixture_matches'] == 38
     assert all(row['match'] for row in check['results'])
+    assert all(row['match'] for row in check['fixture_results'])
     assert 'Not an independently executed native compiler' in check['limitation']
 
 
@@ -78,8 +83,22 @@ def test_codenet_audit_counts_accepted_source_files_and_screens_supported_subset
     assert fortran['accepted_source_present'] == 2
     assert fortran['screened_sample_size'] == 2
     assert fortran['screen_results']['subset_screen_pass'] == 2
-    assert report['licensing']['status'] == 'review_required'
+    assert report['licensing']['status'] == 'dataset_level_license_documented'
     candidates = report['screened_candidate_manifest']
     assert all(candidate['expected_outcome'] == 'screening_only' for candidate in candidates)
     assert all(candidate['split'] == candidates[0]['split'] for candidate in candidates)
     assert all(candidate['source_archive_path'].startswith('data/p00001/Fortran/') for candidate in candidates)
+
+
+def test_codenet_screen_records_parser_crashes_as_candidate_failures(tmp_path, monkeypatch):
+    source = tmp_path / 'sample.f90'
+    source.write_text('PROGRAM BROKEN\nEND PROGRAM BROKEN', encoding='utf-8')
+
+    def broken_parser(*_args, **_kwargs):
+        raise IndexError('synthetic parser crash')
+
+    monkeypatch.setattr(corpus, 'legacy_transpile', broken_parser)
+    result = corpus._screen_candidate({'language': 'Fortran', 'source_path': source})
+
+    assert result['screen_status'] == 'parser_or_pipeline_error'
+    assert result['screen_error'] == 'synthetic parser crash'

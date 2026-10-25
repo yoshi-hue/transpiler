@@ -16,3 +16,5 @@ data/*debug*.log
 data/simple_test.png
 .pytest-run-*/
 .pytest-tmp/
+.pytest-tmp-*/
+.venv*/

@@ -1,0 +1,463 @@
+{
+  "schema_version": "1.0",
+  "title": "Expanded live ablation candidate review packet",
+  "created_from": [
+    "controlled_ablation_live_v9_javascript.json",
+    "controlled_ablation_live_v8_python.json"
+  ],
+  "provider": "Google Gemini",
+  "model": "gemini-3.1-flash-lite",
+  "prompt_version": "legacy-modernizer-llm-v3",
+  "corpus_sha256": "832607a99c5ff81f32deaa86fd967fad337f671594a6fbae6edc2d305af608b2",
+  "policy": "These unique candidate programs were each generated five times. Automated checks do not constitute acceptance. Complete each review gate and record actual human effort; leave accepted false until all required gates pass.",
+  "candidate_programs": 6,
+  "candidate_observations": 30,
+  "accepted": 0,
+  "reviewer": "project owner and independent reviewer(s); all reviews pending",
+  "candidates": [
+    {
+      "candidate_id": "rosetta-loops-for-cobol:JavaScript:108b193939ac",
+      "source_case_id": "rosetta-loops-for-cobol",
+      "source_sha256": "46554bf83661f6e37391e29d6e0f255f6a9dcca9495ea38d07338aaa8642a5ac",
+      "target": "JavaScript",
+      "candidate_code": "for (let i = 0; i < 3; i++) {\n    console.log(\"STEP\");\n}\nprocess.exit(0);",
+      "candidate_sha256": "108b193939aca339f86fbe2d02d72e2d61875a09b37da31d2ca5867a636f366c",
+      "repeated_generation_count": 5,
+      "request_ids": [
+        "685f2d4d-4566-423c-8a14-b3dc725eaa79",
+        "6b851a66-255e-4015-be63-5864013e2034",
+        "67d0b2c9-619e-483d-bdaf-0afc291c2d3b",
+        "507041ec-0a74-492f-ae41-9c33963ccf64",
+        "ed33d60f-76c2-4165-b112-f18fbedbe79d"
+      ],
+      "latencies_ms": [
+        22154.3,
+        872.2,
+        1075.9,
+        14701.3,
+        1130.8
+      ],
+      "expected_output": "STEP\nSTEP\nSTEP",
+      "observed_output": "STEP\nSTEP\nSTEP",
+      "target_syntax_valid": true,
+      "target_runtime_valid": true,
+      "oracle_match": true,
+      "accepted": false,
+      "acceptance_blockers": [
+        "source_review",
+        "independent_fixtures",
+        "security_review",
+        "regression_checks",
+        "human_review"
+      ],
+      "review": {
+        "source_semantics": {
+          "status": "pending",
+          "reviewer": null,
+          "notes": null
+        },
+        "target_correctness": {
+          "status": "pending",
+          "reviewer": null,
+          "notes": null
+        },
+        "independent_fixtures": {
+          "status": "pending",
+          "reviewer": null,
+          "fixture_set_id": null,
+          "passed": null,
+          "total": null
+        },
+        "security": {
+          "status": "pending",
+          "reviewer": null,
+          "notes": null
+        },
+        "regression": {
+          "status": "pending",
+          "reviewer": null,
+          "suite_id": null,
+          "passed": null
+        },
+        "human_decision": {
+          "status": "pending",
+          "source_reviewer": null,
+          "target_reviewer": null,
+          "decision": null,
+          "review_minutes": null,
+          "notes": null
+        }
+      }
+    },
+    {
+      "candidate_id": "rosetta-loops-for-singleton-cobol:JavaScript:961371ff8263",
+      "source_case_id": "rosetta-loops-for-singleton-cobol",
+      "source_sha256": "76df8c90141f245e77fb8b128f079210184142e334a1bc32ab1bd16e9ec6e109",
+      "target": "JavaScript",
+      "candidate_code": "// IDENTIFICATION DIVISION.\n// PROGRAM-ID. LOOP-ONE.\n\n(function() {\n    // PERFORM 1 TIMES\n    for (let i = 0; i < 1; i++) {\n        // DISPLAY \"X\"\n        console.log(\"X\");\n    }\n    // STOP RUN.\n    process.exit(0);\n})();",
+      "candidate_sha256": "961371ff826329dd478979a8a7ad90b5c7ca7811158de358d935cf08abf144d4",
+      "repeated_generation_count": 5,
+      "request_ids": [
+        "734e9388-7705-4315-946c-0283aeee1ef1",
+        "eb953652-90fe-4fd4-93c6-247e51e6f200",
+        "16719ec3-35bf-4c3d-a53d-6324be8f9d0e",
+        "7027ab4d-95b2-43be-9e71-dcd915fc41b2",
+        "4e625add-4101-4341-a794-5aa648d92428"
+      ],
+      "latencies_ms": [
+        2141.9,
+        1195.5,
+        1109.5,
+        10000.8,
+        1125.5
+      ],
+      "expected_output": "X",
+      "observed_output": "X",
+      "target_syntax_valid": true,
+      "target_runtime_valid": true,
+      "oracle_match": true,
+      "accepted": false,
+      "acceptance_blockers": [
+        "source_review",
+        "independent_fixtures",
+        "security_review",
+        "regression_checks",
+        "human_review"
+      ],
+      "review": {
+        "source_semantics": {
+          "status": "pending",
+          "reviewer": null,
+          "notes": null
+        },
+        "target_correctness": {
+          "status": "pending",
+          "reviewer": null,
+          "notes": null
+        },
+        "independent_fixtures": {
+          "status": "pending",
+          "reviewer": null,
+          "fixture_set_id": null,
+          "passed": null,
+          "total": null
+        },
+        "security": {
+          "status": "pending",
+          "reviewer": null,
+          "notes": null
+        },
+        "regression": {
+          "status": "pending",
+          "reviewer": null,
+          "suite_id": null,
+          "passed": null
+        },
+        "human_decision": {
+          "status": "pending",
+          "source_reviewer": null,
+          "target_reviewer": null,
+          "decision": null,
+          "review_minutes": null,
+          "notes": null
+        }
+      }
+    },
+    {
+      "candidate_id": "rosetta-loops-for-four-cobol:JavaScript:906072706ecd",
+      "source_case_id": "rosetta-loops-for-four-cobol",
+      "source_sha256": "06a104ba9ad875985e09dea0f16909ee6306593deabc45d94c7f5628689995f6",
+      "target": "JavaScript",
+      "candidate_code": "for (let i = 0; i < 4; i++) {\n    console.log(\"X\");\n}\nprocess.exit(0);",
+      "candidate_sha256": "906072706ecdecff31acf234cb5d32c24e099107fc2fc2c009414751fad4d02c",
+      "repeated_generation_count": 5,
+      "request_ids": [
+        "f17c8092-bbca-4fc4-99f9-eafdd050aa18",
+        "ad82f8e4-a70d-4004-a257-22fcc3427a35",
+        "c38d6657-137e-4e12-a309-e835836003c5",
+        "a898f4ba-0348-4164-8241-a3ac349ad3f9",
+        "9a735bde-e8c6-4ef4-9b50-014197e7a1a4"
+      ],
+      "latencies_ms": [
+        901.5,
+        704.2,
+        11260.2,
+        1267.5,
+        910.6
+      ],
+      "expected_output": "X\nX\nX\nX",
+      "observed_output": "X\nX\nX\nX",
+      "target_syntax_valid": true,
+      "target_runtime_valid": true,
+      "oracle_match": true,
+      "accepted": false,
+      "acceptance_blockers": [
+        "source_review",
+        "independent_fixtures",
+        "security_review",
+        "regression_checks",
+        "human_review"
+      ],
+      "review": {
+        "source_semantics": {
+          "status": "pending",
+          "reviewer": null,
+          "notes": null
+        },
+        "target_correctness": {
+          "status": "pending",
+          "reviewer": null,
+          "notes": null
+        },
+        "independent_fixtures": {
+          "status": "pending",
+          "reviewer": null,
+          "fixture_set_id": null,
+          "passed": null,
+          "total": null
+        },
+        "security": {
+          "status": "pending",
+          "reviewer": null,
+          "notes": null
+        },
+        "regression": {
+          "status": "pending",
+          "reviewer": null,
+          "suite_id": null,
+          "passed": null
+        },
+        "human_decision": {
+          "status": "pending",
+          "source_reviewer": null,
+          "target_reviewer": null,
+          "decision": null,
+          "review_minutes": null,
+          "notes": null
+        }
+      }
+    },
+    {
+      "candidate_id": "rosetta-loops-for-cobol:Python:12672db5b78c",
+      "source_case_id": "rosetta-loops-for-cobol",
+      "source_sha256": "46554bf83661f6e37391e29d6e0f255f6a9dcca9495ea38d07338aaa8642a5ac",
+      "target": "Python",
+      "candidate_code": "for _ in range(3):\n    print(\"STEP\")",
+      "candidate_sha256": "12672db5b78c9c0c55f5c07d94be97e838700584b11b3aeb8c78f7f2b05715d8",
+      "repeated_generation_count": 5,
+      "request_ids": [
+        "458d2bb0-c581-4968-8a59-a0e7a552d78c",
+        "53cf10fe-4d0c-4ad0-ac89-0857871e472e",
+        "ec6741c3-7d47-4adc-9441-57f70aecb197",
+        "ca7ae087-8db1-46fc-b93b-87caf036d35b",
+        "796464ff-fa02-4856-9ab6-b6e18566ea74"
+      ],
+      "latencies_ms": [
+        797.5,
+        1076.3,
+        1028.3,
+        862.8,
+        1343.6
+      ],
+      "expected_output": "STEP\nSTEP\nSTEP",
+      "observed_output": "STEP\nSTEP\nSTEP",
+      "target_syntax_valid": true,
+      "target_runtime_valid": true,
+      "oracle_match": true,
+      "accepted": false,
+      "acceptance_blockers": [
+        "source_review",
+        "independent_fixtures",
+        "security_review",
+        "regression_checks",
+        "human_review"
+      ],
+      "review": {
+        "source_semantics": {
+          "status": "pending",
+          "reviewer": null,
+          "notes": null
+        },
+        "target_correctness": {
+          "status": "pending",
+          "reviewer": null,
+          "notes": null
+        },
+        "independent_fixtures": {
+          "status": "pending",
+          "reviewer": null,
+          "fixture_set_id": null,
+          "passed": null,
+          "total": null
+        },
+        "security": {
+          "status": "pending",
+          "reviewer": null,
+          "notes": null
+        },
+        "regression": {
+          "status": "pending",
+          "reviewer": null,
+          "suite_id": null,
+          "passed": null
+        },
+        "human_decision": {
+          "status": "pending",
+          "source_reviewer": null,
+          "target_reviewer": null,
+          "decision": null,
+          "review_minutes": null,
+          "notes": null
+        }
+      }
+    },
+    {
+      "candidate_id": "rosetta-loops-for-singleton-cobol:Python:b371ba05c451",
+      "source_case_id": "rosetta-loops-for-singleton-cobol",
+      "source_sha256": "76df8c90141f245e77fb8b128f079210184142e334a1bc32ab1bd16e9ec6e109",
+      "target": "Python",
+      "candidate_code": "print(\"X\")",
+      "candidate_sha256": "b371ba05c4510bea2496b0ea530dc9d348e32ad7756aeccc78bb6dcc08557f3e",
+      "repeated_generation_count": 5,
+      "request_ids": [
+        "eed1d35a-f6fb-4ec9-bd75-7ba41f0b58cf",
+        "e6bb4cf1-a450-469a-874c-49efd750cf3b",
+        "2728e7c4-88a3-4799-8d40-a7550589631f",
+        "341ab1aa-f31c-4cb0-b9b0-4f254f9d76e9",
+        "e6efb2c8-ae10-4899-88c7-d56d480744ca"
+      ],
+      "latencies_ms": [
+        944.2,
+        1067.7,
+        768.1,
+        863.6,
+        1452.4
+      ],
+      "expected_output": "X",
+      "observed_output": "X",
+      "target_syntax_valid": true,
+      "target_runtime_valid": true,
+      "oracle_match": true,
+      "accepted": false,
+      "acceptance_blockers": [
+        "source_review",
+        "independent_fixtures",
+        "security_review",
+        "regression_checks",
+        "human_review"
+      ],
+      "review": {
+        "source_semantics": {
+          "status": "pending",
+          "reviewer": null,
+          "notes": null
+        },
+        "target_correctness": {
+          "status": "pending",
+          "reviewer": null,
+          "notes": null
+        },
+        "independent_fixtures": {
+          "status": "pending",
+          "reviewer": null,
+          "fixture_set_id": null,
+          "passed": null,
+          "total": null
+        },
+        "security": {
+          "status": "pending",
+          "reviewer": null,
+          "notes": null
+        },
+        "regression": {
+          "status": "pending",
+          "reviewer": null,
+          "suite_id": null,
+          "passed": null
+        },
+        "human_decision": {
+          "status": "pending",
+          "source_reviewer": null,
+          "target_reviewer": null,
+          "decision": null,
+          "review_minutes": null,
+          "notes": null
+        }
+      }
+    },
+    {
+      "candidate_id": "rosetta-loops-for-four-cobol:Python:6123a83aed87",
+      "source_case_id": "rosetta-loops-for-four-cobol",
+      "source_sha256": "06a104ba9ad875985e09dea0f16909ee6306593deabc45d94c7f5628689995f6",
+      "target": "Python",
+      "candidate_code": "for _ in range(4):\n    print(\"X\")",
+      "candidate_sha256": "6123a83aed87887007b65813fe6f2ecf9a00fb9de891262b78939694eaaebd92",
+      "repeated_generation_count": 5,
+      "request_ids": [
+        "33238b22-c809-4788-abff-808613b0381a",
+        "ab461040-94ee-49e2-b8a6-0138d875ccbe",
+        "6dfe14d5-38db-4349-827b-f8b3eccdde8e",
+        "f28df335-9368-4b4f-ad50-d573afe8d948",
+        "a81f8ab8-e472-46d1-8622-d01d6df03934"
+      ],
+      "latencies_ms": [
+        1554.6,
+        960.1,
+        5920.3,
+        3104.5,
+        2704.9
+      ],
+      "expected_output": "X\nX\nX\nX",
+      "observed_output": "X\nX\nX\nX",
+      "target_syntax_valid": true,
+      "target_runtime_valid": true,
+      "oracle_match": true,
+      "accepted": false,
+      "acceptance_blockers": [
+        "source_review",
+        "independent_fixtures",
+        "security_review",
+        "regression_checks",
+        "human_review"
+      ],
+      "review": {
+        "source_semantics": {
+          "status": "pending",
+          "reviewer": null,
+          "notes": null
+        },
+        "target_correctness": {
+          "status": "pending",
+          "reviewer": null,
+          "notes": null
+        },
+        "independent_fixtures": {
+          "status": "pending",
+          "reviewer": null,
+          "fixture_set_id": null,
+          "passed": null,
+          "total": null
+        },
+        "security": {
+          "status": "pending",
+          "reviewer": null,
+          "notes": null
+        },
+        "regression": {
+          "status": "pending",
+          "reviewer": null,
+          "suite_id": null,
+          "passed": null
+        },
+        "human_decision": {
+          "status": "pending",
+          "source_reviewer": null,
+          "target_reviewer": null,
+          "decision": null,
+          "review_minutes": null,
+          "notes": null
+        }
+      }
+    }
+  ]
+}

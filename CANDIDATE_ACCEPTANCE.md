@@ -53,22 +53,47 @@ acceptance policy; fixture, security, regression, and human-review gates still a
 
 ## Current status
 
-No model candidate has passed the complete acceptance policy. The v3 paired benchmark
-returned no candidate for either target. Fixed JavaScript and Python provider trials
-have returned candidates and matched their predeclared stdout in restricted/isolated
-runtimes. The Python candidate also passed three project-authored source-variant
-fixtures, a static AST security review, and `tests/test_transpiler.py`. These checks do
-not validate the COBOL source with a native compiler: its dialect and source format are
-unspecified, and `cobc` was unavailable during review. Two human reviews (COBOL source
-and Python target/runtime) remain outstanding. No candidate is accepted.
+No model candidate has passed the complete acceptance policy. The archived provider
+trial returned a Python candidate and matched its fixed expected stdout in an isolated
+runtime. The current guarded v6 five-repeat ablation used the expanded corpus, but all
+15 eligible project-authored fallback requests per target failed with connection
+errors; it generated no candidates. The v6 run did not send CodeNet-origin sources to
+the provider. The preserved v4 attempt has an unresolved payload-receipt status in the
+CodeNet review record.
+The archived Python candidate was re-run in Docker and passed a conservative AST
+allowlist screen plus its one fixed-output regression fixture. This is not the independent
+fixture-set gate or human security review. Source-semantic, target/runtime, and security
+review decisions remain pending from the project owner. No candidate is accepted.
 
-The Python trial's detailed evidence is in
-[`data/provider_trial_python_acceptance_review.json`](data/provider_trial_python_acceptance_review.json);
-the source variants and expected outputs are in
-[`data/provider_trial_python_fixtures.json`](data/provider_trial_python_fixtures.json).
-The expected outputs were authored from the fixed-count `PERFORM` and `DISPLAY`
-semantics; they are not native compiler results. The review report preserves the source
-review and two-person human-review gates as pending.
+The latest candidate review packet is
+[`data/llm_candidate_review_queue_v6.json`](data/llm_candidate_review_queue_v6.json);
+its reproducible isolated runtime and AST screening report is
+[`data/llm_candidate_regression_v4.json`](data/llm_candidate_regression_v4.json). The
+expected output is from a fixed-count `PERFORM`/`DISPLAY` fixture, not a native COBOL
+compiler result. The packet records the project owner as the assigned independent
+reviewer and leaves decisions and actual review minutes pending.
+
+The historical v3 live ablation did produce candidates, as recorded in
+[`data/live_ablation_human_review_queue_v1.json`](data/live_ablation_human_review_queue_v1.json).
+The current v6 ablation reports instead have zero candidate generation after 15
+eligible connection failures per target. Actual reviewer minutes must be entered by the owner;
+they are not estimated from automated execution time.
+
+The CodeNet Fortran challenge review is in
+[`data/codenet_case_review.json`](data/codenet_case_review.json). It built with GNU
+Fortran 14.3.0 in explicit free-form mode and passed three official AtCoder samples and
+two derived fixtures. Its dataset-level CDLA-Permissive-2.0 reuse basis, source
+provenance, and redistribution condition are recorded; the complete agreement text is
+included at [`data/licenses/CDLA-Permissive-2.0.txt`](data/licenses/CDLA-Permissive-2.0.txt).
+The held-out case p02607/s779285219 is reviewed in
+[`data/codenet_case_review_p02607.json`](data/codenet_case_review_p02607.json); it is
+expected unsupported and its four fixtures passed the local GNU Fortran build. The
+p02600/s098305279 case's 17 fixtures passed the same native Fortran toolchain and both
+target translators; its independent owner review remains pending in
+[`data/codenet_case_review_p02600.json`](data/codenet_case_review_p02600.json). These
+are corpus rights/build reviews, not LLM-candidate acceptance reviews. The source code
+remains copyrighted by its submitter, and no individual file license header was found;
+the recorded reuse basis is the CodeNet dataset agreement and its terms.
 
 ## Reproducible provider trial
 

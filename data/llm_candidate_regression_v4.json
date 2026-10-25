@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "candidate_sha256": "12672db5b78c9c0c55f5c07d94be97e838700584b11b3aeb8c78f7f2b05715d8",
+  "source_sha256": "356c6f3c1d5aff1bab49d3df472be557e08a94acad6bff791c90c45a4f890e32",
+  "candidate_trial": "cobol-perform-three-times-v1",
+  "target": "Python",
+  "ast_static_screen": {
+    "status": "passed",
+    "disallowed_node_types": [],
+    "names": [
+      "_",
+      "print",
+      "range"
+    ],
+    "calls": [
+      "print",
+      "range"
+    ],
+    "scope": "Conservative syntax screen only; not a security approval."
+  },
+  "isolated_runtime": {
+    "available": true,
+    "ok": true,
+    "output": "STEP\nSTEP\nSTEP",
+    "error": "",
+    "sandbox": {
+      "image": "python:3.13-slim",
+      "network": "none",
+      "filesystem": "read-only",
+      "memory_limit": "128m",
+      "cpu_limit": "0.5",
+      "pids_limit": 32,
+      "host_mounts": []
+    }
+  },
+  "expected_output": "STEP\nSTEP\nSTEP",
+  "observed_output": "STEP\nSTEP\nSTEP",
+  "oracle_match": true,
+  "regression_gate": "passed_for_fixed_candidate_fixture",
+  "limitations": [
+    "One fixed-output fixture only; independent fixture gate remains pending.",
+    "Human source, target, and security reviews remain pending.",
+    "This report does not accept or integrate the candidate."
+  ]
+}

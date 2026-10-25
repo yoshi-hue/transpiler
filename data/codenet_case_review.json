@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0",
+  "case_id": "codenet-p02606-s368691152",
+  "problem": {
+    "name": "AIsing Programming Contest 2020 - A: Number of Multiples",
+    "problem_id": "p02606",
+    "source": "AtCoder",
+    "problem_url": "https://atcoder.jp/contests/aising2020/tasks/aising2020_a?lang=en",
+    "statement_summary": "Given integers L, R, d, count multiples of d in inclusive range [L,R].",
+    "constraints": "1 <= L <= R <= 100; 1 <= d <= 100"
+  },
+  "submission": {
+    "submission_id": "s368691152",
+    "user_id": "u506403362",
+    "source_path_in_local_archive": "data/p02606/Fortran/s368691152.f",
+    "source_sha256": "00b4403a1f9ecb3620b45d111cbaca3513cc9f0bce88f64f9ced8c0c81b81eaf",
+    "source_form": "Free-form Fortran source stored with .f extension",
+    "metadata_status": "Accepted",
+    "metadata_compiler": "Fortran (GNU Fortran 9.2.1)",
+    "metadata_record": "metadata/p02606.csv",
+    "original_compile_status": "not independently rerun with GNU Fortran 9.2.1"
+  },
+  "local_build_review": {
+    "compiler": "GNU Fortran 14.3.0 (GCC container image gcc:14-bookworm)",
+    "compile_command": "gfortran -ffree-form -std=f2008 -Wall -Wextra -fcheck=all /src/s368691152.f -o /tmp/codenet_case",
+    "default_form_check": "Failed as expected: .f selected fixed-form parsing, but the source uses free-form syntax.",
+    "explicit_free_form_build": "passed",
+    "official_samples": [
+      {
+        "stdin": "5 10 2",
+        "expected": "3",
+        "observed": "3",
+        "passed": true
+      },
+      {
+        "stdin": "6 20 7",
+        "expected": "2",
+        "observed": "2",
+        "passed": true
+      },
+      {
+        "stdin": "1 100 1",
+        "expected": "100",
+        "observed": "100",
+        "passed": true
+      }
+    ],
+    "scope": "This is a local rebuild with GNU Fortran 14.3.0 and an explicit free-form flag. It does not reproduce the original GNU Fortran 9.2.1 judge environment."
+  },
+  "oracle_review": {
+    "official_examples": "The three fixtures match the official AtCoder problem statement.",
+    "additional_fixtures": "Two boundary/offset fixtures are derived from the stated mathematical specification.",
+    "prototype_translation_screen": "Passed all five fixtures against the project's Fortran-subset interpreter and generated JavaScript runtime.",
+    "independence_limit": "The official examples are independent reference outputs; the two additional fixture outputs were derived from the problem definition. The prototype interpreter is not an independent oracle."
+  },
+  "license_review": {
+    "status": "dataset_level_license_documented",
+    "codenet_repository_license_clears_submission_rights": null,
+    "evidence": "Project CodeNet full dataset was released under CDLA-Permissive-2.0. CDLA FAQ says the agreement is intended to cover datasets and their individual contents. AtCoder terms say submitter retains copyright; this is ownership provenance and does not by itself negate a non-exclusive dataset license.",
+    "terms_url": "https://atcoder.jp/tos?lang=en",
+    "action": "Use as CodeNet data under the dataset-level CDLA-Permissive-2.0 grant and retain provenance. Do not send this submission to a third-party model service without separately reviewing those processing terms.",
+    "license": "CDLA-Permissive-2.0",
+    "license_url": "https://cdla.dev/permissive-2-0/",
+    "dataset_scope": "Project CodeNet full dataset, including individual contents according to the CDLA FAQ",
+    "official_evidence": [
+      "Linux Foundation announcement identifies Project CodeNet as released under CDLA-Permissive-2.0.",
+      "CDLA FAQ says the agreement is intended to cover datasets as a whole and individual contents."
+    ],
+    "file_level_license_header_found": false,
+    "source_site_terms_note": "AtCoder says copyright remains with the user who created the program. Copyright ownership is compatible with a license, but no separate author grant or file-level notice was found; CDLA-Permissive-2.0 on the full CodeNet dataset is the documented reuse basis.",
+    "redistribution_condition": "Make the CDLA-Permissive-2.0 text available with any redistribution of CodeNet data.",
+    "dataset_level_license_covers_contents": true,
+    "repository_code_license_covers_dataset": false
+  },
+  "evaluation_admission": {
+    "admitted": true,
+    "scope": "scored_translation_evaluation",
+    "benchmark_split": "test",
+    "split_group": "codenet:AtCoder:aising2020:p02606",
+    "expected_outcome": "translated",
+    "public_redistribution": true,
+    "license_clearance": "dataset_level_CDLA_Permissive_2.0_documented; agreement text included",
+    "reason": "Promoted from the local challenge after recording the accepted CodeNet submission, source hash, native build, official and derived fixtures, task URL, and dataset-level reuse basis. The source is included in the benchmark record under the documented CDLA-Permissive-2.0 agreement.",
+    "license_basis": "CodeNet dataset-level CDLA-Permissive-2.0; full text at data/licenses/CDLA-Permissive-2.0.txt"
+  },
+  "independent_review": {
+    "status": "pending",
+    "assigned_reviewer": "project owner",
+    "reviewer_name": null,
+    "source_and_task_semantics": "pending",
+    "fixture_expected_outputs": "pending",
+    "reuse_terms_and_attribution": "pending",
+    "review_minutes": null,
+    "review_notes": null
+  },
+  "reviewed_on": "2026-10-25"
+}

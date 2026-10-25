@@ -20,12 +20,14 @@ from backend.benchmark import (  # noqa: E402
     LOCAL_EXPECTED_OUTPUTS,
     _EXTERNAL_CASE_METADATA,
 )
-from backend.legacy import LANGUAGES, SUBSETS, UnsupportedSyntax, legacy_transpile, run_nodes  # noqa: E402
+from backend.legacy import LANGUAGES, SUBSETS, legacy_transpile, run_nodes  # noqa: E402
 from backend.validator import compare, run_javascript  # noqa: E402
 
 MANIFEST_PATH = ROOT / 'data' / 'corpus_manifest.jsonl'
+CODENET_LOCAL_SCREENING_PATH = ROOT / 'data' / 'codenet_local_screening_manifest.jsonl'
 CODE_NET_REPOSITORY = 'https://github.com/IBM/Project_CodeNet'
 CODE_NET_README = f'{CODE_NET_REPOSITORY}/blob/main/README.md'
+CODE_NET_DATA_LICENSE = 'CDLA-Permissive-2.0'
 LANGUAGE_ALIASES = {
     'cobol': 'COBOL',
     'fortran': 'FORTRAN',
@@ -130,17 +132,65 @@ def build_manifest_records():
     for language, case_id, source in EXTERNAL_CASES:
         external = _EXTERNAL_CASE_METADATA[(language, case_id)]
         task = external['provenance']['task']
-        split = 'development' if task == 'A+B' else 'test'
+        split = external.get('split', 'development' if task == 'A+B' else 'test')
         records.append(_manifest_record(
             language,
             case_id,
             external['construct'],
             source,
-            origin='task-derived',
-            group=f'rosettacode:{task}',
+            origin=external.get('origin', 'task-derived'),
+            group=external.get('split_group', f'rosettacode:{task}'),
             split=split,
             external=external,
         ))
+
+    # This locally archived CodeNet sample is catalogued in the main corpus
+    # manifest as a challenge, but is deliberately not part of the scored split.
+    # Keep its source out of this repository while retaining the hash-bound URI,
+    # fixtures, and restricted-use status.
+    if CODENET_LOCAL_SCREENING_PATH.exists():
+        with CODENET_LOCAL_SCREENING_PATH.open(encoding='utf-8-sig') as manifest:
+            for line in manifest:
+                if not line.strip():
+                    continue
+                local = json.loads(line)
+                if local.get('admission_scope') != 'local_restricted_screening_only':
+                    continue
+                candidate = local.get('candidate_manifest_record') or {}
+                records.append({
+                    'schema_version': '1.0',
+                    'case_id': local['case_id'],
+                    'origin': 'codenet-local-restricted',
+                    'language': 'FORTRAN',
+                    'dialect': 'Fortran free-form source (stored as .f)',
+                    'task': local['task'],
+                    'category': 'local_screening_challenge',
+                    'split_group': local['split_group'],
+                    'split': 'challenge',
+                    'source': None,
+                    'source_sha256': local['source_sha256'],
+                    'source_url': candidate.get('source_url'),
+                    'source_repository': candidate.get('source_repository'),
+                    'source_commit': None,
+                    'source_storage': 'local_external_archive',
+                    'original_status': 'Accepted (CodeNet metadata)',
+                    'license': candidate.get('license'),
+                    'license_status': local['license_status'],
+                    'public_redistribution': False,
+                    'evaluation_scope': 'local_restricted_screening_only',
+                    'required_constructs': candidate.get('required_constructs', []),
+                    'input_fixtures': candidate.get('input_fixtures', []),
+                    'expected_outcome': 'screening_only',
+                    'expected_output': None,
+                    'oracle_status': 'official_samples_plus_derived_fixtures',
+                    'source_uri': local['source_uri'],
+                    'adaptation_notes': (
+                        'User-directed local screening admission. Source remains in the '
+                        'separate CodeNet archive; rights are unresolved. GNU Fortran '
+                        '14.3.0 explicit free-form build and five fixtures are recorded '
+                        'in data/codenet_case_review.json. Not a scored benchmark case.'
+                    ),
+                })
     return records
 
 
@@ -183,11 +233,18 @@ def validate_manifest(path=MANIFEST_PATH):
                 errors.append(f'line {line_number}: missing fields: {", ".join(missing)}')
                 continue
             case_id = record['case_id']
-            source_hash = _sha256(record['source'])
+            local_archive_only = (
+                record.get('evaluation_scope') == 'local_restricted_screening_only'
+                and record.get('source_storage') == 'local_external_archive'
+                and record.get('split') == 'challenge'
+                and record.get('public_redistribution') is False
+                and record['source'] is None
+            )
+            source_hash = _sha256(record['source']) if record['source'] is not None else None
             if case_id in ids:
                 errors.append(f'line {line_number}: duplicate case_id {case_id}')
             ids.add(case_id)
-            if source_hash != record['source_sha256']:
+            if not local_archive_only and source_hash != record['source_sha256']:
                 errors.append(f'line {line_number}: source hash mismatch for {case_id}')
             previous = hashes.get(source_hash)
             if previous:
@@ -204,7 +261,44 @@ def validate_manifest(path=MANIFEST_PATH):
                 errors.append(f'line {line_number}: translated case {case_id} lacks expected_output')
             if record['expected_outcome'] == 'translated' and record['oracle_status'] == 'unavailable':
                 errors.append(f'line {line_number}: translated case {case_id} lacks an independent oracle')
-            if record['origin'] == 'codenet' and record['license_status'] != 'reviewed':
+            fixtures = record.get('input_fixtures')
+            if not isinstance(fixtures, list):
+                errors.append(f'line {line_number}: input_fixtures must be a list for {case_id}')
+            else:
+                fixture_ids = set()
+                for fixture in fixtures:
+                    missing_fixture = [
+                        field for field in ('fixture_id', 'stdin', 'expected_output', 'oracle_status')
+                        if field not in fixture
+                    ]
+                    if missing_fixture:
+                        errors.append(
+                            f'line {line_number}: fixture for {case_id} lacks {", ".join(missing_fixture)}'
+                        )
+                        continue
+                    fixture_id = fixture['fixture_id']
+                    if fixture_id in fixture_ids:
+                        errors.append(f'line {line_number}: duplicate fixture {fixture_id} for {case_id}')
+                    fixture_ids.add(fixture_id)
+                    if not isinstance(fixture['stdin'], str) or not isinstance(fixture['expected_output'], str):
+                        errors.append(f'line {line_number}: fixture {fixture_id} for {case_id} has non-string I/O')
+                    if (
+                        fixture.get('source_sha256') is not None
+                        and fixture['source_sha256'] != record['source_sha256']
+                    ):
+                        errors.append(f'line {line_number}: fixture {fixture_id} source hash mismatch for {case_id}')
+                    if record['expected_outcome'] == 'translated' and fixture['oracle_status'] == 'unavailable':
+                        errors.append(f'line {line_number}: translated fixture {fixture_id} has no oracle')
+            codenet_dataset_license = (
+                record.get('license_status') == 'dataset_level_license_documented'
+                and str(record.get('license', '')).startswith('CDLA-Permissive-2.0')
+            )
+            if (
+                record['origin'].startswith('codenet')
+                and record['license_status'] != 'reviewed'
+                and not local_archive_only
+                and not codenet_dataset_license
+            ):
                 errors.append(f'line {line_number}: CodeNet case {case_id} has no reviewed license status')
             records.append(record)
 
@@ -243,6 +337,50 @@ def _resolve_codenet_source(root, row):
     return source_path
 
 
+def _known_codenet_fixtures(problem_id, submission_id):
+    """Fixed, independently derived fixture for a manually inspected sample.
+
+    This is screening evidence only: it does not certify source license or original
+    compiler/build status. Keep the source hash guard so a different submission
+    cannot inherit this oracle accidentally.
+    """
+    if (problem_id, submission_id) == ('p02606', 's368691152'):
+        source_sha256 = '00b4403a1f9ecb3620b45d111cbaca3513cc9f0bce88f64f9ced8c0c81b81eaf'
+        return [
+            {
+                'fixture_id': 'atcoder-sample-1', 'source_sha256': source_sha256,
+                'stdin': '5 10 2', 'expected_output': '3',
+                'oracle_status': 'official_problem_sample',
+                'oracle_note': 'AtCoder problem description p02606, Sample Input 1 / Sample Output 1.',
+            },
+            {
+                'fixture_id': 'atcoder-sample-2', 'source_sha256': source_sha256,
+                'stdin': '6 20 7', 'expected_output': '2',
+                'oracle_status': 'official_problem_sample',
+                'oracle_note': 'AtCoder problem description p02606, Sample Input 2 / Sample Output 2.',
+            },
+            {
+                'fixture_id': 'atcoder-sample-3', 'source_sha256': source_sha256,
+                'stdin': '1 100 1', 'expected_output': '100',
+                'oracle_status': 'official_problem_sample',
+                'oracle_note': 'AtCoder problem description p02606, Sample Input 3 / Sample Output 3.',
+            },
+            {
+                'fixture_id': 'number-of-multiples-boundary-v1', 'source_sha256': source_sha256,
+                'stdin': '1 10 3', 'expected_output': '3',
+                'oracle_status': 'independently_derived_from_problem_definition',
+                'oracle_note': 'Count multiples of d in inclusive interval [l,r]: floor(r/d)-floor((l-1)/d).',
+            },
+            {
+                'fixture_id': 'number-of-multiples-offset-v1', 'source_sha256': source_sha256,
+                'stdin': '5 20 4', 'expected_output': '4',
+                'oracle_status': 'independently_derived_from_problem_definition',
+                'oracle_note': 'Multiples are 8, 12, 16, and 20.',
+            },
+        ]
+    return []
+
+
 def _screen_candidate(candidate):
     canonical = LANGUAGE_ALIASES.get(candidate['language'].strip().lower())
     if canonical not in SUBSETS:
@@ -253,22 +391,68 @@ def _screen_candidate(candidate):
         return {'screen_status': 'source_encoding_error'}
     except OSError as exc:
         return {'screen_status': 'source_read_error', 'screen_error': str(exc)[:300]}
+    source_hash = hashlib.sha256(source.encode('utf-8')).hexdigest()
+    fixtures = candidate.get('input_fixtures', [])
+    if any(fixture.get('source_sha256') != source_hash for fixture in fixtures):
+        return {'screen_status': 'fixture_source_hash_mismatch'}
     try:
         result = legacy_transpile(canonical, source, 'JavaScript')
-    except (UnsupportedSyntax, ValueError, SyntaxError) as exc:
+    except Exception as exc:
         return {'screen_status': 'parser_or_pipeline_error', 'screen_error': str(exc)[:300]}
     if result.unsupported:
         return {
             'screen_status': 'unsupported_syntax',
             'unsupported_constructs': len(result.unsupported),
         }
-    source_output = []
-    try:
-        run_nodes(result.source_program, {}, source_output)
-    except UnsupportedSyntax as exc:
-        return {'screen_status': 'source_interpreter_error', 'screen_error': str(exc)[:300]}
-    target_result = run_javascript(result.javascript)
-    validation = compare('\n'.join(map(str, source_output)), target_result, 'JavaScript')
+    def contains_input(nodes):
+        return any(node.get('kind') == 'input' or any(contains_input(node.get(key, [])) for key in ('then', 'else', 'body')) for node in nodes)
+    requires_input = contains_input(result.source_program)
+    if requires_input and not fixtures:
+        return {
+            'screen_status': 'input_fixture_required',
+            'target_codegen_available': True,
+            'validation_status': 'not_run',
+            'screen_note': 'The supported parser/code generator recognized stdin input, but no fixture was supplied.',
+        }
+    if not fixtures:
+        fixtures = [{'stdin': None, 'expected_output': None, 'oracle_status': 'prototype_interpreter_only'}]
+    fixture_results = []
+    for fixture in fixtures:
+        source_output = []
+        try:
+            values = fixture.get('stdin')
+            run_nodes(result.source_program, {}, source_output, values.split() if values is not None else None)
+        except Exception as exc:
+            return {'screen_status': 'source_interpreter_error', 'screen_error': str(exc)[:300]}
+        try:
+            target_result = run_javascript(result.javascript, stdin_data=fixture.get('stdin'))
+        except Exception as exc:
+            return {'screen_status': 'target_runtime_error', 'screen_error': str(exc)[:300]}
+        validation = compare('\n'.join(map(str, source_output)), target_result, 'JavaScript')
+        expected = fixture.get('expected_output')
+        fixture_match = expected is None or (
+            target_result.get('ok') and target_result.get('output', '').replace('\r\n', '\n').strip()
+            == str(expected).replace('\r\n', '\n').strip()
+        )
+        fixture_results.append({
+            'fixture_id': fixture.get('fixture_id'),
+            'validation_status': validation['status'],
+            'expected_output_match': fixture_match if expected is not None else None,
+            'oracle_status': fixture.get('oracle_status', 'prototype_interpreter_only'),
+        })
+        if validation.get('status') != 'passed':
+            return {
+                'screen_status': 'not_independently_executable',
+                'validation_status': validation.get('status'),
+                'failure_class': validation.get('failure_class'),
+                'fixture_results': fixture_results,
+            }
+        if not fixture_match:
+            return {
+                'screen_status': 'fixture_mismatch',
+                'validation_status': validation.get('status'),
+                'fixture_results': fixture_results,
+            }
     if validation['status'] == 'not_run' and validation.get('failure_class') == 'runtime_unavailable':
         return {
             'screen_status': 'target_runtime_unavailable',
@@ -282,8 +466,10 @@ def _screen_candidate(candidate):
         }
     return {
         'screen_status': 'subset_screen_pass',
-        'validation_status': validation.get('status'),
-        'validation_note': 'Prototype interpreter/target agreement only; not an independent oracle.',
+        'validation_status': 'passed',
+        'fixture_count': len(fixture_results),
+        'fixture_results': fixture_results,
+        'validation_note': 'Prototype interpreter/target agreement and optional supplied fixture checks only; not native source compilation or license clearance.',
     }
 
 
@@ -310,13 +496,18 @@ def audit_codenet(root, output=None, screen_per_language=100):
             for row in reader:
                 language = row.get('language', '').strip() or 'unknown'
                 status = row.get('status', '').strip()
-                source_path = _resolve_codenet_source(root, row)
-                exists = bool(source_path and source_path.is_file())
                 totals['submissions'] += 1
                 by_language[language]['submissions'] += 1
                 if status.lower() == 'accepted':
                     totals['accepted'] += 1
                     by_language[language]['accepted'] += 1
+                    # Source presence is audited only for language labels that map
+                    # to this prototype's subsets; other CodeNet languages are not
+                    # candidate corpus languages for this project.
+                    if language.lower() not in LANGUAGE_ALIASES:
+                        continue
+                    source_path = _resolve_codenet_source(root, row)
+                    exists = bool(source_path and source_path.is_file())
                     if exists:
                         totals['accepted_source_present'] += 1
                         by_language[language]['accepted_source_present'] += 1
@@ -329,6 +520,7 @@ def audit_codenet(root, output=None, screen_per_language=100):
                                 'submission_id': submission_id,
                                 'source_path': source_path,
                                 'source_hash': '',
+                                'input_fixtures': _known_codenet_fixtures(row.get('problem_id', ''), submission_id),
                             }
                             heap = candidate_heaps[language]
                             item = (-rank, submission_id, candidate)
@@ -375,8 +567,8 @@ def audit_codenet(root, output=None, screen_per_language=100):
                 'source_url': CODE_NET_REPOSITORY,
                 'source_repository': CODE_NET_REPOSITORY,
                 'source_commit': None,
-                'license': 'unknown; must be verified for the source submission and source-site terms',
-                'license_status': 'review_required',
+                'license': f'{CODE_NET_DATA_LICENSE} (IBM Project CodeNet full-dataset license)',
+                'license_status': 'dataset_level_license_documented',
                 'original_status': 'Accepted',
                 'required_constructs': [],
                 'input_fixtures': [],
@@ -405,8 +597,12 @@ def audit_codenet(root, output=None, screen_per_language=100):
             'note': 'Screen counts are candidate triage only. Source/target agreement uses this prototype interpreter and is not an independent correctness oracle or proof of original-language compilation.',
         },
         'licensing': {
-            'status': 'review_required',
-            'note': 'The repository LICENSE does not establish redistribution rights for each third-party online-judge submission. Review CodeNet, AIZU, AtCoder, and any applicable source-specific terms before using or redistributing samples.',
+            'status': 'dataset_level_license_documented',
+            'license': CODE_NET_DATA_LICENSE,
+            'license_url': 'https://cdla.dev/permissive-2-0/',
+            'evidence': 'The Linux Foundation announced Project CodeNet under CDLA-Permissive-2.0; the CDLA FAQ says the agreement is intended to cover datasets and their individual contents.',
+            'conditions': 'Make the CDLA-Permissive-2.0 agreement text available with any redistributed CodeNet data.',
+            'caveat': 'Individual files do not necessarily carry their own license headers. Source-site terms and the provider’s chain of rights remain provenance fields; the dataset license disclaims warranties of title/non-infringement.',
         },
         'supported_language_mapping': {
             'COBOL': ['COBOL'],
@@ -414,12 +610,14 @@ def audit_codenet(root, output=None, screen_per_language=100):
             'Pascal': ['Pascal'],
             'BASIC': ['BASIC'],
         },
+        'source_presence_scope': 'Accepted submissions are source-checked only for metadata language labels mapped to this prototype subset; other CodeNet languages are counted from metadata only.',
     }
     for language in sorted(set(by_language) | set(screened)):
         counts = by_language[language]
         report['per_language'][language] = {
             **dict(sorted(counts.items())),
             'subset_language': LANGUAGE_ALIASES.get(language.lower()),
+            'source_presence_checked': language.lower() in LANGUAGE_ALIASES,
             'accepted_source_present_candidates': counts.get('accepted_source_present', 0),
             'screened_sample_size': sum(screened[language].values()),
             'screen_results': dict(sorted(screened[language].items())),

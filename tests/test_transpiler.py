@@ -458,22 +458,82 @@ def test_experiment_endpoint_rejects_invalid_repeat_count():
 def test_benchmark_covers_translation_and_expected_unsupported_outcomes():
     from backend.benchmark import run_benchmark
     report = run_benchmark('JavaScript')
-    assert report['total'] == 20
-    assert report['external_task_derived_cases'] == 20
+    assert report['total'] == 26
+    assert report['external_task_derived_cases'] == 26
     assert report['development_cases_excluded'] == 16
-    assert report['passed'] == 17
+    assert report['passed'] == 22
     assert report['success_rate_percent'] < 100.0
     assert report['success_rate_95ci_percent'][0] < report['success_rate_percent']
     assert report['expected_outcome_match_rate_percent'] == 100.0
     assert report['gold_output_accuracy_percent'] == 100.0
-    assert report['gold_output_cases'] == 17
-    assert report['unsupported_cases_expected'] == 3
+    assert report['gold_output_cases'] == 22
+    assert report['input_fixtures'] == 34
+    assert report['input_fixtures_matched'] == 34
+    assert report['unsupported_cases_expected'] == 4
     assert report['unsupported_recognition_rate_percent'] == 100.0
     external = [case for case in report['cases'] if case.get('source_reference')]
-    assert len(external) == 20
+    assert len(external) == 26
     assert all(case['source_reference']['url'].startswith('https://') for case in external)
     assert all(case['split'] == 'test' for case in report['cases'])
-    assert len({case['split_group'] for case in report['cases']}) == 2
+    assert len({case['split_group'] for case in report['cases']}) == 8
+    codenet_case = next(case for case in report['cases'] if case['case'] == 'codenet-p02600-s098305279')
+    assert codenet_case['input_fixture_count'] == 17
+    assert codenet_case['input_fixtures_matched'] == 17
+    multiples_case = next(case for case in report['cases'] if case['case'] == 'codenet-p02606-s368691152')
+    assert multiples_case['input_fixture_count'] == 5
+    assert multiples_case['input_fixtures_matched'] == 5
+    for case_id, fixture_count in (
+        ('codenet-p03997-s040559345', 4),
+        ('codenet-p02724-s408275047', 5),
+        ('codenet-p03238-s608868631', 3),
+    ):
+        case = next(item for item in report['cases'] if item['case'] == case_id)
+        assert case['input_fixture_count'] == fixture_count
+        assert case['input_fixtures_matched'] == fixture_count
+
+
+def test_fortran_mod_and_integer_division_match_fortran_semantics_for_both_targets():
+    from backend.legacy import eval_expr, legacy_transpile
+    from backend.validator import run_javascript, run_python
+
+    source = '''program main
+implicit none
+integer :: x
+read(*,*) x
+print *, (x/500) * 1000 + mod(x,500)/5 * 5
+end program main'''
+    fixtures = [('1024', '2020'), ('0', '0'), ('499', '495'),
+                ('500', '1000'), ('1000000000', '2000000000')]
+    assert eval_expr('mod(-9, 4)', {}, fortran_mod=True) == -1
+    assert eval_expr('mod(9, -4)', {}, fortran_mod=True) == 1
+
+    javascript = legacy_transpile('FORTRAN', source, 'JavaScript')
+    python = legacy_transpile('FORTRAN', source, 'Python')
+    assert javascript.unsupported == []
+    assert python.unsupported == []
+    for stdin, expected in fixtures:
+        js_result = run_javascript(javascript.javascript, stdin_data=stdin)
+        py_result = run_python(python.javascript, stdin_data=stdin)
+        assert js_result['ok'] is True
+        assert py_result['ok'] is True
+        assert js_result['output'] == expected
+        assert py_result['output'] == expected
+
+
+def test_live_ablation_never_sends_codenet_sources_to_external_model(monkeypatch):
+    from backend.benchmark import _case_result
+    from backend.benchmark import EXTERNAL_CASES
+
+    monkeypatch.setenv('LLM_API_URL', '')
+    monkeypatch.setenv('LLM_MODEL', '')
+    monkeypatch.setenv('LLM_API_KEY', '')
+    for protected_case in ('codenet-p02606-s368691152', 'codenet-p02607-s779285219'):
+        language, case_name, source = next(case for case in EXTERNAL_CASES if case[1] == protected_case)
+        result = _case_result(language, case_name, source, 'JavaScript', enable_llm=True)
+
+        assert result['llm_disabled_by_source_policy'] is True
+        assert result['llm_calls'] == 0
+        assert result['candidate_generated'] == 0
 
 
 def test_translation_contract_is_generated_for_valid_translation():

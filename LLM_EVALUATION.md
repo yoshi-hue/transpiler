@@ -63,7 +63,7 @@ An LLM candidate is **not** automatically accepted.
 A candidate can be classified as:
 - `candidate_generated`: model produced target code
 - `target_syntax_valid`: candidate parses as the target language
-- `target_runtime_valid`: JavaScript candidate executes under Node's permission-restricted mode; Python candidates are syntax-checked but not executed and must be counted as runtime-not-run, not runtime failures
+- `target_runtime_valid`: JavaScript candidate executes under Node's permission-restricted mode; Python candidates are executed in the isolated Docker runner when Docker is available. If unavailable, count runtime as not run rather than as a translation failure.
 - `validation_status`: `runtime_valid_unverified`, `syntax_valid_runtime_not_run`, `rejected_syntax`, `rejected_runtime`, `runtime_unavailable`, or `syntax_check_unavailable`
 - `candidate_oracle_match`: candidate output matches a separately authored expected output for a fixed benchmark input
 - `semantically_validated`: source and target behavior agree over the defined independent test inputs
@@ -89,22 +89,43 @@ Recommended table columns:
 | LLM requests rejected | -- | |
 | Delta vs baseline | -- | |
 
-Metadata features are excluded from the causal comparison: contracts, risk assessments,
-failure fingerprints, and learned-rule records do not alter code generation, validation,
-or acceptance. Describe them as prototype diagnostics. The only implemented paired
-comparison is rule-only versus hybrid candidate generation; it does not isolate or test
-the metadata features.
+Contracts and risk affect eligibility/storage and repeatability checks, and learned rules
+can affect generated code when an exact schema match is found. They remain common to the
+benchmark arms; the safeguards arm adds learned-rule memory. The current three-arm
+comparison therefore does not isolate contract or risk effects. Failure fingerprints
+remain diagnostic.
 
-The strengthened benchmark now contains 36 manifest records: 16 development examples
-(local smoke tests plus the A+B task family) and 20 test examples from two held-out task
-families (Maximum of two numbers and Loops/For). The test set adds equal-value maxima,
-singleton and expanded ranges, and three expected-unsupported COBOL PERFORM variants.
-The benchmark runner scores only the test split. Expected outputs are separately authored
-from constants and loop semantics and match the separate reference evaluator (20/20),
-but have not been executed in native source compilers or checked by a second human; this
-remains a small task-derived pilot. The test set is not large enough to support a
-broad effectiveness claim. See [`BENCHMARK_AND_ABLATION_PROTOCOL.md`](./BENCHMARK_AND_ABLATION_PROTOCOL.md)
-for task grouping and the sample-size design.
+The current benchmark manifest contains 42 records: 16 development and 26 held-out cases
+across eight task groups. The test groups are Maximum of two numbers, Loops/For, and six
+CodeNet AtCoder tasks. The 26 test cases comprise 22 supported translations and four
+expected-unsupported programs. The project-authored
+expected outputs match a separate reference evaluator (20/20); those legacy programs
+have not been compiled with native source toolchains or reviewed by a second human. The
+CodeNet p02600 has two official and 15 derived inputs checked against native Fortran and
+both targets; p02606 has three official and two derived inputs. Owner review remains pending. CodeNet p02607 has two official and two
+derived fixtures and contributes to unsupported-syntax recognition. This remains a
+small pilot, not an independent or representative corpus. See
+[`BENCHMARK_AND_ABLATION_PROTOCOL.md`](./BENCHMARK_AND_ABLATION_PROTOCOL.md) for the
+current split, historical ablations, and sample-size plan.
+
+Historical v3 and v6 runs are retained as earlier attempts. The latest live comparison
+uses 26 cases across eight task groups and five repeats (130 observations per arm and
+target) with provider network access. Each target generated 15 candidates from three
+project-authored COBOL loop variants; all 15 passed target syntax/runtime and fixed output
+checks, but none were accepted. All arms had 110/110 supported-case passes, 170/170
+fixture matches, and 20/20 expected-unsupported recognitions. Learned-rule reuse was
+zero; reviewer effort was not measured. This shows connectivity and bounded candidate
+validation, not an improvement in accepted translation outcomes. See:
+[`data/controlled_ablation_live_v3_javascript.json`](./data/controlled_ablation_live_v3_javascript.json)
+and [`data/controlled_ablation_live_v3_python.json`](./data/controlled_ablation_live_v3_python.json),
+plus [`data/controlled_ablation_live_v4_javascript.json`](./data/controlled_ablation_live_v4_javascript.json)
+and [`data/controlled_ablation_live_v4_python.json`](./data/controlled_ablation_live_v4_python.json),
+plus the guarded v6 reports
+[`data/controlled_ablation_live_v9_javascript.json`](./data/controlled_ablation_live_v9_javascript.json)
+and [`data/controlled_ablation_live_v8_python.json`](./data/controlled_ablation_live_v8_python.json).
+The JavaScript v8 run lacked network permission and failed; v9 is the network-enabled
+result used here. The preserved v4 run attempted CodeNet requests before the guard; source
+payload receipt is unknown and documented in the p02607 case review.
 
 ## 6. Minimum evidence for publication-quality reporting
 

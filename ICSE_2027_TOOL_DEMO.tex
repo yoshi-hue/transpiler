@@ -27,10 +27,13 @@ and line-numbered BASIC into JavaScript or Python, and a project-specific Python
 subset into JavaScript. Its web interface exposes tokenization, normalized intermediate
 data, deterministic output, unsupported constructs, optional complete-program model
 proposals, and finite validation results. The model output remains an unaccepted
-candidate. On a 20-case task-grouped pilot, both targets passed 17 supported cases and
-matched all 17 separately authored expected outputs; three COBOL loop cases were
-correctly reported unsupported. These expected outputs have not been checked against
-native source compilers. The historical paired model benchmark returned no candidate;
+candidate. On the current 23-case, five-group pilot, both targets passed all 19
+supported cases and matched their expected outputs; all four expected-unsupported
+cases (three COBOL loops and one CodeNet Fortran array-input program) were recognized.
+The supported CodeNet scalar-input programs passed 17 and five predeclared fixtures on
+both targets, respectively, and native Fortran builds; the array-input program passed four native fixtures. The other
+expected outputs have not been checked against native source compilers. The historical
+paired model benchmark returned no candidate;
 a later fixed, single-input trial generated JavaScript and Python candidates that each
 matched one predeclared expected output. Both remain unaccepted pending review. The
 prototype demonstrates inspectable boundaries, not an effectiveness gain or general
@@ -128,11 +131,12 @@ and human review before any candidate could be accepted.
 
 \section{Evaluation and Limitations}
 We ran the deterministic benchmark against JavaScript and Python. The test split has
-20 records in two whole-task groups: maximum-of-two-numbers and for-loop tasks. It
-contains 17 expected-translatable records and three expected-unsupported COBOL
-\texttt{PERFORM} records. The 17 supported target executions matched their separately
-authored expected outputs in both targets (17/17); all three unsupported cases were
-recognized (3/3). End-to-end status was 17/20 for each target because expected-unsupported
+23 records in five task groups: maximum-of-two-numbers, for-loop, CodeNet p02600,
+CodeNet p02606, and CodeNet p02607. It contains 19 expected-translatable records and four expected-unsupported records
+(three COBOL \texttt{PERFORM} cases and one Fortran array-input case). The 19 supported
+target executions matched their separately authored expected outputs in both targets
+(19/19); all four unsupported cases were recognized (4/4). End-to-end status was 19/23
+for each target because expected-unsupported
 cases are reported as \texttt{not\_run}, not translation passes (Table~\ref{tab:results}).
 
 \begin{table}[t]
@@ -143,27 +147,35 @@ cases are reported as \texttt{not\_run}, not translation passes (Table~\ref{tab:
 \toprule
 Measure & JavaScript & Python \\
 \midrule
-Test cases & 20 & 20 \\
-Supported outputs matching expected output & 17/17 & 17/17 \\
-Expected-unsupported cases recognized & 3/3 & 3/3 \\
-End-to-end translation passes & 17/20 & 17/20 \\
+Test cases & 23 & 23 \\
+Supported outputs matching expected output & 19/19 & 19/19 \\
+Expected-unsupported cases recognized & 4/4 & 4/4 \\
+End-to-end translation passes & 19/23 & 19/23 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-The expected outputs are project-authored from fixed constants and loop ranges and
-match a separate reference evaluator (20/20). This checker does not import the
-transpiler or its source interpreter; it is not a native source compiler or a second
-human review. The corpus has only two test
-task groups and is not a representative estimate of translation accuracy. The original
+The 20 project-authored task cases' expected outputs are derived from fixed constants
+and loop ranges and match a separate reference evaluator (20/20). CodeNet p02600 passed
+two official samples and 15 interval fixtures under GNU Fortran 14.3.0, and its source
+translated on all 17 fixtures for both targets. CodeNet p02607's two official and two
+derived fixtures also pass GNU Fortran 14.3.0. CodeNet p02606's three official and two
+derived fixtures pass the same compiler and its translation passes all five fixtures
+on both targets. These local builds do not reproduce the
+metadata-listed GNU Fortran 9.2.1 environment. No second human reviewed the oracle. The
+corpus has only five test task groups and is not a representative estimate of
+translation accuracy. The original
 24-case paired refresh at pushed commit \texttt{ade68dc} used
 \texttt{gemini-3.1-flash-lite} and \texttt{legacy-modernizer-llm-v3}. The provider
 returned no candidate after three request attempts for the unsupported case in each
 target. In a later single-input provider smoke trial, JavaScript and Python candidates
-were generated, ran in their target checks, and matched the one fixed expected output;
-the Python review artifact also reports three fixture-variant matches. Source-format and
-human review remain pending, so both candidates are unaccepted. This is not a controlled
-comparison and supports no LLM effectiveness claim.
+were generated and matched the one fixed expected output; both remain unaccepted. The
+The current guarded five-repeat v6 ablation used the 23-case corpus. CodeNet inputs were
+withheld from the provider, and all 15 eligible project-authored requests per target
+failed with connection errors, producing no candidates. All arms scored 95/115 case-runs;
+learned-rule reuse was zero, and reviewer effort was not measured. This is not evidence
+of LLM effectiveness. A preserved v4 attempt included CodeNet requests; payload receipt
+is unknown. Independent source/oracle/license reviews for CodeNet cases remain pending.
 
 Contract and risk checks gate finite-test eligibility and rule storage; learned-rule
 memory reuses only matching templates. No controlled ablation has shown that these

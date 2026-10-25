@@ -29,17 +29,21 @@
       "dialect": "FORTRAN 77/90-style subset",
       "implemented_constructs": [
         "INTEGER and REAL declarations",
+        "scalar list-directed READ from stdin",
         "scalar assignment",
         "PRINT *, expression",
+        "formatted scalar WRITE to stdout",
         "block IF / ELSE / END IF",
-        "DO identifier = start, stop / END DO"
+        "DO identifier = start, stop / END DO",
+        "integer division with Fortran truncation toward zero",
+        "integer MOD intrinsic with dividend-sign remainder semantics"
       ],
       "not_claimed": [
-        "READ/input",
         "arrays",
+        "array-valued input and implied-DO lists",
         "subroutines and functions",
         "modules",
-        "formatted I/O",
+        "formatted input, format-descriptor semantics, and non-scalar formatted I/O",
         "step values other than the implicit increment of one"
       ]
     },

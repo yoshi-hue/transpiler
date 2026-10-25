@@ -1,13 +1,19 @@
-# Corpus protocol
+﻿# Corpus protocol
 
 ## Purpose and status
 
 This protocol defines selection and evaluation rules for the current small
 project-authored, task-derived pilot and a future independent legacy-program corpus.
-The present held-out set has whole-task grouping and separately authored expected
-outputs; those outputs match a separate reference evaluator (20/20), but have not been
-checked against native source compilers or by a second human reviewer. This is not an
-independent or representative corpus.
+The current held-out set has whole-task grouping and 26 cases in eight task groups:
+22 supported-translation cases and four expected-unsupported cases. The separate
+reference evaluator matches 25 expected-output records and 38 declared fixtures. The six
+CodeNet cases cover six distinct task groups: p02600, p02606, p02607, p03997 (Trapezoids),
+p02724 (Golden Coins), and p03238 (Programming Education). Their source files have
+hash-bound GNU Fortran 14.3.0 builds and fixed fixture results. Independent owner review
+of source/task semantics, fixtures, and reuse terms remains pending. The prepared
+case-by-case review packet is [`independent_oracle_review_queue_v2.json`](./independent_oracle_review_queue_v2.json);
+its decisions and elapsed review time are blank until a human completes it. The corpus
+is still a small pilot, not a representative sample.
 
 ## Supported subset
 
@@ -65,26 +71,26 @@ clustered by task/problem and reviewed before splitting. All programs from the s
 and repository must stay in one split. Do not randomly split submissions/snippets from
 the same task across development and test.
 
-The corpus manifest carries `split_group` and `split`. For the current pilot, all local
-smoke tests and all A+B task variants are in development; Maximum-of-two-numbers and
-Loops/For task groups are held out together in test. The benchmark runner evaluates only
-test records and reports the number of development records excluded. This leaves two
-held-out task groups, so its rate is a descriptive pilot statistic, not a generalization
-estimate. For a larger set,
-use deterministic 70/15/15 group splitting with a fixed seed and publish the split
-manifest. The CodeNet candidate export uses seed 2026 and groups submissions by problem;
-this is only a reproducible triage split, not an evaluation split until candidates pass
-curation.
+The corpus manifest carries `split_group` and `split`. The current manifest has 16
+development records and 26 held-out cases across eight task groups (Maximum of two numbers,
+Loops/For, and six CodeNet AtCoder problems). The runner evaluates only test records
+and reports development records excluded. Five held-out groups remain too few for a
+generalization estimate. For a larger set, use deterministic 70/15/15 group
+splitting with a fixed seed and publish the split manifest. The CodeNet candidate export
+uses seed 2026 and groups submissions by problem; this is only a reproducible triage
+split, not an evaluation split until candidates pass curation.
 Report group counts per split; if the independent test split is too small, do not present
 the score as a generalization estimate.
 
 ## CodeNet assessment
 
 Project CodeNet documents 13,916,868 submissions across 55 languages in its README and
-describes the full archive as 7.8 GB. The GitHub repository's Apache-2.0 license covers
-that repository's licensed materials; it does **not**, by itself, establish that every
-third-party submission in the dataset can be redistributed or used under the same
-terms. Review the dataset/source-site terms and any per-file rights before reuse.
+describes the full archive as 7.8 GB. IBM released the full dataset under
+CDLA-Permissive-2.0; the CDLA FAQ says the agreement is intended to cover datasets and
+their individual contents. It permits use, modification, and sharing subject to making
+the agreement text available with redistributed data. The GitHub repository's
+Apache-2.0 license covers repository code, not the dataset. Preserve source-site
+provenance and review any conflicting terms for each selected task.
 
 IBM's published [CodeNet statistics workbook](https://github.com/IBM/Project_CodeNet/blob/main/assets/Project_CodeNet_statistics.xlsx)
 reports these language totals:
@@ -97,13 +103,90 @@ reports these language totals:
 | Visual Basic | 2,116 | 1,087 |
 
 The workbook has no plain BASIC row; Visual Basic is a different dialect and is not
-counted as a match for this project's BASIC subset. These are published metadata
-statistics, **not** source-present or usable sample counts. The full archive transfer
-was attempted but not completed in this workspace, so no source-present counts or
-translator-screened sample counts are claimed. Run the audit script on the extracted
-archive to obtain them. It reports metadata counts separately from conservative
-translator-screened candidates and marks licensing as requiring review. The screen is
-a triage measure, not original-language compilation or an independent semantic oracle.
+counted as a match for this project's BASIC subset. These published totals are metadata
+statistics, not usable-sample counts.
+
+### Local archive audit (2026-10-25)
+
+The extracted local archive was inventoried with the conservative audit tool. The
+machine-readable outputs are
+[`codenet_audit.json`](./codenet_audit.json) and the metadata-only
+[`codenet_candidate_manifest.jsonl`](./codenet_candidate_manifest.jsonl). The audit
+read 4,053 per-problem metadata files and counted 13,916,868 submissions, of which
+7,460,588 have metadata status `Accepted`. Source-file presence was checked only for
+accepted submissions whose CodeNet language label maps to this prototype's supported
+subsets; other languages are metadata-counted only.
+
+| CodeNet label | Submissions | Accepted | Accepted source present | Screened sample |
+|---|---:|---:|---:|---:|
+| COBOL | 1,277 | 727 | 727 | 10 |
+| Fortran | 15,059 | 8,018 | 8,018 | 10 |
+| Pascal | 8,727 | 4,820 | 4,820 | 10 |
+| plain BASIC | no matching row | â€” | â€” | 0 |
+
+All 30 sampled records received source hashes, CodeNet problem/task groups, and a
+deterministic provisional split assignment (22 train, 4 development, 4 test across
+30 task groups). The sample screen produced 27 parser/pipeline errors and 3
+unsupported-syntax results; **zero** passed the prototype screen. The parser errors
+include constructs outside the documented subsets and are recorded per candidate in
+the candidate manifest. This small hash-sampled screen is not a representative success
+rate.
+
+At the user's direction, the Fortran candidate `codenet-p02606-s368691152` is included
+in [`codenet_local_screening_manifest.jsonl`](./codenet_local_screening_manifest.jsonl)
+as a **local restricted screening challenge** in the main corpus manifest. It is not
+part of the scored benchmark or held-out score. The record preserves the source hash, local archive
+reference, five fixtures, compiler command/results, and review scope. Its GNU Fortran
+14.3.0 explicit-free-form build passed the three official samples and two derived
+fixtures. CodeNet's `Accepted` status and GNU Fortran 9.2.1 compiler are metadata; the
+local build does not reproduce that original environment. The dataset-level
+CDLA-Permissive-2.0 license covers individual contents according to the CDLA FAQ. No
+separate license header was found in this submission. AtCoder copyright ownership is
+recorded as provenance; the CodeNet data license is the documented reuse basis. If
+source data is redistributed, make the CDLA agreement text available. This challenge
+remains unscored because it is one task group and the source is stored outside this
+repository.
+
+The held-out corpus now also contains the separate CodeNet submission
+`codenet-p02607-s779285219` for AtCoder AIsing 2020 B: An Odd Problem. It is expected
+unsupported because array-section input is outside the documented subset. Its two
+official samples and two derived fixtures were checked against GNU Fortran 14.3.0; its
+source SHA-256 and build record are in
+[`codenet_case_review_p02607.json`](./codenet_case_review_p02607.json). The complete
+CDLA-Permissive-2.0 text is included at
+[`licenses/CDLA-Permissive-2.0.txt`](./licenses/CDLA-Permissive-2.0.txt). The case
+contributes only to unsupported-syntax recognition, not supported-translation success.
+
+Three more fixture-backed CodeNet Fortran cases were promoted after target screening,
+independent task-formula checking, and native source rebuilds:
+
+| Case | Task group | Target fixtures | Native Fortran outputs | Translation subset |
+|---|---|---:|---|---|
+| `codenet-p03997-s040559345` | ABC045 A: Trapezoids | 4 | 7, 16, 5000, 2 | scalar input, integer arithmetic, formatted output |
+| `codenet-p02724-s408275047` | ABC160 B: Golden Coins | 5 | 2020, 0, 495, 1000, 2000000000 | integer division and Fortran `MOD` |
+| `codenet-p03238-s608868631` | ABC112 A: Programming Education | 3 | Hello World, 8, 10 | scalar input, block IF, addition |
+
+The native builds used GNU Fortran 14.3.0 in `gcc:14-bookworm`, with networking disabled
+and source mounted read-only. The source hashes, individual fixture outputs, license basis,
+and pending owner review are recorded in `codenet_case_review_p03997.json`,
+`codenet_case_review_p02724.json`, and `codenet_case_review_p03238.json`. The separate
+arithmetic/task evaluator matches all 38 fixtures (including unsupported challenge fixtures);
+both target benchmark runs match all 34 fixtures for the 22 supported cases. The owner has
+not yet recorded an independent human review, so these are machine-checked cases, not
+independently human-reviewed cases. Adding these three groups increases the held-out count
+by 13% and task groups by 60%; the resulting eight groups remain far below the planned
+100-group study.
+
+The audit checks file presence and a bounded translation screen; neither is original-
+language compilation or an independent semantic oracle. The GitHub repository license
+does not grant rights to every third-party submission.
+
+The saved 30-record screen predates the FORTRAN scalar `READ(*,*)` and formatted
+`WRITE` support added to the prototype. The current screen reports a recognized
+stdin-reading program as `input_fixture_required` when no fixture is present; this is
+code-generation coverage, not a behavior pass. Re-run the audit with a predeclared
+fixture for a candidate before reporting any new screen pass. No automatic inputs or
+expected outputs are synthesized from CodeNet source.
 
 ## Current manifest
 
@@ -125,9 +208,19 @@ The Exercism COBOL Hello World lead is excluded: its `src/hello-world.cob` file 
 unfinished student starter, and the exact candidate revision, build, fixture, and oracle
 were not independently verified. The track repository documents a test command for
 example implementations, which is useful provenance but does not establish that this
-starter is a valid solution. The local CodeNet audit is still pending because the source
-archive is absent; CodeNet metadata counts or prototype-screen passes are not eligible
-corpus cases.
+starter is a valid solution. The local CodeNet audit is complete, but most sampled
+records remain screening-only. A later rescreen of the same 30 source files after
+adding scalar Fortran stdin/output support produced one fixture-backed prototype pass,
+24 parser/pipeline errors, and five unsupported-syntax results. The passing p02606 /
+s368691152 case is catalogued as an unscored local challenge; its local build and
+dataset-level license basis are documented above. The second held-out CodeNet case,
+p02607/s779285219, is in the unsupported-recognition set with a native build and four
+fixtures. The third curated submission, p02600/s098305279, is held out as a supported
+scalar-input case with a native build and 17 fixtures. Its independent owner review is
+pending. The CDLA license text is included. Most other triage
+records still lack task-specific fixtures and independent oracles. The rescreen report
+is `codenet_rescreen_v1.json`; candidate metadata and fixtures are in
+`codenet_candidate_manifest.jsonl`.
 
 Do not promote an exclusion into `corpus_manifest.jsonl` until all of the following are
 complete for the exact immutable source revision: compute and verify its source SHA-256;
@@ -148,7 +241,7 @@ python tools\corpus.py audit-codenet --root C:\datasets\Project_CodeNet --output
 The CodeNet audit requires its extracted `metadata` and `data` directories. It does not
 download the archive or copy source code into this repository.
 Add `--candidate-manifest data\codenet_candidate_manifest.jsonl` to write metadata-only
-records for a deterministic sample of screened candidates. Their `expected_outcome` is
-`screening_only`, their oracle is unavailable, and their license status is
-`review_required`; these records are not eligible evaluation cases until a curator
-reviews them.
+records for a deterministic sample of screened candidates. Uncurated records remain
+`screening_only` with unavailable oracles; the CodeNet dataset-level CDLA license is
+recorded, but each candidate still needs task/source provenance, fixtures, build status,
+and an independent oracle before evaluation admission.

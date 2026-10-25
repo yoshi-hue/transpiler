@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "case_id": "codenet-p02600-s098305279",
+  "source_sha256": "42d176af444979844386308baf5f56081f3e2be81b80cdc0f749539d255524b7",
+  "problem": {
+    "name": "M-SOLUTIONS Programming Contest 2020 - A: Kyu in AtCoder",
+    "problem_id": "p02600",
+    "source": "AtCoder",
+    "url": "https://atcoder.jp/contests/m-solutions2020/tasks/m_solutions2020_a?lang=en",
+    "oracle_basis": "Two official samples and fifteen boundary/interior ratings derived from the task's eight rating intervals."
+  },
+  "submission": {
+    "submission_id": "s098305279",
+    "archive_path": "data/p02600/Fortran/s098305279.f",
+    "source_sha256": "42d176af444979844386308baf5f56081f3e2be81b80cdc0f749539d255524b7",
+    "status": "Accepted (CodeNet metadata)",
+    "compiler_metadata": "GNU Fortran 9.2.1",
+    "source_form": "free-form Fortran in .f file",
+    "file_level_license_header_found": false
+  },
+  "license_review": {
+    "status": "dataset_level_license_documented; second review pending",
+    "license": "CDLA-Permissive-2.0",
+    "license_url": "https://cdla.dev/permissive-2-0/",
+    "scope_basis": "CDLA FAQ states its data agreement applies to individual dataset contents.",
+    "faq_url": "https://cdla.dev/faq-resources/faq/",
+    "atcoder_terms_note": "The submitter retains copyright; no individual source license header was found. The documented CodeNet dataset agreement is the reuse basis and should be checked by the project owner before redistribution.",
+    "redistribution_condition": "Include the full CDLA-Permissive-2.0 agreement text with redistributed CodeNet data.",
+    "license_copy": "data/licenses/CDLA-Permissive-2.0.txt"
+  },
+  "native_build": {
+    "compiler": "GNU Fortran 14.3.0 (gcc:14-bookworm)",
+    "command": "gfortran -ffree-form -std=f2008 -Wall -Wextra -fcheck=all /src/s.f -o /tmp/kyu",
+    "container_network": "none",
+    "source_mount": "read-only",
+    "result": "passed",
+    "warning": "Unused variable k; no build failure.",
+    "fixture_outputs_in_manifest_order": ["7", "2", "8", "8", "7", "7", "6", "6", "5", "5", "4", "4", "3", "3", "2", "1", "1"]
+  },
+  "prototype_evaluation": {
+    "targets": {
+      "JavaScript": {"fixtures_passed": 17, "fixtures_total": 17},
+      "Python": {"fixtures_passed": 17, "fixtures_total": 17}
+    },
+    "test_split": "test",
+    "split_group": "codenet:AtCoder:msolutions2020:p02600",
+    "expected_outcome": "translated",
+    "score_role": "supported translation and fixed-fixture output checks; not a claim of general source coverage"
+  },
+  "independent_review": {
+    "status": "pending",
+    "assigned_reviewer": "project owner",
+    "reviewer_name": null,
+    "source_and_task_semantics": "pending",
+    "fixture_expected_outputs": "pending",
+    "reuse_terms_and_attribution": "pending",
+    "review_minutes": null,
+    "review_notes": null
+  }
+}

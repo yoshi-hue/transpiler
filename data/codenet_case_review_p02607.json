@@ -1,0 +1,76 @@
+{
+  "schema_version": "1.0",
+  "case_id": "codenet-p02607-s779285219",
+  "source_sha256": "969fe29546989cd0f97dbbfeafb4d8a584d2cebd2a39a63fa16188b51e4079bc",
+  "problem": {
+    "name": "AIsing Programming Contest 2020 - B: An Odd Problem",
+    "problem_id": "p02607",
+    "source": "AtCoder",
+    "url": "https://atcoder.jp/contests/aising2020/tasks/aising2020_b?lang=en",
+    "constraints": "1 <= N, a_i <= 100; count odd values at odd one-based positions."
+  },
+  "submission": {
+    "submission_id": "s779285219",
+    "user_id": "u506403362",
+    "archive_path": "data/p02607/Fortran/s779285219.f",
+    "source_sha256": "969fe29546989cd0f97dbbfeafb4d8a584d2cebd2a39a63fa16188b51e4079bc",
+    "status": "Accepted (CodeNet metadata)",
+    "compiler_metadata": "GNU Fortran 9.2.1",
+    "source_form": "free-form Fortran in .f file"
+  },
+  "license_review": {
+    "status": "dataset_level_license_documented",
+    "license": "CDLA-Permissive-2.0",
+    "license_url": "https://cdla.dev/permissive-2-0/",
+    "scope": "The CodeNet full-dataset license applies to individual dataset contents according to the CDLA FAQ.",
+    "file_level_license_header_found": false,
+    "atcoder_terms_note": "Copyright ownership remains with the submitting user; the documented CodeNet dataset license is the reuse basis. No individual source license header was found.",
+    "redistribution_condition": "Make the full CDLA-Permissive-2.0 agreement text available with any redistributed CodeNet data.",
+    "license_copy": "data/licenses/CDLA-Permissive-2.0.txt"
+  },
+  "native_build": {
+    "compiler": "GNU Fortran 14.3.0 (gcc:14-bookworm)",
+    "command": "gfortran -ffree-form -std=f2008 -Wall -Wextra -fcheck=all",
+    "result": "passed",
+    "official_sample_outputs": [
+      "2",
+      "3"
+    ],
+    "derived_fixture_outputs": [
+      "1",
+      "2"
+    ],
+    "source_read_only_mount": true
+  },
+  "prototype_screen": {
+    "target": "JavaScript",
+    "status": "expected_unsupported_recognized",
+    "unsupported_constructs": [
+      "read(*,*) a(1:n)"
+    ],
+    "reason": "Array section input is outside the documented FORTRAN subset."
+  },
+  "evaluation_admission": {
+    "admitted": true,
+    "split": "test",
+    "split_group": "codenet:AtCoder:Aising2020:p02607",
+    "expected_outcome": "unsupported",
+    "score_role": "unsupported-syntax recognition only; excluded from supported translation success denominator",
+    "third_party_model_submission": "prohibited in this corpus workflow unless provider processing terms are separately reviewed"
+  },
+  "provider_processing_audit": {
+    "v4_ablation": "Five provider fallback requests per target were attempted for this source and returned connection_error. Provider receipt of the source payload cannot be confirmed.",
+    "corrective_action": "Benchmark runner now disables external LLM fallback for CodeNet-origin records unless processing terms are reviewed; guarded v5 and v6 reports record zero CodeNet LLM calls.",
+    "source_policy_test": "tests/test_transpiler.py::test_live_ablation_never_sends_codenet_sources_to_external_model"
+  },
+  "independent_review": {
+    "status": "pending",
+    "assigned_reviewer": "project owner",
+    "reviewer_name": null,
+    "source_and_task_semantics": "pending",
+    "fixture_expected_outputs": "pending",
+    "reuse_terms_and_attribution": "pending",
+    "review_minutes": null,
+    "review_notes": null
+  }
+}
