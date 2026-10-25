@@ -174,11 +174,6 @@ def _fallback_failure_summary(entry):
         category, http_status = 'connection_error', None
     else:
         category, http_status = 'request_error', None
-    heldout_group_count = len({
-        _case_metadata(language, case_name, source).get('split_group')
-        for language, case_name, source in run_cases
-        if _case_metadata(language, case_name, source).get('split_group')
-    })
     return {
         'category': category,
         'http_status': http_status,
@@ -655,6 +650,11 @@ def run_benchmark(target='JavaScript', cases=None):
 
 def run_experiment(target='JavaScript', cases=None, repeats=1, enable_llm=False):
     run_cases = list(DEFAULT_CASES if cases is None else cases)
+    heldout_group_count = len({
+        _case_metadata(language, case_name, source).get('split_group')
+        for language, case_name, source in run_cases
+        if _case_metadata(language, case_name, source).get('split_group')
+    })
     rule_only_results = []
     hybrid_results = []
     safeguards_results = []
