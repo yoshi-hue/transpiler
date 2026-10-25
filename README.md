@@ -180,16 +180,55 @@ The guided demo sequence is in [`DEMO_WALKTHROUGH.md`](./DEMO_WALKTHROUGH.md).
 
 ## Run locally
 
-```bash
-python -m venv .venv
-# Windows PowerShell:
-.\.venv\Scripts\Activate.ps1
-# macOS/Linux: source .venv/bin/activate
-python -m pip install -r requirements.txt
-python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000
-```
+### Prerequisites
+- **Python**: 3.10+ (tested with Python 3.13.1)
+- **Node.js**: Node 18+ (tested with Node.js v24.20.0, required for JavaScript target execution)
 
-Open `http://127.0.0.1:8000`.
+### 1. Setup Virtual Environment & Dependencies
+
+**Windows PowerShell:**
+`powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt -r requirements-dev.txt
+`
+
+**macOS / Linux:**
+`ash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt -r requirements-dev.txt
+`
+
+### 2. Start the Application Server
+
+Run the FastAPI backend with hot reloading enabled:
+`powershell
+python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
+`
+
+Once started, open your browser and navigate to:
+**http://127.0.0.1:8000**
+
+The web UI allows you to select a source language (COBOL, FORTRAN, Pascal, BASIC, or Python-like), enter code or select a preloaded sample, choose a target (JavaScript or Python), run transpilation, view AST/IR representations, inspect rule diagnostics, and verify execution output.
+
+### 3. Run Automated Tests & Reproducible Benchmarks
+
+To verify the installation and run the full test suite locally:
+`powershell
+# Run all unit and integration tests (58 passing tests)
+python -m pytest
+
+# Run the deterministic held-out benchmark (26 cases across 8 task groups)
+python tools\run_test_benchmark.py --target JavaScript --output data\reproduced_test_26_javascript.json
+python tools\run_test_benchmark.py --target Python --output data\reproduced_test_26_python.json
+
+# Verify independent expected-output oracles and input fixtures
+python tools\check_benchmark_oracles.py --output data\oracle_current_check.json
+`
+
 
 Useful paper/demo API endpoints:
 
