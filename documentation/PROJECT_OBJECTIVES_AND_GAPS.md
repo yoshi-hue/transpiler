@@ -176,7 +176,7 @@ limitations:
 
 ## Current evidence summary
 
-The refreshed v3 paired run is a historical baseline recorded in [`EVIDENCE_V3_REFRESH.md`](./EVIDENCE_V3_REFRESH.md): on the pre-split 24-case pilot, both targets had 23/24 end-to-end passes and 23/23 target-output matches; the provider returned no candidate after three attempts per target for the unsupported COBOL PERFORM case. Later one-case provider smoke trials generated JavaScript and Python candidates. The five-repeat live comparison is now archived in [`../data/controlled_ablation_live_v3_javascript.json`](../data/controlled_ablation_live_v3_javascript.json) and its Python counterpart: 15/15 candidate outputs per target passed target execution and expected-output checks on three COBOL loop variants, but no candidate was accepted and arm-level success remained unchanged. Two human reviews per candidate and actual review time are still outstanding. These are finite pilot results, not general effectiveness evidence.
+The earlier paired run and five-repeat live comparison were historical pilots and are not included in the final evidence set. Current reproducibility and benchmark files are listed in the root README. These are finite pilot results, not general effectiveness evidence.
 
 The current held-out split has 26 cases across eight task groups (22 supported and four
 expected-unsupported: three COBOL loops and one CodeNet Fortran array-input program).
@@ -188,7 +188,7 @@ build records. Independent owner review of source/task behavior, expected output
 reuse terms is still pending. The project-authored cases are not all independently
 compiled in native source-language toolchains; this remains exploratory evidence, not
 general semantic equivalence. See
-[`../BENCHMARK_AND_ABLATION_PROTOCOL.md`](../BENCHMARK_AND_ABLATION_PROTOCOL.md).
+[`./BENCHMARK_AND_ABLATION_PROTOCOL.md`](./BENCHMARK_AND_ABLATION_PROTOCOL.md).
 Contracts and risk affect local eligibility and learned-rule storage, but their individual
 effects are not isolated. The current 26-case/eight-group live ablations used five repeats
 per target. With provider network access explicitly enabled, both target runs generated

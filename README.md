@@ -17,7 +17,7 @@ a successful case.
 
 ## Project objectives and evidence status
 
-The project objectives are to survey translation approaches, identify evidence-backed research gaps, build a multi-language front end and shared representation, investigate a constrained hybrid backend, validate behavior by execution, and document contributions and limitations. Their current implementation status and the presentation's candidate gap claims are tracked in [`data/PROJECT_OBJECTIVES_AND_GAPS.md`](./data/PROJECT_OBJECTIVES_AND_GAPS.md).
+The project objectives are to survey translation approaches, identify evidence-backed research gaps, build a multi-language front end and shared representation, investigate a constrained hybrid backend, validate behavior by execution, and document contributions and limitations. Their current implementation status and the presentation's candidate gap claims are tracked in [`documentation/PROJECT_OBJECTIVES_AND_GAPS.md`](./documentation/PROJECT_OBJECTIVES_AND_GAPS.md).
 
 A course-specific DOCX report may contain personal identifiers and is maintained separately from the public repository.
 
@@ -26,7 +26,7 @@ The project report and paper draft are maintained separately from the runnable p
 The main implementation/evaluation boundaries are:
 
 - Front ends, normalized representation, deterministic generation, and finite execution checks are implemented for the subsets in [`data/supported_subset.json`](./data/supported_subset.json).
-- A scoped primary-source audit and related-work reading list are documented in [`data/PROJECT_OBJECTIVES_AND_GAPS.md`](./data/PROJECT_OBJECTIVES_AND_GAPS.md). They partially address the survey/gap objectives; they are not an exhaustive or systematic review.
+- A scoped primary-source audit and related-work reading list are documented in [`documentation/PROJECT_OBJECTIVES_AND_GAPS.md`](./documentation/PROJECT_OBJECTIVES_AND_GAPS.md). They partially address the survey/gap objectives; they are not an exhaustive or systematic review.
 - The LLM fallback can request a complete-program candidate for unsupported input and displays it separately from acceptance while retaining deterministic partial output. JavaScript candidates run in Node's permission mode; Python candidates can run in an isolated Docker container. The fixed COBOL `PERFORM` provider trial generated both target candidates; each passed its recorded runtime check and matched one predeclared expected output. The Python review report also records three fixture-variant matches. Both candidates remain unaccepted because human review and some other acceptance gates are pending. The earlier paired 24-case v3 benchmark produced no candidate after three provider attempts per target; it remains a historical result, not a contradiction. See the [provider trial](./data/provider_trial_latest.json), [Python trial](./data/provider_trial_latest_python.json), and [acceptance review](./data/provider_trial_python_acceptance_review.json).
 - Contracts gate local rule storage, risk profiles select repeatability checks and high-risk review, and learned statement templates can generate matching restricted programs. These safeguards and transformations have not yet shown a causal correctness improvement.
 - Scalability and multilingual-bias experiments were not conducted and are not claimed contributions or findings. The unidentified “Xu et al. 2026” citation was removed from the paper framing.
@@ -94,9 +94,9 @@ python tools\run_test_benchmark.py --target JavaScript --output data\reproduced_
 python tools\run_test_benchmark.py --target Python --output data\reproduced_test_26_python.json
 ```
 
-Candidate review requirements are in [CANDIDATE_ACCEPTANCE.md](./CANDIDATE_ACCEPTANCE.md), and the sample-size and metadata ablation decision are in [BENCHMARK_AND_ABLATION_PROTOCOL.md](./BENCHMARK_AND_ABLATION_PROTOCOL.md).
+Candidate review requirements are in [documentation/CANDIDATE_ACCEPTANCE.md](./documentation/CANDIDATE_ACCEPTANCE.md), and the sample-size and metadata ablation decision are in [documentation/BENCHMARK_AND_ABLATION_PROTOCOL.md](./documentation/BENCHMARK_AND_ABLATION_PROTOCOL.md).
 
-See [LLM_EVALUATION.md](./LLM_EVALUATION.md) for the recommended protocol.
+See [documentation/LLM_EVALUATION.md](./documentation/LLM_EVALUATION.md) for the recommended protocol.
 
 ## Scope
 
@@ -176,7 +176,7 @@ Wait for **Publish demo container** to pass in GitHub Actions, make the generate
 `ghcr.io/yoshi-hue/transpiler` package public in the repository's Packages settings, and
 verify the `compose.image.yaml` pull path from a clean machine.
 
-The guided demo sequence is in [`DEMO_WALKTHROUGH.md`](./DEMO_WALKTHROUGH.md).
+The guided demo sequence is in [`documentation/DEMO_WALKTHROUGH.md`](./documentation/DEMO_WALKTHROUGH.md).
 
 ## Run locally
 
@@ -298,7 +298,7 @@ measure. Do not use its entry count or status labels as evidence of language sup
 ## Corpus collection and provenance
 
 The implemented subset is enumerated in [`data/supported_subset.json`](./data/supported_subset.json);
-screening and oracle policy are in [`data/CORPUS_PROTOCOL.md`](./data/CORPUS_PROTOCOL.md).
+screening and oracle policy are in [`documentation/CORPUS_PROTOCOL.md`](./documentation/CORPUS_PROTOCOL.md).
 [`data/corpus_manifest.jsonl`](./data/corpus_manifest.jsonl) records 42 entries: 16
 development and 26 held-out records across eight task groups, with source hashes,
 provenance, expected outcomes/outputs, license status, and task-group splits. The
@@ -335,7 +335,7 @@ python tools\run_ablation.py --target JavaScript --output data\my_live_ablation_
 python tools\run_ablation.py --target Python --output data\my_live_ablation_python.json --repeats 5 --enable-llm --load-dotenv
 ```
 
-The latest live ablation uses the frozen 26-case, eight-group test split and five repeats per arm. With provider network access enabled, both targets generated 15 candidates for the three project-authored COBOL loop variants; all 15 per target passed syntax, target runtime, and predeclared output checks. No candidate was accepted. Each arm had 110/130 supported validation passes (22/22 supported cases per repeat), while expected-unsupported recognition was 20/20. Learned-rule reuse was zero, and the third arm matched the rule-only and hybrid pass counts. This does not establish an improvement. See [the protocol and latest results](./BENCHMARK_AND_ABLATION_PROTOCOL.md), [JavaScript](./data/controlled_ablation_live_v9_javascript.json), and [Python](./data/controlled_ablation_live_v8_python.json).
+The latest live ablation uses the frozen 26-case, eight-group test split and five repeats per arm. With provider network access enabled, both targets generated 15 candidates for the three project-authored COBOL loop variants; all 15 per target passed syntax, target runtime, and predeclared output checks. No candidate was accepted. Each arm had 110/130 supported validation passes (22/22 supported cases per repeat), while expected-unsupported recognition was 20/20. Learned-rule reuse was zero, and the third arm matched the rule-only and hybrid pass counts. This does not establish an improvement. See [the protocol and latest results](./documentation/BENCHMARK_AND_ABLATION_PROTOCOL.md), [JavaScript](./data/controlled_ablation_live_v9_javascript.json), and [Python](./data/controlled_ablation_live_v8_python.json).
 
 For a CodeNet audit, first obtain and extract the official archive yourself; the
 documented full archive is 7.8 GB. Then run:
@@ -360,7 +360,7 @@ IBM's published statistics workbook reports 15,059 Fortran submissions (8,018 ac
 8,727 Pascal (4,820 accepted), and 1,277 COBOL (727 accepted). It reports Visual Basic
 separately (2,116; 1,087 accepted), with no plain BASIC row. These are metadata totals,
 not source-present or supported-subset sample counts; details and limitations are in
-[`data/CORPUS_PROTOCOL.md`](./data/CORPUS_PROTOCOL.md).
+[`documentation/CORPUS_PROTOCOL.md`](./documentation/CORPUS_PROTOCOL.md).
 
 The local CodeNet audit has now scanned 4,053 metadata files (13,916,868 submissions;
 7,460,588 marked accepted). It found source files for all accepted COBOL, Fortran, and
@@ -383,7 +383,6 @@ samples and two derived fixtures. The CDLA agreement text is included at
 See the saved
 [`audit report`](./data/codenet_audit.json) and
 [`candidate metadata`](./data/codenet_candidate_manifest.jsonl), plus
-[`rescreen report`](./data/codenet_rescreen_v1.json),
 [`local screening manifest`](./data/codenet_local_screening_manifest.jsonl), and
 [`case build and rights review`](./data/codenet_case_review.json) and
 [`second CodeNet case review`](./data/codenet_case_review_p02607.json).
@@ -405,8 +404,7 @@ shared across arms, so this experiment does not estimate their individual effect
 candidates remain unaccepted. Reviewer effort is not collected and is reported as
 unavailable. The following one-repeat reports are historical 20-case
 baselines from before the CodeNet case was added; they are archived in
-[`data/ablation_v1_javascript.json`](./data/ablation_v1_javascript.json) and
-[`data/ablation_v1_python.json`](./data/ablation_v1_python.json). Both used the same 20
+the historical ablation snapshots omitted from the final repository. Both used the same 20
 held-out cases from two task groups; no LLM provider was configured and no learned-rule
 reuse occurred. All arms had 17/20 overall passes, 17/17 supported-case passes, and
 3/3 expected-unsupported cases recognized. These runs show no observed difference and
@@ -421,7 +419,7 @@ produced 15 candidates per target, all passing syntax/runtime and output checks,
 were accepted. Learned-rule reuse was zero. Provider network access was explicitly enabled
 and CodeNet sources were withheld from requests. Human review effort remains unmeasured.
 
-Keep the model, prompt version, temperature, benchmark, runtime, and rule table fixed. See `LLM_EVALUATION.md` for the recommended protocol.
+Keep the model, prompt version, temperature, benchmark, runtime, and rule table fixed. See `documentation/LLM_EVALUATION.md` for the recommended protocol.
 
 ## Scope
 

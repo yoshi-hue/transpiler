@@ -16,4 +16,4 @@ groups. The held-out set has 22 supported cases and four expected-unsupported ca
 Six CodeNet Fortran cases span six task groups. Their hash-bound source/build/fixture
 records are in the codenet_case_review*.json files. The separate oracle checker matches
 25 expected-output records and 38 fixtures. Independent owner review remains pending.
-See CORPUS_PROTOCOL.md for current counts, license scope, inclusion criteria, and limits.
+See ../documentation/CORPUS_PROTOCOL.md for current counts, license scope, inclusion criteria, and limits.

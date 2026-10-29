@@ -18,9 +18,9 @@ generalization, production readiness, or an accuracy improvement.
 - The latest live five-repeat comparison used the same 26-case hash and settings for both targets. Each arm had 110/130 observations: 22/22 supported passes per repeat and 20/20 expected-unsupported recognitions. The hybrid generated 15 candidates per target; all 15 per target passed syntax, isolated/restricted runtime, and fixed output checks. Zero candidates were accepted, learned-rule reuse was zero, and reviewer effort was not measured. Arms had identical outcomes, so no improvement is established. CodeNet inputs were excluded from provider requests.
 - The clean setup record predates the current corpus/code changes. A fresh full-suite result is being recorded after these changes; the previous 57-test result is historical. Docker Compose startup was previously verified. See `data/reproducibility_current.json` for archived commands, versions, and reports.
 - Candidate review gates remain pending. Contracts/risk are shared across arms, so their individual effects remain unestimated. The preserved v4 run attempted CodeNet requests before the source guard; payload receipt is unknown.
-See [`data/PROJECT_OBJECTIVES_AND_GAPS.md`](data/PROJECT_OBJECTIVES_AND_GAPS.md),
+See [`PROJECT_OBJECTIVES_AND_GAPS.md`](PROJECT_OBJECTIVES_AND_GAPS.md),
 [`BENCHMARK_AND_ABLATION_PROTOCOL.md`](BENCHMARK_AND_ABLATION_PROTOCOL.md), and
-[`data/CORPUS_PROTOCOL.md`](data/CORPUS_PROTOCOL.md) for the objective matrix, current
+[`CORPUS_PROTOCOL.md`](CORPUS_PROTOCOL.md) for the objective matrix, current
 protocol, provenance, and artifact links. Report exact denominators and distinguish
 supported translation from unsupported recognition.
 

@@ -5,7 +5,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_project_objectives_and_candidate_gaps_are_documented_with_status_caveats():
-    alignment = (ROOT / 'data' / 'PROJECT_OBJECTIVES_AND_GAPS.md').read_text(encoding='utf-8')
+    alignment = (ROOT / 'documentation' / 'PROJECT_OBJECTIVES_AND_GAPS.md').read_text(encoding='utf-8')
     for objective in (
         'Survey established',
         'Identify specific gaps',
