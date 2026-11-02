@@ -172,6 +172,20 @@ pre{height:220px;padding:14px;overflow:auto;white-space:pre-wrap}
         <div id="generatedCodeTitle" class="card-title">Generated target code</div>
         <pre id="javascript" class="output"></pre>
         <div id="llmCandidateNote" class="decision" hidden>This model-generated program is not semantically validated and is not accepted. Automated syntax/runtime and fixture checks cover only recorded inputs and do not prove equivalence.</div>
+        <div id="candidateReviewPanel" class="decision" hidden>
+          <strong>Explicit candidate review</strong>
+          <div class="form-grid">
+            <input id="reviewerName" placeholder="Source reviewer name" />
+            <input id="reviewerTarget" placeholder="Target reviewer name" />
+            <input id="reviewReason" placeholder="Review reason" />
+            <input id="reviewFixtureEvidence" placeholder="Independent fixture evidence" />
+            <input id="reviewSecurityEvidence" placeholder="Security evidence" />
+            <input id="reviewRegressionEvidence" placeholder="Regression evidence" />
+          </div>
+          <button class="secondary" onclick="submitCandidateReview('approved')">Record approval</button>
+          <button class="secondary" onclick="submitCandidateReview('rejected')">Record rejection</button>
+          <span id="reviewStatus"></span>
+        </div>
         <div id="deterministicPartialPanel" hidden>
           <div class="card-title">Deterministic partial output (unsupported constructs remain)</div>
           <pre id="deterministicPartialCode" class="output"></pre>
@@ -444,6 +458,7 @@ async function translateCode(){
    const runtimePolicy=data.language_support.target==='Python'?'Python candidates receive syntax checks and an isolated Docker runtime check when Docker is available; otherwise runtime validation remains pending.':'JavaScript candidates receive syntax checks and restricted Node execution.';
    const blockers=data.candidate_acceptance?.blockers||['candidate acceptance record unavailable'];
    $('llmCandidateNote').textContent=`Model candidate status: ${candidateStatuses.join(', ')}. NOT ACCEPTED. ${runtimePolicy} Remaining acceptance gates: ${blockers.join(', ')}.`;
+   $('candidateReviewPanel').hidden=false;
   }
   $('deterministicPartialPanel').hidden=!llmOnly || !hasDeterministicCode;
   $('deterministicPartialCode').textContent=deterministicCode;
@@ -464,7 +479,7 @@ async function translateCode(){
   $('irScopes').textContent=data.ir && data.ir.scopes ? data.ir.scopes.length : '—';
   $('ruleTableVersion').textContent=data.rule_table_version || '—';
   $('failureClass').textContent=data.validation.failure_class || 'none';
-  $('fallbackDetails').textContent=JSON.stringify({status:fb,events:data.fallback_log||[],suggestions:data.fallback_suggestions||[]},null,2);
+  $('fallbackDetails').textContent=JSON.stringify({status:fb,events:data.fallback_log||[],suggestions:data.fallback_suggestions||[],candidate_lifecycle:data.candidate_lifecycle||null},null,2);
   const v=data.validation; $('validation').textContent=v.status;
   $('validationDetails').textContent=JSON.stringify({validation:v,contract:data.translation_contract,risk:data.risk_assessment,acceptance_policy:data.acceptance_policy,candidate_acceptance:data.candidate_acceptance,learned_rule:data.learned_rule,learned_rule_policy:'Local exact-schema cache only. A stored example does not infer source semantics or a rule for arbitrary programs. Contract failures, unsupported constructs, model candidates, failed checks, and high risk block learned-rule storage. Risk selects 1/2/3 repeat runs for low/medium/high; high risk also requires human review. A miss or rejection retains deterministic output.'},null,2);
   $('traceDetails').textContent=JSON.stringify(data.pipeline_trace||[],null,2);
@@ -484,6 +499,19 @@ async function translateCode(){
   status.textContent=(data.language_support?data.language_support.source+' subset → '+data.language_support.target+'. ':'')+(v.message||'Translation complete.')+(policyBlocked?' Policy blocked: '+(policy.reasons||[]).join(', '):'');
   status.className='status '+(policyBlocked?'neutral':v.status==='passed'?'pass':v.status==='failed'?'fail':'neutral');
  }catch(error){status.textContent=BACKEND_ERROR_MESSAGE;status.className='status fail';}
+}
+async function submitCandidateReview(decision){
+ if(!latestTranslation){return;}
+ const candidate=(latestTranslation.fallback_suggestions||[]).find(item=>item.candidate)?.candidate;
+ const reviewer=$('reviewerName').value.trim(); const targetReviewer=$('reviewerTarget').value.trim();
+ const reason=$('reviewReason').value.trim();
+ const fixture=$('reviewFixtureEvidence').value.trim(); const security=$('reviewSecurityEvidence').value.trim(); const regression=$('reviewRegressionEvidence').value.trim();
+ if(!reviewer||!targetReviewer||!reason||!fixture||!security||!regression){$('reviewStatus').textContent='Complete reviewer identities and all evidence fields first.';return;}
+ const evidence={validation:latestTranslation.validation,target_runtime:latestTranslation.target_runtime,independent_fixtures:fixture,security_review:security,regression_checks:regression,target_reviewer:targetReviewer};
+ try{
+ const response=await fetch(apiUrl('/candidate/review'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:$('sourceCode').value,candidate,validation_evidence:evidence,reviewer,target_reviewer:targetReviewer,decision,reason})});
+  const data=await response.json(); $('reviewStatus').textContent=response.ok?`Review recorded: ${data.review.state}. ${data.review_file||''}`:(data.detail||'Review failed.');
+ }catch(error){$('reviewStatus').textContent=error.message||'Review request failed.';}
 }
 function downloadText(filename,content,type){
  const blob=new Blob([content],{type}); const url=URL.createObjectURL(blob); const link=document.createElement('a');
@@ -520,7 +548,7 @@ function downloadLLMCandidate(){
 }
 function downloadProvenance(){
  if(!latestTranslation){ $('status').textContent='Translate a program before downloading provenance.'; $('status').className='status neutral'; return; }
- const provenance={source_language:$('source').value,target_language:$('target').value,source_code:$('sourceCode').value,rule_table_version:latestTranslation.rule_table_version,rule_coverage:latestTranslation.rule_coverage,unsupported:latestTranslation.unsupported,fallback_log:latestTranslation.fallback_log,validation:latestTranslation.validation,pipeline_trace:latestTranslation.pipeline_trace};
+ const provenance={source_language:$('source').value,target_language:$('target').value,source_code:$('sourceCode').value,rule_table_version:latestTranslation.rule_table_version,rule_coverage:latestTranslation.rule_coverage,unsupported:latestTranslation.unsupported,fallback_log:latestTranslation.fallback_log,validation:latestTranslation.validation,candidate_lifecycle:latestTranslation.candidate_lifecycle||null,pipeline_trace:latestTranslation.pipeline_trace};
  downloadText('translation-provenance.json',JSON.stringify(provenance,null,2),'application/json');
 }
 async function testLLM(){

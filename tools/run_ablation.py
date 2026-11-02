@@ -48,6 +48,7 @@ parser.add_argument('--target', required=True, choices=['JavaScript', 'Python'])
 parser.add_argument('--output', required=True)
 parser.add_argument('--repeats', type=int, default=1)
 parser.add_argument('--enable-llm', action='store_true', help='Allow live provider requests using process environment variables.')
+parser.add_argument('--enable-repair', action='store_true', help='Enable at most two validation-driven repair requests.')
 parser.add_argument('--load-dotenv', action='store_true', help='Explicitly load repository .env for a live provider run; secrets are never included in output.')
 args = parser.parse_args()
 if args.load_dotenv:
@@ -62,6 +63,7 @@ report = run_experiment(
     target=args.target,
     repeats=args.repeats,
     enable_llm=args.enable_llm,
+    enable_repair=args.enable_repair,
 )
 record = {
     'schema_version': '1.0',
@@ -79,6 +81,7 @@ record = {
         'target': args.target,
         'repeats': args.repeats,
         'llm_enabled': args.enable_llm,
+        'repair_enabled': args.enable_repair,
         'split': 'test',
         'dotenv_autoload': False,
         'dotenv_explicitly_loaded': args.load_dotenv,

@@ -119,6 +119,28 @@ Latest JavaScript smoke-trial record: `data/provider_trial_latest.json`. It gene
 candidate, passed syntax and restricted runtime checks, and matched the fixed expected
 stdout. The record is explicitly not accepted and does not establish effectiveness.
 
+To complete an explicit review for a newly generated provider trial, run the
+separate review command below. It requires real reviewer identities and written
+evidence for every remaining gate; it does not modify the original trial record:
+
+```powershell
+python tools\review_provider_trial.py `
+  --report data\provider_trial_latest.json `
+  --output data\provider_trial_latest_review.json `
+  --reviewer "Your Name <you@example.com>" `
+  --target-reviewer "Target Reviewer <reviewer@example.com>" `
+  --decision approved `
+  --reason "Reviewed source, candidate, independent fixtures, security, and regression evidence." `
+  --source-review-evidence "..." `
+  --fixture-evidence "..." `
+  --security-evidence "..." `
+  --regression-evidence "..."
+```
+
+Do not use `approved` until the fixture evidence is genuinely independent of the
+fixed smoke oracle. The command records attestations and hashes; approval is
+still empirical, not a proof of equivalence.
+
 ## Learned-rule behavior
 
 The current implementation can induce an experimental statement-pattern rule from one

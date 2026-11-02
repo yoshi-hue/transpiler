@@ -1,6 +1,8 @@
 import logging
 import os
 from pathlib import Path
+from datetime import datetime, timezone
+import json
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Response
@@ -11,6 +13,7 @@ from pydantic import BaseModel, Field
 from .benchmark import run_benchmark, run_experiment
 from .legacy import LANGUAGES, SUBSETS
 from .llm_fallback import fallback_status, test_connection
+from .candidate_lifecycle import review_candidate
 from .rules import get_rules_report
 from .transpiler import TARGETS, transpile
 
@@ -43,6 +46,17 @@ class TranspileRequest(BaseModel):
     source_language: str = Field(default='Python-like', min_length=1, max_length=40)
     target_language: str = Field(default='JavaScript', min_length=1, max_length=40)
     input_data: str | None = Field(default=None, max_length=50_000)
+
+
+class CandidateReviewRequest(BaseModel):
+    source: str = Field(min_length=1, max_length=MAX_SOURCE_CHARS)
+    candidate: str = Field(min_length=1, max_length=MAX_SOURCE_CHARS)
+    validation_evidence: dict
+    reviewer: str = Field(min_length=1, max_length=200)
+    target_reviewer: str | None = Field(default=None, max_length=200)
+    decision: str = Field(min_length=1, max_length=20)
+    reason: str = Field(min_length=1, max_length=2000)
+    prior_review: dict | None = None
 
 
 @app.get('/')
@@ -102,6 +116,21 @@ def llm_test():
             'error': 'LLM connectivity check failed. Check the server logs for details.',
             'status': fallback_status(),
         }
+
+
+@app.post('/candidate/review')
+def candidate_review(request: CandidateReviewRequest):
+    """Record a review bound to exact source, candidate, and validation hashes."""
+    try:
+        review = review_candidate(**request.model_dump())
+        review_dir = Path(__file__).resolve().parent.parent / 'data' / 'reviews'
+        review_dir.mkdir(parents=True, exist_ok=True)
+        stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+        review_path = review_dir / f'{stamp}-{review["candidate_sha256"][:12]}.json'
+        review_path.write_text(json.dumps(review, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+        return {'ok': True, 'review': review, 'review_file': str(review_path.relative_to(review_dir.parent.parent))}
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
 
 @app.post('/transpile')

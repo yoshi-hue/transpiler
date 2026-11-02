@@ -1,0 +1,3144 @@
+{
+  "schema_version": "1.0",
+  "run_id": "20261102T093044Z-c0fb1222",
+  "timestamp_utc": "2026-11-02T09:30:44.048258Z",
+  "command": "tools/run_research_evaluation.py --target JavaScript --output-dir data/evidence --project-only",
+  "settings": {
+    "target": "JavaScript",
+    "llm_enabled": false,
+    "repair_enabled": false,
+    "project_only": true,
+    "selected_case_count": 20,
+    "split": "test"
+  },
+  "runtime": {
+    "python": "3.13.1",
+    "node": "v24.20.0"
+  },
+  "inputs": {
+    "C:\\Users\\Madhuri\\Desktop\\project\\mini_transpiler\\data\\external_task_cases.jsonl": "832607a99c5ff81f32deaa86fd967fad337f671594a6fbae6edc2d305af608b2",
+    "C:\\Users\\Madhuri\\Desktop\\project\\mini_transpiler\\data\\supported_subset.json": "3a58bd772faef12dbf24eb9544f7712b3a3b77660a28d8832d1fa1feb9a92388"
+  },
+  "outcomes": {
+    "benchmark_version": "four-arm-pilot-v1",
+    "arms": {
+      "rule_only": {
+        "target": "JavaScript",
+        "dataset_id": "pilot-task-derived-codenet-v1",
+        "external_task_derived_cases": 20,
+        "development_cases_excluded": 16,
+        "total": 20,
+        "passed": 17,
+        "failed": 3,
+        "success_rate_percent": 85.0,
+        "required_constructs": 48,
+        "covered_required_constructs": 45,
+        "required_construct_coverage_percent": 93.8,
+        "success_rate_95ci_percent": [
+          64.0,
+          94.8
+        ],
+        "expected_outcomes_matched": 20,
+        "expected_outcome_match_rate_percent": 100.0,
+        "supported_case_success_rate_percent": 100.0,
+        "supported_case_success_rate_95ci_percent": [
+          81.6,
+          100.0
+        ],
+        "translation_success_rate_percent": 100.0,
+        "unsupported_cases_expected": 3,
+        "unsupported_cases_recognized": 3,
+        "unsupported_recognition_rate_percent": 100.0,
+        "gold_output_cases": 17,
+        "gold_output_matches": 17,
+        "gold_output_accuracy_percent": 100.0,
+        "input_fixtures": 0,
+        "input_fixtures_matched": 0,
+        "cases": [
+          {
+            "language": "COBOL",
+            "case": "rosetta-maximum-cobol",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "source_reference": {
+              "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input.",
+              "task": "Maximum of two numbers",
+              "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Maximum of two numbers",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "25",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "translated",
+            "outcome_correct": true,
+            "generated_lines": 7
+          },
+          {
+            "language": "FORTRAN",
+            "case": "rosetta-maximum-fortran",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "source_reference": {
+              "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input.",
+              "task": "Maximum of two numbers",
+              "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Maximum of two numbers",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "25",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "translated",
+            "outcome_correct": true,
+            "generated_lines": 7
+          },
+          {
+            "language": "Pascal",
+            "case": "rosetta-maximum-pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "source_reference": {
+              "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input.",
+              "task": "Maximum of two numbers",
+              "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Maximum of two numbers",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "25",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "translated",
+            "outcome_correct": true,
+            "generated_lines": 7
+          },
+          {
+            "language": "BASIC",
+            "case": "rosetta-maximum-basic",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "source_reference": {
+              "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input.",
+              "task": "Maximum of two numbers",
+              "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Maximum of two numbers",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "25",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "translated",
+            "outcome_correct": true,
+            "generated_lines": 8
+          },
+          {
+            "language": "COBOL",
+            "case": "rosetta-loops-for-cobol",
+            "status": "not_run",
+            "failure_class": "unsupported_source_syntax",
+            "unsupported": 2,
+            "source_construct_coverage_percent": 33.3,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 1,
+              "coverage_percent": 50.0
+            },
+            "source_reference": {
+              "adaptation": "Authored for this benchmark from the independently published task prompt. PERFORM is deliberately outside the implemented COBOL subset; the separately authored expected output allows optional candidate behavior to be scored without treating parser support as implemented.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "STEP\nSTEP\nSTEP",
+            "gold_output_match": null,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "unsupported",
+            "outcome_correct": true,
+            "generated_lines": 1
+          },
+          {
+            "language": "FORTRAN",
+            "case": "rosetta-loops-for-fortran",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "source_reference": {
+              "adaptation": "Authored for this benchmark from the independently published task prompt; minimal loop/output form.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "1\n2\n3",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "translated",
+            "outcome_correct": true,
+            "generated_lines": 3
+          },
+          {
+            "language": "Pascal",
+            "case": "rosetta-loops-for-pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "source_reference": {
+              "adaptation": "Authored for this benchmark from the independently published task prompt; minimal loop/output form.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "1\n2\n3",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "translated",
+            "outcome_correct": true,
+            "generated_lines": 3
+          },
+          {
+            "language": "BASIC",
+            "case": "rosetta-loops-for-basic",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "source_reference": {
+              "adaptation": "Authored for this benchmark from the independently published task prompt; minimal loop/output form with a distinct range from the local smoke test.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "2\n3\n4",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "translated",
+            "outcome_correct": true,
+            "generated_lines": 3
+          },
+          {
+            "language": "COBOL",
+            "case": "rosetta-maximum-tie-cobol",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "source_reference": {
+              "adaptation": "Project-authored boundary variant of the task; equal operands exercise tie behavior. Expected output is independently derived from the two equal constants.",
+              "task": "Maximum of two numbers",
+              "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Maximum of two numbers",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "7",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "translated",
+            "outcome_correct": true,
+            "generated_lines": 7
+          },
+          {
+            "language": "FORTRAN",
+            "case": "rosetta-maximum-tie-fortran",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "source_reference": {
+              "adaptation": "Project-authored boundary variant of the task; equal operands exercise tie behavior. Expected output is independently derived from the two equal constants.",
+              "task": "Maximum of two numbers",
+              "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Maximum of two numbers",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "7",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "translated",
+            "outcome_correct": true,
+            "generated_lines": 7
+          },
+          {
+            "language": "Pascal",
+            "case": "rosetta-maximum-tie-pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "source_reference": {
+              "adaptation": "Project-authored boundary variant of the task; equal operands exercise tie behavior. Expected output is independently derived from the two equal constants.",
+              "task": "Maximum of two numbers",
+              "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Maximum of two numbers",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "7",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "translated",
+            "outcome_correct": true,
+            "generated_lines": 7
+          },
+          {
+            "language": "BASIC",
+            "case": "rosetta-maximum-tie-basic",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "source_reference": {
+              "adaptation": "Project-authored boundary variant of the task; equal operands exercise tie behavior. Expected output is independently derived from the two equal constants.",
+              "task": "Maximum of two numbers",
+              "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Maximum of two numbers",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "7",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "translated",
+            "outcome_correct": true,
+            "generated_lines": 8
+          },
+          {
+            "language": "COBOL",
+            "case": "rosetta-loops-for-singleton-cobol",
+            "status": "not_run",
+            "failure_class": "unsupported_source_syntax",
+            "unsupported": 2,
+            "source_construct_coverage_percent": 33.3,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 1,
+              "coverage_percent": 50.0
+            },
+            "source_reference": {
+              "adaptation": "Project-authored boundary/expanded-range variant of the task with fixed constants. Expected output is independently derived by enumerating the inclusive loop range; COBOL PERFORM remains outside the supported subset.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "X",
+            "gold_output_match": null,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "unsupported",
+            "outcome_correct": true,
+            "generated_lines": 1
+          },
+          {
+            "language": "COBOL",
+            "case": "rosetta-loops-for-four-cobol",
+            "status": "not_run",
+            "failure_class": "unsupported_source_syntax",
+            "unsupported": 2,
+            "source_construct_coverage_percent": 33.3,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 1,
+              "coverage_percent": 50.0
+            },
+            "source_reference": {
+              "adaptation": "Project-authored boundary/expanded-range variant of the task with fixed constants. Expected output is independently derived by enumerating the inclusive loop range; COBOL PERFORM remains outside the supported subset.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "X\nX\nX\nX",
+            "gold_output_match": null,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "unsupported",
+            "outcome_correct": true,
+            "generated_lines": 1
+          },
+          {
+            "language": "FORTRAN",
+            "case": "rosetta-loops-for-singleton-fortran",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "source_reference": {
+              "adaptation": "Project-authored boundary/expanded-range variant of the task with fixed constants. Expected output is independently derived by enumerating the inclusive loop range; COBOL PERFORM remains outside the supported subset.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "2",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "translated",
+            "outcome_correct": true,
+            "generated_lines": 3
+          },
+          {
+            "language": "FORTRAN",
+            "case": "rosetta-loops-for-expanded-fortran",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "source_reference": {
+              "adaptation": "Project-authored boundary/expanded-range variant of the task with fixed constants. Expected output is independently derived by enumerating the inclusive loop range; COBOL PERFORM remains outside the supported subset.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "2\n3\n4\n5",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "translated",
+            "outcome_correct": true,
+            "generated_lines": 3
+          },
+          {
+            "language": "Pascal",
+            "case": "rosetta-loops-for-singleton-pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "source_reference": {
+              "adaptation": "Project-authored boundary/expanded-range variant of the task with fixed constants. Expected output is independently derived by enumerating the inclusive loop range; COBOL PERFORM remains outside the supported subset.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "2",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "translated",
+            "outcome_correct": true,
+            "generated_lines": 3
+          },
+          {
+            "language": "Pascal",
+            "case": "rosetta-loops-for-expanded-pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "source_reference": {
+              "adaptation": "Project-authored boundary/expanded-range variant of the task with fixed constants. Expected output is independently derived by enumerating the inclusive loop range; COBOL PERFORM remains outside the supported subset.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "2\n3\n4\n5",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "translated",
+            "outcome_correct": true,
+            "generated_lines": 3
+          },
+          {
+            "language": "BASIC",
+            "case": "rosetta-loops-for-singleton-basic",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "source_reference": {
+              "adaptation": "Project-authored boundary/expanded-range variant of the task with fixed constants. Expected output is independently derived by enumerating the inclusive loop range; COBOL PERFORM remains outside the supported subset.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "2",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "translated",
+            "outcome_correct": true,
+            "generated_lines": 3
+          },
+          {
+            "language": "BASIC",
+            "case": "rosetta-loops-for-expanded-basic",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "source_reference": {
+              "adaptation": "Project-authored boundary/expanded-range variant of the task with fixed constants. Expected output is independently derived by enumerating the inclusive loop range; COBOL PERFORM remains outside the supported subset.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "2\n3\n4\n5",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "expected_outcome": "translated",
+            "outcome_correct": true,
+            "generated_lines": 3
+          }
+        ]
+      },
+      "llm_only": {
+        "status": "not_run",
+        "reason": "Use --enable-llm for an explicitly authorized live run.",
+        "cases": 20
+      },
+      "rule_first_llm": {
+        "target": "hybrid",
+        "total": 20,
+        "passed": 17,
+        "failed": 3,
+        "success_rate_percent": 85.0,
+        "success_rate_95ci_percent": [
+          64.0,
+          94.8
+        ],
+        "unsupported_constructs": 6,
+        "eligible_for_use": 17,
+        "learned_rule_reuses": 0,
+        "learned_rule_storage_allowed_cases": 17,
+        "human_review_effort_minutes": null,
+        "failure_class_counts": {
+          "none": 17,
+          "unsupported_source_syntax": 3
+        },
+        "validation_failures": 3,
+        "required_constructs": 48,
+        "covered_required_constructs": 45,
+        "required_construct_coverage_percent": 93.8,
+        "candidate_generated": 0,
+        "candidate_syntax_valid": 0,
+        "candidate_runtime_valid": 0,
+        "candidate_runtime_checked": 0,
+        "candidate_runtime_not_run": 0,
+        "accepted_llm_candidates": 0,
+        "candidate_oracle_cases": 0,
+        "candidate_oracle_matches": 0,
+        "candidate_oracle_match_percent": null,
+        "llm_configured_cases": 0,
+        "expected_outcomes_matched": 20,
+        "expected_outcome_match_rate_percent": 100.0,
+        "supported_case_success_rate_percent": 100.0,
+        "supported_case_success_rate_95ci_percent": [
+          81.6,
+          100.0
+        ],
+        "unsupported_cases_expected": 3,
+        "unsupported_cases_recognized": 3,
+        "unsupported_recognition_rate_percent": 100.0,
+        "gold_output_cases": 17,
+        "gold_output_matches": 17,
+        "gold_output_accuracy_percent": 100.0,
+        "input_fixtures": 0,
+        "input_fixtures_matched": 0,
+        "fallback_frequency_percent": 0.0,
+        "metrics": {
+          "llm_calls": 0,
+          "llm_attempts": 0,
+          "llm_latency_ms": [],
+          "median_llm_latency_ms": null,
+          "mean_llm_latency_ms": null,
+          "llm_cost_usd": null,
+          "candidate_generated": 0,
+          "candidate_syntax_valid": 0,
+          "candidate_runtime_valid": 0,
+          "accepted_llm_candidates": 0,
+          "candidate_oracle_cases": 0,
+          "candidate_oracle_matches": 0,
+          "llm_configured_cases": 0,
+          "fallback_frequency_percent": 0.0,
+          "validation_failures": 3
+        },
+        "by_language": {
+          "COBOL": {
+            "total": 5,
+            "passed": 2,
+            "failed": 3,
+            "unsupported_constructs": 6,
+            "validation_failures": 3,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_generated": 0,
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "accepted_llm_candidates": 0,
+            "llm_configured_cases": 0,
+            "success_rate_percent": 40.0,
+            "fallback_frequency_percent": 0.0,
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "llm_cost_usd": null,
+            "success_rate_95ci_percent": [
+              11.8,
+              76.9
+            ]
+          },
+          "FORTRAN": {
+            "total": 5,
+            "passed": 5,
+            "failed": 0,
+            "unsupported_constructs": 0,
+            "validation_failures": 0,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_generated": 0,
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "accepted_llm_candidates": 0,
+            "llm_configured_cases": 0,
+            "success_rate_percent": 100.0,
+            "fallback_frequency_percent": 0.0,
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "llm_cost_usd": null,
+            "success_rate_95ci_percent": [
+              56.6,
+              100.0
+            ]
+          },
+          "Pascal": {
+            "total": 5,
+            "passed": 5,
+            "failed": 0,
+            "unsupported_constructs": 0,
+            "validation_failures": 0,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_generated": 0,
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "accepted_llm_candidates": 0,
+            "llm_configured_cases": 0,
+            "success_rate_percent": 100.0,
+            "fallback_frequency_percent": 0.0,
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "llm_cost_usd": null,
+            "success_rate_95ci_percent": [
+              56.6,
+              100.0
+            ]
+          },
+          "BASIC": {
+            "total": 5,
+            "passed": 5,
+            "failed": 0,
+            "unsupported_constructs": 0,
+            "validation_failures": 0,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_generated": 0,
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "accepted_llm_candidates": 0,
+            "llm_configured_cases": 0,
+            "success_rate_percent": 100.0,
+            "fallback_frequency_percent": 0.0,
+            "median_llm_latency_ms": null,
+            "mean_llm_latency_ms": null,
+            "llm_cost_usd": null,
+            "success_rate_95ci_percent": [
+              56.6,
+              100.0
+            ]
+          }
+        },
+        "by_construct": {
+          "COBOL:rosetta-maximum-cobol": {
+            "language": "COBOL",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "FORTRAN:rosetta-maximum-fortran": {
+            "language": "FORTRAN",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "Pascal:rosetta-maximum-pascal": {
+            "language": "Pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "BASIC:rosetta-maximum-basic": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "COBOL:rosetta-loops-for-cobol": {
+            "language": "COBOL",
+            "status": "not_run",
+            "failure_class": "unsupported_source_syntax",
+            "unsupported": 2,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 1,
+              "coverage_percent": 50.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 1
+          },
+          "FORTRAN:rosetta-loops-for-fortran": {
+            "language": "FORTRAN",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "Pascal:rosetta-loops-for-pascal": {
+            "language": "Pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "BASIC:rosetta-loops-for-basic": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "COBOL:rosetta-maximum-tie-cobol": {
+            "language": "COBOL",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "FORTRAN:rosetta-maximum-tie-fortran": {
+            "language": "FORTRAN",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "Pascal:rosetta-maximum-tie-pascal": {
+            "language": "Pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "BASIC:rosetta-maximum-tie-basic": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "COBOL:rosetta-loops-for-singleton-cobol": {
+            "language": "COBOL",
+            "status": "not_run",
+            "failure_class": "unsupported_source_syntax",
+            "unsupported": 2,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 1,
+              "coverage_percent": 50.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 1
+          },
+          "COBOL:rosetta-loops-for-four-cobol": {
+            "language": "COBOL",
+            "status": "not_run",
+            "failure_class": "unsupported_source_syntax",
+            "unsupported": 2,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 1,
+              "coverage_percent": 50.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 1
+          },
+          "FORTRAN:rosetta-loops-for-singleton-fortran": {
+            "language": "FORTRAN",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "FORTRAN:rosetta-loops-for-expanded-fortran": {
+            "language": "FORTRAN",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "Pascal:rosetta-loops-for-singleton-pascal": {
+            "language": "Pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "Pascal:rosetta-loops-for-expanded-pascal": {
+            "language": "Pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "BASIC:rosetta-loops-for-singleton-basic": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          },
+          "BASIC:rosetta-loops-for-expanded-basic": {
+            "language": "BASIC",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "llm_latency_ms": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "validation_failures": 0
+          }
+        },
+        "cases": [
+          {
+            "language": "COBOL",
+            "case": "rosetta-maximum-cobol",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "unsupported_constructs": [],
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 7,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "eligible_for_use_after_finite_checks",
+              "eligible_for_use": true,
+              "learned_rule_storage_allowed": true,
+              "reasons": [],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": true,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": true,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input.",
+              "task": "Maximum of two numbers",
+              "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Maximum of two numbers",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "25",
+            "expected_outcome": "translated",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 0
+          },
+          {
+            "language": "FORTRAN",
+            "case": "rosetta-maximum-fortran",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "unsupported_constructs": [],
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 7,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "eligible_for_use_after_finite_checks",
+              "eligible_for_use": true,
+              "learned_rule_storage_allowed": true,
+              "reasons": [],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": true,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": true,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input.",
+              "task": "Maximum of two numbers",
+              "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Maximum of two numbers",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "25",
+            "expected_outcome": "translated",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 0
+          },
+          {
+            "language": "Pascal",
+            "case": "rosetta-maximum-pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "unsupported_constructs": [],
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 7,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "eligible_for_use_after_finite_checks",
+              "eligible_for_use": true,
+              "learned_rule_storage_allowed": true,
+              "reasons": [],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": true,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": true,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input.",
+              "task": "Maximum of two numbers",
+              "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Maximum of two numbers",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "25",
+            "expected_outcome": "translated",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 0
+          },
+          {
+            "language": "BASIC",
+            "case": "rosetta-maximum-basic",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "unsupported_constructs": [],
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 8,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "eligible_for_use_after_finite_checks",
+              "eligible_for_use": true,
+              "learned_rule_storage_allowed": true,
+              "reasons": [],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": true,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": true,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Authored for this benchmark from the independently published task prompt; fixed values replace interactive input.",
+              "task": "Maximum of two numbers",
+              "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Maximum of two numbers",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "25",
+            "expected_outcome": "translated",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 0
+          },
+          {
+            "language": "COBOL",
+            "case": "rosetta-loops-for-cobol",
+            "status": "not_run",
+            "failure_class": "unsupported_source_syntax",
+            "unsupported": 2,
+            "unsupported_constructs": [
+              "PERFORM 3 TIMES",
+              "END-PERFORM"
+            ],
+            "source_construct_coverage_percent": 33.3,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 1,
+              "coverage_percent": 50.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 1,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "blocked",
+              "eligible_for_use": false,
+              "learned_rule_storage_allowed": false,
+              "reasons": [
+                "unsupported_source_constructs",
+                "contract:complete_source_coverage",
+                "contract:target_execution_succeeded",
+                "contract:finite_stdout_matches_source_oracle",
+                "validation_status:not_run"
+              ],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": false,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": false,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Authored for this benchmark from the independently published task prompt. PERFORM is deliberately outside the implemented COBOL subset; the separately authored expected output allows optional candidate behavior to be scored without treating parser support as implemented.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "STEP\nSTEP\nSTEP",
+            "expected_outcome": "unsupported",
+            "gold_output_match": null,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 1
+          },
+          {
+            "language": "FORTRAN",
+            "case": "rosetta-loops-for-fortran",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "unsupported_constructs": [],
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 3,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "eligible_for_use_after_finite_checks",
+              "eligible_for_use": true,
+              "learned_rule_storage_allowed": true,
+              "reasons": [],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": true,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": true,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Authored for this benchmark from the independently published task prompt; minimal loop/output form.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "1\n2\n3",
+            "expected_outcome": "translated",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 0
+          },
+          {
+            "language": "Pascal",
+            "case": "rosetta-loops-for-pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "unsupported_constructs": [],
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 3,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "eligible_for_use_after_finite_checks",
+              "eligible_for_use": true,
+              "learned_rule_storage_allowed": true,
+              "reasons": [],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": true,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": true,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Authored for this benchmark from the independently published task prompt; minimal loop/output form.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "1\n2\n3",
+            "expected_outcome": "translated",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 0
+          },
+          {
+            "language": "BASIC",
+            "case": "rosetta-loops-for-basic",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "unsupported_constructs": [],
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 3,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "eligible_for_use_after_finite_checks",
+              "eligible_for_use": true,
+              "learned_rule_storage_allowed": true,
+              "reasons": [],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": true,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": true,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Authored for this benchmark from the independently published task prompt; minimal loop/output form with a distinct range from the local smoke test.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "2\n3\n4",
+            "expected_outcome": "translated",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 0
+          },
+          {
+            "language": "COBOL",
+            "case": "rosetta-maximum-tie-cobol",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "unsupported_constructs": [],
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 7,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "eligible_for_use_after_finite_checks",
+              "eligible_for_use": true,
+              "learned_rule_storage_allowed": true,
+              "reasons": [],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": true,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": true,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Project-authored boundary variant of the task; equal operands exercise tie behavior. Expected output is independently derived from the two equal constants.",
+              "task": "Maximum of two numbers",
+              "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Maximum of two numbers",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "7",
+            "expected_outcome": "translated",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 0
+          },
+          {
+            "language": "FORTRAN",
+            "case": "rosetta-maximum-tie-fortran",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "unsupported_constructs": [],
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 7,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "eligible_for_use_after_finite_checks",
+              "eligible_for_use": true,
+              "learned_rule_storage_allowed": true,
+              "reasons": [],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": true,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": true,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Project-authored boundary variant of the task; equal operands exercise tie behavior. Expected output is independently derived from the two equal constants.",
+              "task": "Maximum of two numbers",
+              "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Maximum of two numbers",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "7",
+            "expected_outcome": "translated",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 0
+          },
+          {
+            "language": "Pascal",
+            "case": "rosetta-maximum-tie-pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "unsupported_constructs": [],
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 7,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "eligible_for_use_after_finite_checks",
+              "eligible_for_use": true,
+              "learned_rule_storage_allowed": true,
+              "reasons": [],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": true,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": true,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Project-authored boundary variant of the task; equal operands exercise tie behavior. Expected output is independently derived from the two equal constants.",
+              "task": "Maximum of two numbers",
+              "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Maximum of two numbers",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "7",
+            "expected_outcome": "translated",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 0
+          },
+          {
+            "language": "BASIC",
+            "case": "rosetta-maximum-tie-basic",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "unsupported_constructs": [],
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "conditional",
+                "comparison",
+                "output"
+              ],
+              "covered": [
+                "comparison",
+                "conditional",
+                "output"
+              ],
+              "total": 3,
+              "covered_count": 3,
+              "coverage_percent": 100.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 8,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "eligible_for_use_after_finite_checks",
+              "eligible_for_use": true,
+              "learned_rule_storage_allowed": true,
+              "reasons": [],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": true,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": true,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Project-authored boundary variant of the task; equal operands exercise tie behavior. Expected output is independently derived from the two equal constants.",
+              "task": "Maximum of two numbers",
+              "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Maximum of two numbers",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "7",
+            "expected_outcome": "translated",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 0
+          },
+          {
+            "language": "COBOL",
+            "case": "rosetta-loops-for-singleton-cobol",
+            "status": "not_run",
+            "failure_class": "unsupported_source_syntax",
+            "unsupported": 2,
+            "unsupported_constructs": [
+              "PERFORM 1 TIMES",
+              "END-PERFORM"
+            ],
+            "source_construct_coverage_percent": 33.3,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 1,
+              "coverage_percent": 50.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 1,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "blocked",
+              "eligible_for_use": false,
+              "learned_rule_storage_allowed": false,
+              "reasons": [
+                "unsupported_source_constructs",
+                "contract:complete_source_coverage",
+                "contract:target_execution_succeeded",
+                "contract:finite_stdout_matches_source_oracle",
+                "validation_status:not_run"
+              ],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": false,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": false,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Project-authored boundary/expanded-range variant of the task with fixed constants. Expected output is independently derived by enumerating the inclusive loop range; COBOL PERFORM remains outside the supported subset.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "X",
+            "expected_outcome": "unsupported",
+            "gold_output_match": null,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 1
+          },
+          {
+            "language": "COBOL",
+            "case": "rosetta-loops-for-four-cobol",
+            "status": "not_run",
+            "failure_class": "unsupported_source_syntax",
+            "unsupported": 2,
+            "unsupported_constructs": [
+              "PERFORM 4 TIMES",
+              "END-PERFORM"
+            ],
+            "source_construct_coverage_percent": 33.3,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 1,
+              "coverage_percent": 50.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 1,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "blocked",
+              "eligible_for_use": false,
+              "learned_rule_storage_allowed": false,
+              "reasons": [
+                "unsupported_source_constructs",
+                "contract:complete_source_coverage",
+                "contract:target_execution_succeeded",
+                "contract:finite_stdout_matches_source_oracle",
+                "validation_status:not_run"
+              ],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": false,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": false,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Project-authored boundary/expanded-range variant of the task with fixed constants. Expected output is independently derived by enumerating the inclusive loop range; COBOL PERFORM remains outside the supported subset.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "X\nX\nX\nX",
+            "expected_outcome": "unsupported",
+            "gold_output_match": null,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 1
+          },
+          {
+            "language": "FORTRAN",
+            "case": "rosetta-loops-for-singleton-fortran",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "unsupported_constructs": [],
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 3,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "eligible_for_use_after_finite_checks",
+              "eligible_for_use": true,
+              "learned_rule_storage_allowed": true,
+              "reasons": [],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": true,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": true,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Project-authored boundary/expanded-range variant of the task with fixed constants. Expected output is independently derived by enumerating the inclusive loop range; COBOL PERFORM remains outside the supported subset.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "2",
+            "expected_outcome": "translated",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 0
+          },
+          {
+            "language": "FORTRAN",
+            "case": "rosetta-loops-for-expanded-fortran",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "unsupported_constructs": [],
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 3,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "eligible_for_use_after_finite_checks",
+              "eligible_for_use": true,
+              "learned_rule_storage_allowed": true,
+              "reasons": [],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": true,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": true,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Project-authored boundary/expanded-range variant of the task with fixed constants. Expected output is independently derived by enumerating the inclusive loop range; COBOL PERFORM remains outside the supported subset.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "2\n3\n4\n5",
+            "expected_outcome": "translated",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 0
+          },
+          {
+            "language": "Pascal",
+            "case": "rosetta-loops-for-singleton-pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "unsupported_constructs": [],
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 3,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "eligible_for_use_after_finite_checks",
+              "eligible_for_use": true,
+              "learned_rule_storage_allowed": true,
+              "reasons": [],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": true,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": true,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Project-authored boundary/expanded-range variant of the task with fixed constants. Expected output is independently derived by enumerating the inclusive loop range; COBOL PERFORM remains outside the supported subset.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "2",
+            "expected_outcome": "translated",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 0
+          },
+          {
+            "language": "Pascal",
+            "case": "rosetta-loops-for-expanded-pascal",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "unsupported_constructs": [],
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 3,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "eligible_for_use_after_finite_checks",
+              "eligible_for_use": true,
+              "learned_rule_storage_allowed": true,
+              "reasons": [],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": true,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": true,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Project-authored boundary/expanded-range variant of the task with fixed constants. Expected output is independently derived by enumerating the inclusive loop range; COBOL PERFORM remains outside the supported subset.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "2\n3\n4\n5",
+            "expected_outcome": "translated",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 0
+          },
+          {
+            "language": "BASIC",
+            "case": "rosetta-loops-for-singleton-basic",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "unsupported_constructs": [],
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 3,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "eligible_for_use_after_finite_checks",
+              "eligible_for_use": true,
+              "learned_rule_storage_allowed": true,
+              "reasons": [],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": true,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": true,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Project-authored boundary/expanded-range variant of the task with fixed constants. Expected output is independently derived by enumerating the inclusive loop range; COBOL PERFORM remains outside the supported subset.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "2",
+            "expected_outcome": "translated",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 0
+          },
+          {
+            "language": "BASIC",
+            "case": "rosetta-loops-for-expanded-basic",
+            "status": "passed",
+            "failure_class": null,
+            "unsupported": 0,
+            "unsupported_constructs": [],
+            "source_construct_coverage_percent": 100.0,
+            "required_construct_coverage": {
+              "required": [
+                "loop",
+                "output"
+              ],
+              "covered": [
+                "loop",
+                "output"
+              ],
+              "total": 2,
+              "covered_count": 2,
+              "coverage_percent": 100.0
+            },
+            "llm_configured": false,
+            "llm_disabled_by_source_policy": false,
+            "provider": "OpenAI-compatible endpoint",
+            "model": "",
+            "prompt_version": "legacy-modernizer-llm-v3",
+            "generated_lines": 3,
+            "llm_calls": 0,
+            "llm_attempts": 0,
+            "fallback_failures": [],
+            "llm_latency_ms": [],
+            "llm_cost_usd": null,
+            "candidate_generated": 0,
+            "candidate_sha256": [],
+            "candidate_artifacts": [],
+            "candidate_syntax_valid": 0,
+            "candidate_runtime_valid": 0,
+            "candidate_runtime_checked": 0,
+            "candidate_runtime_not_run": 0,
+            "candidate_oracle_match": null,
+            "accepted_llm_candidates": 0,
+            "acceptance_policy": {
+              "status": "eligible_for_use_after_finite_checks",
+              "eligible_for_use": true,
+              "learned_rule_storage_allowed": true,
+              "reasons": [],
+              "policy_version": "1",
+              "note": "Eligibility applies only to tested inputs; it is not proof of equivalence or human approval."
+            },
+            "eligible_for_use": true,
+            "learned_rule_reused": false,
+            "learned_rule_storage_allowed": true,
+            "human_review_effort_minutes": null,
+            "source_reference": {
+              "adaptation": "Project-authored boundary/expanded-range variant of the task with fixed constants. Expected output is independently derived by enumerating the inclusive loop range; COBOL PERFORM remains outside the supported subset.",
+              "task": "Loops/For",
+              "url": "https://rosettacode.org/wiki/Loops/For"
+            },
+            "split": "test",
+            "split_group": "rosettacode:Loops/For",
+            "oracle_status": "separately_authored_reference_checked",
+            "expected_output": "2\n3\n4\n5",
+            "expected_outcome": "translated",
+            "gold_output_match": true,
+            "input_fixture_count": 0,
+            "input_fixtures_matched": 0,
+            "input_fixture_results": [],
+            "outcome_correct": true,
+            "validation_failures": 0
+          }
+        ]
+      },
+      "rule_first_llm_repair": {
+        "status": "not_run",
+        "reason": "Use --enable-llm --enable-repair for an explicitly authorized live run.",
+        "cases": 20
+      }
+    },
+    "native_adapters": {
+      "COBOL": {
+        "status": "available_container",
+        "executable": "cobc",
+        "container": "docker",
+        "image": "mini-transpiler-native:ubuntu24",
+        "version": "cobc (GnuCOBOL) 3.1.2.0",
+        "reason": ""
+      },
+      "FORTRAN": {
+        "status": "available_container",
+        "executable": "gfortran",
+        "container": "docker",
+        "image": "gcc:14-bookworm",
+        "version": "GNU Fortran (GCC) 14.3.0",
+        "reason": ""
+      },
+      "Pascal": {
+        "status": "available_container",
+        "executable": "fpc",
+        "container": "docker",
+        "image": "mini-transpiler-native:ubuntu24",
+        "version": "3.2.2",
+        "reason": ""
+      },
+      "BASIC": {
+        "status": "available_container",
+        "executable": "fbc",
+        "container": "docker",
+        "image": "primeimages/freebasic",
+        "version": "FreeBASIC Compiler - Version 1.10.1 (2026-11-01), built for linux-x86_64 (64bit)",
+        "reason": ""
+      }
+    },
+    "native_pilots": {
+      "COBOL": {
+        "status": "passed",
+        "stdout": "025\n",
+        "stderr": "/tmp/source.cob:13: warning: line not terminated by a newline [-Wothers]\n<command-line>: warning: \"_FORTIFY_SOURCE\" redefined\n<command-line>: note: this is the location of the previous definition\n",
+        "exit_status": 0,
+        "compiler": "cobc (GnuCOBOL) 3.1.2.0",
+        "container_image": "mini-transpiler-native:ubuntu24",
+        "language": "COBOL",
+        "case": "rosetta-maximum-cobol",
+        "expected_output": "25",
+        "oracle_match": false
+      },
+      "FORTRAN": {
+        "status": "passed",
+        "stdout": "          25\n",
+        "stderr": "",
+        "exit_status": 0,
+        "compiler": "GNU Fortran (GCC) 14.3.0",
+        "container_image": "gcc:14-bookworm",
+        "language": "FORTRAN",
+        "case": "rosetta-maximum-fortran",
+        "expected_output": "25",
+        "oracle_match": true
+      },
+      "Pascal": {
+        "status": "passed",
+        "stdout": "25\n",
+        "stderr": "",
+        "exit_status": 0,
+        "compiler": "3.2.2",
+        "container_image": "mini-transpiler-native:ubuntu24",
+        "language": "Pascal",
+        "case": "rosetta-maximum-pascal",
+        "expected_output": "25",
+        "oracle_match": true
+      },
+      "BASIC": {
+        "status": "passed",
+        "stdout": " 25\n",
+        "stderr": "",
+        "exit_status": 0,
+        "compiler": "FreeBASIC Compiler - Version 1.10.1 (2026-11-01), built for linux-x86_64 (64bit)",
+        "container_image": "primeimages/freebasic",
+        "language": "BASIC",
+        "case": "rosetta-maximum-basic",
+        "expected_output": "25",
+        "oracle_match": true
+      }
+    },
+    "safeguards": {
+      "mutation_sensitivity": {
+        "baseline": {
+          "ok": true,
+          "output": "STEP\nSTEP\nSTEP"
+        },
+        "mutations": [
+          {
+            "mutation_id": "reverse-comparison",
+            "description": "Reverse the first strict comparison",
+            "outcome": "behaviorally_different",
+            "observed_output": "",
+            "error": ""
+          },
+          {
+            "mutation_id": "arithmetic-off-by-one",
+            "description": "Change the first numeric literal by one",
+            "outcome": "behaviorally_different",
+            "observed_output": "STEP\nSTEP",
+            "error": ""
+          },
+          {
+            "mutation_id": "omit-output",
+            "description": "Remove the first console output statement",
+            "outcome": "behaviorally_different",
+            "observed_output": "",
+            "error": ""
+          },
+          {
+            "mutation_id": "loop-bound-off-by-one",
+            "description": "Increase the first loop bound by one",
+            "outcome": "behaviorally_different",
+            "observed_output": "STEP\nSTEP\nSTEP\nSTEP",
+            "error": ""
+          }
+        ],
+        "behaviorally_different": 4,
+        "equivalent_or_inconclusive": 0,
+        "interpretation": "Sensitivity to tested mutations only; not proof of universal error detection."
+      }
+    },
+    "limitations": [
+      "LLM-only and repair arms are not silently treated as passes when not explicitly run.",
+      "Native status is tool discovery only until a language-specific compile/run harness is supplied."
+    ]
+  }
+}

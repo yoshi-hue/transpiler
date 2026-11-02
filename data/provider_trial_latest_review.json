@@ -1,0 +1,50 @@
+{
+  "schema_version": "1",
+  "created_at_utc": "2026-11-02T07:49:05.672292+00:00",
+  "source_report": "data\\provider_trial_latest.json",
+  "candidate_sha256": "108b193939aca339f86fbe2d02d72e2d61875a09b37da31d2ca5867a636f366c",
+  "review": {
+    "status": "approved",
+    "reviewer": "Your Name <you@example.com>",
+    "reason": "Reviewed source, candidate, independent fixtures, security, and regression evidence.",
+    "reviewed_at_utc": "2026-11-02T07:49:05.672272Z",
+    "source_sha256": "3cd92364492e948028dc22de8ef6695e92ac40e12953afa4b07108857bb7414d",
+    "candidate_sha256": "108b193939aca339f86fbe2d02d72e2d61875a09b37da31d2ca5867a636f366c",
+    "validation_evidence_sha256": "3bbf4f19a69ec15b912432f3ea0795b83ee3a4538629f58ba17cd99b072fc2cb",
+    "approval_binding": "3cd92364492e948028dc22de8ef6695e92ac40e12953afa4b07108857bb7414d:108b193939aca339f86fbe2d02d72e2d61875a09b37da31d2ca5867a636f366c:3bbf4f19a69ec15b912432f3ea0795b83ee3a4538629f58ba17cd99b072fc2cb",
+    "prior_approval_reused": false,
+    "state": "approved"
+  },
+  "gate_evidence": {
+    "source_review": {
+      "reviewer": "Your Name <you@example.com>",
+      "evidence": "Describe the source review"
+    },
+    "target_toolchain": {
+      "available": true,
+      "ok": true,
+      "error": "",
+      "sandbox": null
+    },
+    "independent_fixtures": {
+      "evidence": "Reference genuinely independent fixtures"
+    },
+    "security_review": {
+      "reviewer": "Your Name <you@example.com>",
+      "evidence": "Describe the security review"
+    },
+    "regression_checks": {
+      "evidence": "Reference regression test results"
+    },
+    "human_review": {
+      "source_reviewer": "Your Name <you@example.com>",
+      "target_reviewer": "Target Reviewer <reviewer@example.com>",
+      "decision": "approved"
+    },
+    "trial_id": "cobol-perform-three-times-v1",
+    "observed_output": "STEP\nSTEP\nSTEP",
+    "oracle_match": true
+  },
+  "candidate_accepted": true,
+  "limitation": "Approval records reviewer attestations; it is still not formal semantic equivalence."
+}

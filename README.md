@@ -76,6 +76,18 @@ When configured, the prototype requests a complete target-program candidate when
 
 The candidate becomes the displayed/downloadable target output, but the translator does not mark it accepted. JavaScript candidates receive a syntax check and are executed in Node's permission-restricted mode with secrets removed from the child environment. Python candidates receive syntax validation and, when Docker is available, run in a no-network, read-only, resource-limited container. A runtime pass establishes behavior only on the recorded inputs; acceptance still requires source review, independent fixtures, security review, regression checks, and human review. The LLM fallback is not a general-purpose migration path.
 
+Candidate lifecycle records expose generated, syntax/runtime/validation failure,
+validated-for-tested-inputs, review-required, approved, and rejected states.
+`POST /candidate/review` records the user-supplied reviewer, reason, timestamp,
+and hashes of the exact source, candidate, and validation evidence; changing any
+of those invalidates approval. A reusable repair path permits at most two
+validation-driven revisions and never accepts hidden evaluation data. Archive an
+offline run without overwriting prior evidence with:
+
+```powershell
+python tools\run_evidence.py --target JavaScript --output-dir data\evidence
+```
+
 ## Research-grade translation safeguards
 
 The translator emits a machine-readable semantic-contract record and diagnostic metadata, including a risk assessment, failure fingerprint, and learned-rule record.

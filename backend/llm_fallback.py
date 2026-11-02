@@ -326,6 +326,56 @@ def translate_construct(source_language, target_language, construct, context='',
     )
 
 
+def translate_with_repair(source_language, target_language, source, *, validate_candidate,
+                          diagnostics=None, development_examples=None, max_repairs=2):
+    """Generate and validate a whole-program candidate with bounded repair.
+
+    The validator must use only public/development evidence; hidden fixtures are
+    intentionally not accepted by this interface.
+    """
+    from .repair import generate_with_bounded_repair
+
+    def generate(packet):
+        context = '' if packet is None else json.dumps({
+            'diagnostics': packet.get('diagnostics', []),
+            'development_examples': packet.get('development_examples', []),
+            'repair_attempt': packet.get('repair_attempt'),
+        }, ensure_ascii=False)
+        return translate_construct(source_language, target_language, source, context,
+                                   complete_program=True)['candidate']
+
+    return generate_with_bounded_repair(
+        generate, validate_candidate, max_repairs=max_repairs,
+        development_diagnostics=diagnostics,
+        development_examples=development_examples,
+    )
+
+
+def repair_existing_candidate(source_language, target_language, source, candidate, *,
+                              validate_candidate, diagnostics=None,
+                              development_examples=None, max_repairs=2):
+    """Repair an already generated candidate without performing a duplicate first generation."""
+    from .repair import generate_with_bounded_repair
+
+    def generate(packet):
+        if packet is None:
+            return candidate
+        context = json.dumps({
+            'diagnostics': packet.get('diagnostics', []),
+            'development_examples': packet.get('development_examples', []),
+            'repair_attempt': packet.get('repair_attempt'),
+            'previous_candidate_sha256': packet.get('previous_candidate_sha256'),
+        }, ensure_ascii=False)
+        return translate_construct(source_language, target_language, source, context,
+                                   complete_program=True)['candidate']
+
+    return generate_with_bounded_repair(
+        generate, validate_candidate, max_repairs=max_repairs,
+        development_diagnostics=diagnostics,
+        development_examples=development_examples,
+    )
+
+
 def test_connection():
     """Make a tiny real request to verify endpoint/model credentials.
 

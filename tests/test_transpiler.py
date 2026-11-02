@@ -665,6 +665,64 @@ def test_medium_risk_validation_repeats_source_and_target():
     assert validation['checks'][0]['target_runs_completed'] == 2
 
 
+def test_candidate_review_is_bound_to_exact_candidate_and_evidence():
+    from backend.candidate_lifecycle import approval_is_current, review_candidate
+    evidence = {'status': 'passed', 'fixtures': ['dev-1'], 'candidate_runtime': 'ok'}
+    review = review_candidate(
+        source='10 GOTO 100\n100 END', candidate='console.log("ok")',
+        validation_evidence=evidence, reviewer='researcher@example.test',
+        decision='approved', reason='Reviewed against the recorded development fixture.',
+    )
+    assert review['state'] == 'approved'
+    assert approval_is_current(review, source='10 GOTO 100\n100 END',
+                               candidate='console.log("ok")', validation_evidence=evidence)
+    assert not approval_is_current(review, source='10 GOTO 100\n100 END',
+                                   candidate='console.log("changed")', validation_evidence=evidence)
+
+
+def test_bounded_repair_preserves_attempts_and_stops_at_two_repairs():
+    from backend.repair import generate_with_bounded_repair
+    generated = iter(['bad', 'still bad', 'good', 'ignored'])
+    seen_packets = []
+
+    def generate(packet):
+        seen_packets.append(packet)
+        return next(generated)
+
+    def validate(candidate):
+        return {'status': 'passed' if candidate == 'good' else 'failed',
+                'syntax_valid': candidate == 'good', 'runtime_valid': candidate == 'good'}
+
+    result = generate_with_bounded_repair(generate, validate, max_repairs=2,
+                                          development_diagnostics=['syntax error'],
+                                          development_examples=[{'stdin': '', 'expected': 'ok'}])
+    assert result['selected'] == 'good'
+    assert len(result['attempts']) == 3
+    assert seen_packets[1]['development_examples'][0]['expected'] == 'ok'
+    assert 'hidden' not in str(seen_packets)
+
+
+def test_native_adapter_reports_missing_tool_as_not_run(monkeypatch):
+    from backend.native_adapters import native_tool_status
+    monkeypatch.setattr('backend.native_adapters.shutil.which', lambda _name: None)
+    monkeypatch.setattr('backend.native_adapters.subprocess.run', lambda *args, **kwargs: (_ for _ in ()).throw(OSError('docker unavailable')))
+    result = native_tool_status('FORTRAN')
+    assert result['status'] == 'not_run'
+    assert 'not installed' in result['reason']
+
+
+def test_mutation_report_separates_behaviorally_different_cases():
+    from backend.safeguards import evaluate_mutations
+    from backend.validator import run_javascript
+    report = evaluate_mutations(
+        'for (let i = 0; i < 2; i++) { console.log("X"); }',
+        lambda code: run_javascript(code, restricted=True),
+    )
+    assert report['mutations']
+    assert report['behaviorally_different'] >= 1
+    assert 'not proof' in report['interpretation'].lower()
+
+
 def test_low_medium_high_risk_selects_one_two_three_runs():
     from backend.transpiler import _risk_assessment
     low = _risk_assessment('x = 1', 'Python-like', 'JavaScript')

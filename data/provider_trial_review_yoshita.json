@@ -1,0 +1,45 @@
+{
+  "schema_version": "1",
+  "review_status": "pending_independent_evidence",
+  "reviewer": {
+    "name": "yoshita",
+    "email": "yoshitavanapalli06@gmail.com"
+  },
+  "source_sha256": "356c6f3c1d5aff1bab49d3df472be557e08a94acad6bff791c90c45a4f890e32",
+  "candidate_sha256": "108b193939aca339f86fbe2d02d72e2d61875a09b37da31d2ca5867a636f366c",
+  "provider": "Google Gemini",
+  "model": "gemini-3.1-flash-lite",
+  "checks_performed": {
+    "source_review": {
+      "status": "passed_for_scoped_trial",
+      "evidence": "Reviewed the COBOL PERFORM 3 TIMES / DISPLAY STEP source and candidate loop. No external dependencies are required by this fixed trial."
+    },
+    "target_syntax": {
+      "status": "passed",
+      "evidence": "node --check passed for the exact candidate hash."
+    },
+    "target_runtime": {
+      "status": "passed",
+      "evidence": "Node permission-mode execution completed with STEP on three lines and exit status 0."
+    },
+    "security_review": {
+      "status": "passed_for_scoped_candidate",
+      "evidence": "Candidate contains only a bounded loop, console output, and process exit; no filesystem, network, subprocess, or environment access was observed."
+    },
+    "regression_checks": {
+      "status": "passed",
+      "evidence": "python -m pytest -q passed for the repository suite."
+    },
+    "fixed_oracle_match": {
+      "status": "passed",
+      "evidence": "Observed output matched STEP\\nSTEP\\nSTEP. This is the predeclared smoke oracle, not an independent native COBOL oracle."
+    }
+  },
+  "pending_gates": {
+    "independent_fixtures": "pending: the current trial has only one fixed smoke case; repeated execution is not additional behavioral coverage.",
+    "target_reviewer": "pending: a separate target/runtime reviewer identity was not supplied.",
+    "final_human_approval": "pending until the two gates above are complete."
+  },
+  "candidate_accepted": false,
+  "limitation": "Finite checks passed for this fixed trial, but this record is not formal semantic equivalence or complete candidate acceptance."
+}

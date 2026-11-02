@@ -5,7 +5,8 @@ import re
 from .legacy import legacy_transpile, LANGUAGES, SUBSETS
 from .validator import run_javascript, run_python, run_python_isolated, compare
 from .corpus import save_validated_example
-from .llm_fallback import create_fallback_log, fallback_status, translate_construct
+from .llm_fallback import create_fallback_log, fallback_status, translate_construct, repair_existing_candidate
+from .candidate_lifecycle import classify_candidate, candidate_hash
 from .learned_rules import (
     apply_generalized_rule,
     find_generalized_rule,
@@ -408,7 +409,7 @@ def _is_unsupported_candidate(candidate):
     return False
 
 
-def transpile(source, source_language='Python-like', target_language='JavaScript', *, input_data=None, enable_llm=None, enable_learned_rules=True, store_validated_example=True):
+def transpile(source, source_language='Python-like', target_language='JavaScript', *, input_data=None, enable_llm=None, enable_learned_rules=True, store_validated_example=True, enable_repair=False, development_examples=None):
     if source_language != 'Python-like':
         if target_language not in TARGETS:
             raise ValueError('Unsupported target language. Choose JavaScript or Python.')
@@ -477,6 +478,8 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
         deterministic_code = result.javascript
         candidate_validation_status = 'not_run'
         candidate_acceptance = None
+        candidate_state = None
+        repair_result = None
         if fallback_suggestions:
             fallback_suggestions[0]['candidate_status'] = 'candidate_generated' if has_llm_candidate else 'unsupported_or_refused'
         if has_llm_candidate:
@@ -538,6 +541,43 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
                     'output': '',
                     'error': 'Incomplete translation was not executed.',
                 }
+            if enable_repair and has_llm_candidate and (
+                fallback_suggestions[0].get('target_syntax_valid') is False or
+                fallback_suggestions[0].get('target_runtime_valid') is False
+            ):
+                from .validator import check_javascript_syntax, check_python_syntax
+
+                def validate_repair(candidate):
+                    syntax = (check_javascript_syntax(candidate) if target_language == 'JavaScript'
+                              else check_python_syntax(candidate))
+                    if not syntax.get('ok'):
+                        return {'status': 'failed', 'syntax_valid': False, 'runtime_valid': False,
+                                'diagnostic': syntax.get('error', 'syntax check failed')}
+                    run = (run_javascript(candidate, restricted=True) if target_language == 'JavaScript'
+                           else run_python_isolated(candidate))
+                    return {'status': 'passed' if run.get('available') and run.get('ok') else 'failed',
+                            'syntax_valid': True,
+                            'runtime_valid': bool(run.get('available') and run.get('ok')),
+                            'diagnostic': run.get('error', ''), 'runtime': run}
+
+                repair_result = repair_existing_candidate(
+                    source_language, target_language, source, llm_candidate,
+                    validate_candidate=validate_repair,
+                    diagnostics=[target_run.get('error', 'candidate validation failed')],
+                    development_examples=development_examples,
+                    max_repairs=2,
+                )
+                if repair_result.get('selected') and repair_result['selected'] != llm_candidate:
+                    llm_candidate = repair_result['selected']
+                    result.javascript = llm_candidate
+                    fallback_suggestions[0]['repair_attempts'] = repair_result['attempts']
+                    fallback_suggestions[0]['candidate'] = llm_candidate
+                    fallback_suggestions[0]['candidate_sha256'] = hashlib.sha256(llm_candidate.encode('utf-8')).hexdigest()
+                    repaired_validation = validate_repair(llm_candidate)
+                    target_run = repaired_validation.get('runtime', target_run)
+                    fallback_suggestions[0]['target_syntax_valid'] = repaired_validation.get('syntax_valid')
+                    fallback_suggestions[0]['target_runtime_valid'] = repaired_validation.get('runtime_valid')
+                    candidate_validation_status = 'repaired_and_runtime_valid' if repaired_validation.get('status') == 'passed' else 'repaired_validation_failed'
             if fallback_suggestions:
                 fallback_suggestions[0]['target_runtime_error'] = target_run.get('error', '')
                 fallback_suggestions[0]['target_runtime_sandbox'] = target_run.get('sandbox')
@@ -547,6 +587,14 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
                 ) if has_llm_candidate else None
                 fallback_suggestions[0]['accepted'] = False
                 fallback_suggestions[0]['validation_status'] = candidate_validation_status
+                candidate_state = classify_candidate(
+                    syntax_valid=fallback_suggestions[0].get('target_syntax_valid'),
+                    runtime_valid=fallback_suggestions[0].get('target_runtime_valid'),
+                    validation_status='not_run',
+                    review_required=True,
+                )
+                fallback_suggestions[0]['candidate_state'] = candidate_state
+                fallback_suggestions[0]['candidate_sha256'] = candidate_hash(llm_candidate)
                 fallback_suggestions[0]['acceptance_record'] = candidate_acceptance
                 trace.append({
                     'stage': 'candidate_validation',
@@ -622,6 +670,13 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
             'translation_contract': contract,
             'acceptance_policy': acceptance,
             'candidate_acceptance': candidate_acceptance,
+            'candidate_lifecycle': {
+                'state': candidate_state,
+                'candidate_sha256': candidate_hash(llm_candidate) if has_llm_candidate else None,
+                'review_required': bool(has_llm_candidate),
+                'approval_is_current': False,
+            },
+            'repair': repair_result,
             'risk_assessment': risk_assessment,
             'failure_fingerprint': failure_fingerprint,
             'rule_evolution': rule_evolution,
@@ -690,7 +745,7 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
         learned_rule, learned_rule_reused,
         bool(learned_rule and learned_rule.get('generalizes')),
     )
-    return {'language_support':{'source':'Python-like','target':'JavaScript','subset':'Existing prototype subset'},'tokens':[{'type':t.type,'value':t.value,'line':t.line,'column':t.column} for t in tokens if t.type not in ('NEWLINE','INDENT','DEDENT','EOF')],'ast':ast_to_dict(ast),'ir':ir.to_dict(),'symbol_table':symbols.as_dict(),'javascript':javascript,'target_code':javascript,'deterministic_code':javascript,'rules_used':generator.rules_used,'rule_table_version':RULE_TABLE_VERSION,'rule_coverage':coverage,'fallback_log':fallback.entries,'fallback_status':fallback_status(enabled=enable_llm),'fallback_suggestions':[],'validation':validation,'unsupported':[],'notes':['Original Python-like demonstration pipeline retained.'],'pipeline_trace':[{'stage':'front_end','status':'completed','detail':'Python-like lexer/parser/semantic analysis completed.'},{'stage':'shared_ir','status':'completed','detail':'Shared IR constructed.'},{'stage':'rule_first','status':'completed','detail':'Deterministic JavaScript code generation completed.'},{'stage':'learned_rule','status':'reused' if learned_rule_reused else 'recorded' if learned_rule else 'not_applicable','detail':'Bounded assignment/print templates are recorded only when contract and risk gates allow; reused output is revalidated.'},{'stage':'llm_fallback','status':'not_needed','detail':'No unsupported constructs in the current subset.'},{'stage':'validation','status':validation['status'],'detail':validation['message']}],'target_runtime':target,'generated_lines':len([x for x in javascript.splitlines() if x.strip()]),'translation_contract':contract,'acceptance_policy':acceptance,'candidate_acceptance':None,'risk_assessment':risk_assessment,'failure_fingerprint':failure_fingerprint,'rule_evolution':rule_evolution,'learned_rule':learned_rule,'type_map':type_map,'dependency_order':dependency_order,'idiomatic_refactor':idiomatic_refactor,'property_validation':property_validation}
+    return {'language_support':{'source':'Python-like','target':'JavaScript','subset':'Existing prototype subset'},'tokens':[{'type':t.type,'value':t.value,'line':t.line,'column':t.column} for t in tokens if t.type not in ('NEWLINE','INDENT','DEDENT','EOF')],'ast':ast_to_dict(ast),'ir':ir.to_dict(),'symbol_table':symbols.as_dict(),'javascript':javascript,'target_code':javascript,'deterministic_code':javascript,'rules_used':generator.rules_used,'rule_table_version':RULE_TABLE_VERSION,'rule_coverage':coverage,'fallback_log':fallback.entries,'fallback_status':fallback_status(enabled=enable_llm),'fallback_suggestions':[],'validation':validation,'unsupported':[],'notes':['Original Python-like demonstration pipeline retained.'],'pipeline_trace':[{'stage':'front_end','status':'completed','detail':'Python-like lexer/parser/semantic analysis completed.'},{'stage':'shared_ir','status':'completed','detail':'Shared IR constructed.'},{'stage':'rule_first','status':'completed','detail':'Deterministic JavaScript code generation completed.'},{'stage':'learned_rule','status':'reused' if learned_rule_reused else 'recorded' if learned_rule else 'not_applicable','detail':'Bounded assignment/print templates are recorded only when contract and risk gates allow; reused output is revalidated.'},{'stage':'llm_fallback','status':'not_needed','detail':'No unsupported constructs in the current subset.'},{'stage':'validation','status':validation['status'],'detail':validation['message']}],'target_runtime':target,'generated_lines':len([x for x in javascript.splitlines() if x.strip()]),'translation_contract':contract,'acceptance_policy':acceptance,'candidate_acceptance':None,'candidate_lifecycle':None,'risk_assessment':risk_assessment,'failure_fingerprint':failure_fingerprint,'rule_evolution':rule_evolution,'learned_rule':learned_rule,'type_map':type_map,'dependency_order':dependency_order,'idiomatic_refactor':idiomatic_refactor,'property_validation':property_validation}
 
 
 def _run_normalized(nodes, input_data=None):

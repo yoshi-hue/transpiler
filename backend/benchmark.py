@@ -102,7 +102,7 @@ def _oracle_match(actual_output, expected_output):
 
 
 def _transpile_benchmark_case(language, case_name, source, target, *, enable_llm,
-                              enable_learned_rules=False):
+                              enable_learned_rules=False, enable_repair=False):
     """Run each predeclared stdin fixture and aggregate case-level validation."""
     metadata = _case_metadata(language, case_name, source)
     fixtures = metadata.get('input_fixtures') or []
@@ -112,6 +112,7 @@ def _transpile_benchmark_case(language, case_name, source, target, *, enable_llm
             enable_llm=enable_llm,
             enable_learned_rules=enable_learned_rules,
             store_validated_example=False,
+            enable_repair=enable_repair,
         )
 
     fixture_results = []
@@ -123,6 +124,7 @@ def _transpile_benchmark_case(language, case_name, source, target, *, enable_llm
             enable_llm=enable_llm,
             enable_learned_rules=enable_learned_rules,
             store_validated_example=False,
+            enable_repair=enable_repair,
         )
         runs.append(run)
         runtime = run.get('target_runtime', {})
@@ -226,7 +228,7 @@ def _required_construct_coverage(language, case_name, rules_used, source=None):
     }
 
 
-def _case_result(language, case_name, source, target, *, enable_llm, enable_learned_rules=False):
+def _case_result(language, case_name, source, target, *, enable_llm, enable_learned_rules=False, enable_repair=False):
     metadata = _case_metadata(language, case_name, source)
     # Do not transmit third-party CodeNet source to an external model provider unless
     # source-specific provider-processing terms have been separately reviewed.
@@ -237,6 +239,7 @@ def _case_result(language, case_name, source, target, *, enable_llm, enable_lear
             language, case_name, source, target,
             enable_llm=case_llm_enabled,
             enable_learned_rules=enable_learned_rules,
+            enable_repair=enable_repair,
         )
     except Exception as exc:
         return {
@@ -467,6 +470,34 @@ def _summarize_variant(results, variant_name):
         payload['llm_cost_usd'] = None
         payload['success_rate_95ci_percent'] = _wilson_interval(payload['passed'], payload['total'])
 
+    # Task-group reporting prevents a strong aggregate from hiding a failure on
+    # one problem family.  Groups are frozen in the case manifest and are never
+    # inferred from model output.
+    by_task_group = {}
+    for item in results:
+        metadata = _case_metadata(item['language'], item['case'])
+        group = metadata.get('split_group') or metadata.get('provenance', {}).get('task') or 'unassigned'
+        entry = by_task_group.setdefault(group, {
+            'total': 0, 'passed': 0, 'failed': 0, 'validation_failures': 0,
+            'llm_calls': 0, 'candidate_generated': 0, 'candidate_oracle_cases': 0,
+            'candidate_oracle_matches': 0,
+        })
+        entry['total'] += 1
+        entry['passed'] += int(item.get('status') == 'passed')
+        entry['failed'] += int(item.get('status') != 'passed')
+        entry['validation_failures'] += item.get('validation_failures', 0)
+        entry['llm_calls'] += item.get('llm_calls', 0)
+        entry['candidate_generated'] += item.get('candidate_generated', 0)
+        if item.get('candidate_oracle_match') is not None:
+            entry['candidate_oracle_cases'] += 1
+            entry['candidate_oracle_matches'] += int(item.get('candidate_oracle_match') is True)
+    for entry in by_task_group.values():
+        entry['success_rate_percent'] = round(entry['passed'] / entry['total'] * 100.0, 1)
+        entry['candidate_oracle_match_percent'] = (
+            round(entry['candidate_oracle_matches'] / entry['candidate_oracle_cases'] * 100.0, 1)
+            if entry['candidate_oracle_cases'] else None
+        )
+
     by_construct = {}
     for item in results:
         by_construct[f"{item['language']}:{item['case']}"] = {
@@ -544,6 +575,7 @@ def _summarize_variant(results, variant_name):
             'validation_failures': validation_failures,
         },
         'by_language': by_language,
+        'by_task_group': by_task_group,
         'by_construct': by_construct,
         'cases': results,
     }
@@ -648,7 +680,7 @@ def run_benchmark(target='JavaScript', cases=None):
     }
 
 
-def run_experiment(target='JavaScript', cases=None, repeats=1, enable_llm=False):
+def run_experiment(target='JavaScript', cases=None, repeats=1, enable_llm=False, enable_repair=False):
     run_cases = list(DEFAULT_CASES if cases is None else cases)
     heldout_group_count = len({
         _case_metadata(language, case_name, source).get('split_group')
@@ -657,17 +689,24 @@ def run_experiment(target='JavaScript', cases=None, repeats=1, enable_llm=False)
     })
     rule_only_results = []
     hybrid_results = []
+    hybrid_repair_results = []
     safeguards_results = []
 
     for _ in range(repeats):
         for language, case_name, source in run_cases:
             rule_only_results.append(_case_result(language, case_name, source, target, enable_llm=False))
             hybrid_results.append(_case_result(language, case_name, source, target, enable_llm=enable_llm))
+            if enable_repair:
+                hybrid_repair_results.append(_case_result(language, case_name, source, target,
+                                                          enable_llm=enable_llm, enable_repair=True))
+            else:
+                hybrid_repair_results.append(hybrid_results[-1])
 
     safeguards_results = _run_safeguards_arm(run_cases, target, repeats, seed_development=(cases is None))
 
     rule_only = _summarize_variant(rule_only_results, 'rule_only')
     hybrid = _summarize_variant(hybrid_results, 'hybrid')
+    hybrid_repair = _summarize_variant(hybrid_repair_results, 'hybrid_repair')
     safeguards = _summarize_variant(safeguards_results, 'contracts_risk_learned_rules')
 
     summary_by_language = {}
@@ -676,6 +715,7 @@ def run_experiment(target='JavaScript', cases=None, repeats=1, enable_llm=False)
             summary_by_language[language] = {
                 'rule_only': rule_only['by_language'].get(language, {}),
                 'hybrid': hybrid['by_language'].get(language, {}),
+                'hybrid_repair': hybrid_repair['by_language'].get(language, {}),
                 'safeguards': safeguards['by_language'].get(language, {}),
             }
 
@@ -685,16 +725,32 @@ def run_experiment(target='JavaScript', cases=None, repeats=1, enable_llm=False)
         summary_by_construct[key] = {
             'rule_only': rule_only['by_construct'].get(key, {}),
             'hybrid': hybrid['by_construct'].get(key, {}),
+            'hybrid_repair': hybrid_repair['by_construct'].get(key, {}),
             'safeguards': safeguards['by_construct'].get(key, {}),
+        }
+
+    summary_by_task_group = {}
+    for group in sorted({
+        _case_metadata(language, case_name, source).get('split_group') or 'unassigned'
+        for language, case_name, source in run_cases
+    }):
+        summary_by_task_group[group] = {
+            'rule_only': rule_only['by_task_group'].get(group, {}),
+            'hybrid': hybrid['by_task_group'].get(group, {}),
+            'hybrid_repair': hybrid_repair['by_task_group'].get(group, {}),
+            'safeguards': safeguards['by_task_group'].get(group, {}),
         }
 
     summary = {
         'by_language': summary_by_language,
         'by_construct': summary_by_construct,
+        'by_task_group': summary_by_task_group,
         'overall': {
             'rule_only_success_rate_percent': rule_only['success_rate_percent'],
             'hybrid_success_rate_percent': hybrid['success_rate_percent'],
             'delta_success_rate_percent': round(hybrid['success_rate_percent'] - rule_only['success_rate_percent'], 1),
+            'hybrid_repair_success_rate_percent': hybrid_repair['success_rate_percent'],
+            'repair_delta_vs_hybrid_percent': round(hybrid_repair['success_rate_percent'] - hybrid['success_rate_percent'], 1),
             'safeguards_success_rate_percent': safeguards['success_rate_percent'],
             'safeguards_delta_vs_rule_only_percent': round(safeguards['success_rate_percent'] - rule_only['success_rate_percent'], 1),
         },
@@ -712,9 +768,10 @@ def run_experiment(target='JavaScript', cases=None, repeats=1, enable_llm=False)
         'llm_enabled': enable_llm,
         'rule_only': rule_only,
         'hybrid': hybrid,
+        'hybrid_repair': hybrid_repair,
         'contracts_risk_learned_rules': safeguards,
         'ablation_scope': {
-            'compared_component': 'three arms: deterministic rules; deterministic rules plus optional LLM fallback; and deterministic rules with development-seeded learned-rule memory',
+            'compared_component': 'four arms: rule-only; LLM-only (separate live runner); rule-first plus LLM; rule-first plus LLM with bounded repair',
             'candidate_acceptance': 'Model candidates remain unaccepted. Executable validity and expected-output matches are separate metrics. human reviewer effort is not collected and is reported as null.',
             'learned_rule_protocol': 'The safeguards arm seeds its local learned-rule store from development cases only. The development-seeded store is restored before every held-out case and repeat; held-out cases cannot teach later cases.',
             'shared_mechanisms': ['Risk-aware finite validation and contract reporting are common to all arms and cannot be disabled safely; their individual effects are not estimated.'],
