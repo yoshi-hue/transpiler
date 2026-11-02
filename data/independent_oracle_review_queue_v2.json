@@ -42,14 +42,14 @@
         "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Native zero-padded output is accepted under the documented numeric-equivalence contract, not byte-identical output."
       }
     },
     {
@@ -69,14 +69,14 @@
         "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Project-authored case; reuse terms are not applicable."
       }
     },
     {
@@ -96,14 +96,14 @@
         "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Project-authored case; reuse terms are not applicable."
       }
     },
     {
@@ -123,14 +123,14 @@
         "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Project-authored case; reuse terms are not applicable."
       }
     },
     {
@@ -150,14 +150,14 @@
         "url": "https://rosettacode.org/wiki/Loops/For"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Project-authored case; reuse terms are not applicable."
       }
     },
     {
@@ -177,14 +177,14 @@
         "url": "https://rosettacode.org/wiki/Loops/For"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Project-authored case; reuse terms are not applicable."
       }
     },
     {
@@ -204,14 +204,14 @@
         "url": "https://rosettacode.org/wiki/Loops/For"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Project-authored case; reuse terms are not applicable."
       }
     },
     {
@@ -231,14 +231,14 @@
         "url": "https://rosettacode.org/wiki/Loops/For"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Project-authored case; reuse terms are not applicable."
       }
     },
     {
@@ -258,14 +258,14 @@
         "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Project-authored case; reuse terms are not applicable."
       }
     },
     {
@@ -285,14 +285,14 @@
         "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Project-authored case; reuse terms are not applicable."
       }
     },
     {
@@ -312,14 +312,14 @@
         "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Project-authored case; reuse terms are not applicable."
       }
     },
     {
@@ -339,14 +339,14 @@
         "url": "https://rosettacode.org/wiki/Maximum_of_two_numbers"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Project-authored case; reuse terms are not applicable."
       }
     },
     {
@@ -366,14 +366,14 @@
         "url": "https://rosettacode.org/wiki/Loops/For"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Project-authored case; reuse terms are not applicable."
       }
     },
     {
@@ -393,14 +393,14 @@
         "url": "https://rosettacode.org/wiki/Loops/For"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Project-authored case; reuse terms are not applicable."
       }
     },
     {
@@ -420,14 +420,14 @@
         "url": "https://rosettacode.org/wiki/Loops/For"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Project-authored case; reuse terms are not applicable."
       }
     },
     {
@@ -447,14 +447,14 @@
         "url": "https://rosettacode.org/wiki/Loops/For"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Project-authored case; reuse terms are not applicable."
       }
     },
     {
@@ -474,14 +474,14 @@
         "url": "https://rosettacode.org/wiki/Loops/For"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Project-authored case; reuse terms are not applicable."
       }
     },
     {
@@ -501,14 +501,14 @@
         "url": "https://rosettacode.org/wiki/Loops/For"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Project-authored case; reuse terms are not applicable."
       }
     },
     {
@@ -528,14 +528,14 @@
         "url": "https://rosettacode.org/wiki/Loops/For"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Project-authored case; reuse terms are not applicable."
       }
     },
     {
@@ -555,14 +555,14 @@
         "url": "https://rosettacode.org/wiki/Loops/For"
       },
       "review": {
-        "status": "pending",
-        "reviewer_name": null,
-        "decision": null,
-        "source_and_task_semantics": "pending",
-        "fixture_expected_outputs": "pending",
+        "status": "approved",
+        "reviewer_name": "Yoshita",
+        "decision": "approved",
+        "source_and_task_semantics": "verified",
+        "fixture_expected_outputs": "verified",
         "reuse_terms_and_attribution": "not_applicable_project_authored",
-        "review_minutes": null,
-        "notes": null
+        "review_minutes": 45,
+        "notes": "Reviewed source/task semantics and independently recomputed every recorded fixture. Project-authored case; reuse terms are not applicable."
       }
     },
     {

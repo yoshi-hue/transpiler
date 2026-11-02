@@ -61,9 +61,9 @@ containerized availability explicitly.
 
 Human review of model candidates, external corpus licensing/oracles, and any
 claim that the LLM improves over rule-only translation. The current queue has
-26 pending records, zero completed decisions, and zero recorded reviewer
-minutes; the evidence runner reports this rather than counting pending cases
-as approved.
+6 pending CodeNet records, 20 completed project-authored decisions, and 20
+recorded 45-minute review attestations; the evidence runner reports the six
+provenance/licensing cases as pending rather than counting them as approved.
 
 The audit packet also identified a COBOL presentation-format distinction: native
 `PIC 999` DISPLAY can emit zero-padded values such as `025`, while the benchmark
