@@ -113,6 +113,7 @@ def _transpile_benchmark_case(language, case_name, source, target, *, enable_llm
             enable_learned_rules=enable_learned_rules,
             store_validated_example=False,
             enable_repair=enable_repair,
+            expected_output=metadata.get('expected_output'),
         )
 
     fixture_results = []
@@ -125,6 +126,7 @@ def _transpile_benchmark_case(language, case_name, source, target, *, enable_llm
             enable_learned_rules=enable_learned_rules,
             store_validated_example=False,
             enable_repair=enable_repair,
+            expected_output=fixture.get('expected_output'),
         )
         runs.append(run)
         runtime = run.get('target_runtime', {})

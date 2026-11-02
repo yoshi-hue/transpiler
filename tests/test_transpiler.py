@@ -699,7 +699,65 @@ def test_bounded_repair_preserves_attempts_and_stops_at_two_repairs():
     assert result['selected'] == 'good'
     assert len(result['attempts']) == 3
     assert seen_packets[1]['development_examples'][0]['expected'] == 'ok'
+    assert seen_packets[1]['previous_candidate'] == 'bad'
     assert 'hidden' not in str(seen_packets)
+
+
+def test_bounded_repair_forwards_previous_code_and_new_diagnostics():
+    from backend.repair import generate_with_bounded_repair
+
+    generated = iter(['prints the wrong answer', 'prints the right answer'])
+    packets = []
+
+    def generate(packet):
+        packets.append(packet)
+        return next(generated)
+
+    def validate(candidate):
+        if candidate.startswith('prints the wrong'):
+            return {'status': 'failed', 'syntax_valid': True, 'runtime_valid': True,
+                    'diagnostic': 'output mismatch: expected 2, observed 3'}
+        return {'status': 'passed', 'syntax_valid': True, 'runtime_valid': True}
+
+    result = generate_with_bounded_repair(generate, validate, max_repairs=1)
+    assert result['selected'] == 'prints the right answer'
+    assert packets[1]['previous_candidate'] == 'prints the wrong answer'
+    assert 'output mismatch' in packets[1]['diagnostics'][-1]
+
+
+def test_candidate_review_endpoint_maps_prior_review_to_lifecycle_argument():
+    from backend.main import CandidateReviewRequest, _review_payload
+
+    request = CandidateReviewRequest(
+        source='10 GOTO 100\n100 END', candidate='console.log("ok")',
+        validation_evidence={'status': 'passed'}, reviewer='source-reviewer',
+        target_reviewer='target-reviewer', decision='approved', reason='Reviewed.',
+        prior_review={'candidate_sha256': 'old'},
+    )
+    payload = _review_payload(request)
+    assert payload['prior'] == {'candidate_sha256': 'old'}
+    assert 'prior_review' not in payload
+
+
+def test_approved_candidate_is_selected_only_with_current_review_binding():
+    from backend.candidate_lifecycle import review_candidate
+
+    source = '10 GOTO 100\n100 END'
+    candidate = 'console.log("ok");'
+    evidence = {'status': 'passed', 'fixtures': ['ok'], 'security': 'passed', 'regression': 'passed'}
+    review = review_candidate(
+        source=source, candidate=candidate, validation_evidence=evidence,
+        reviewer='Yoshita', target_reviewer='Target Reviewer', decision='approved',
+        reason='Reviewed source, target, fixtures, security, and regression evidence.',
+    )
+    result = transpile(
+        source, 'BASIC', 'JavaScript', approved_candidate=candidate,
+        candidate_review=review, expected_output='ok', enable_llm=False,
+        store_validated_example=False,
+    )
+    assert result['fallback_suggestions'][0]['accepted'] is True
+    assert result['candidate_lifecycle']['approval_is_current'] is True
+    assert result['target_runtime']['output'].strip() == 'ok'
 
 
 def test_native_adapter_reports_missing_tool_as_not_run(monkeypatch):

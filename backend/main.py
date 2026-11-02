@@ -46,6 +46,8 @@ class TranspileRequest(BaseModel):
     source_language: str = Field(default='Python-like', min_length=1, max_length=40)
     target_language: str = Field(default='JavaScript', min_length=1, max_length=40)
     input_data: str | None = Field(default=None, max_length=50_000)
+    approved_candidate: str | None = Field(default=None, max_length=MAX_SOURCE_CHARS)
+    candidate_review: dict | None = None
 
 
 class CandidateReviewRequest(BaseModel):
@@ -57,6 +59,12 @@ class CandidateReviewRequest(BaseModel):
     decision: str = Field(min_length=1, max_length=20)
     reason: str = Field(min_length=1, max_length=2000)
     prior_review: dict | None = None
+
+
+def _review_payload(request: CandidateReviewRequest) -> dict:
+    payload = request.model_dump()
+    payload['prior'] = payload.pop('prior_review')
+    return payload
 
 
 @app.get('/')
@@ -122,7 +130,7 @@ def llm_test():
 def candidate_review(request: CandidateReviewRequest):
     """Record a review bound to exact source, candidate, and validation hashes."""
     try:
-        review = review_candidate(**request.model_dump())
+        review = review_candidate(**_review_payload(request))
         review_dir = Path(__file__).resolve().parent.parent / 'data' / 'reviews'
         review_dir.mkdir(parents=True, exist_ok=True)
         stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
@@ -142,7 +150,10 @@ def do_transpile(request: TranspileRequest):
     try:
         return {
             'ok': True,
-            **transpile(request.code, request.source_language, request.target_language, input_data=request.input_data),
+            **transpile(request.code, request.source_language, request.target_language,
+                        input_data=request.input_data,
+                        approved_candidate=request.approved_candidate,
+                        candidate_review=request.candidate_review),
         }
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc

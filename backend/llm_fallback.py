@@ -340,6 +340,8 @@ def translate_with_repair(source_language, target_language, source, *, validate_
             'diagnostics': packet.get('diagnostics', []),
             'development_examples': packet.get('development_examples', []),
             'repair_attempt': packet.get('repair_attempt'),
+            'previous_candidate': packet.get('previous_candidate'),
+            'previous_candidate_sha256': packet.get('previous_candidate_sha256'),
         }, ensure_ascii=False)
         return translate_construct(source_language, target_language, source, context,
                                    complete_program=True)['candidate']
@@ -365,6 +367,7 @@ def repair_existing_candidate(source_language, target_language, source, candidat
             'development_examples': packet.get('development_examples', []),
             'repair_attempt': packet.get('repair_attempt'),
             'previous_candidate_sha256': packet.get('previous_candidate_sha256'),
+            'previous_candidate': packet.get('previous_candidate'),
         }, ensure_ascii=False)
         return translate_construct(source_language, target_language, source, context,
                                    complete_program=True)['candidate']

@@ -27,6 +27,7 @@ def generate_with_bounded_repair(generate, validate, *, max_repairs=2,
             'diagnostics': diagnostics,
             'development_examples': examples,
             'previous_candidate_sha256': candidate_hash(previous),
+                'previous_candidate': previous,
             'repair_attempt': number,
         })
         candidate = (candidate or '').strip()
@@ -53,6 +54,9 @@ def generate_with_bounded_repair(generate, validate, *, max_repairs=2,
             return {'selected': candidate, 'selected_attempt': number,
                     'state': record['state'], 'attempts': attempts,
                     'repair_budget': budget}
+        diagnostic = validation.get('diagnostic') or validation.get('error')
+        if diagnostic:
+            diagnostics.append(str(diagnostic))
         previous = candidate
     return {'selected': None, 'selected_attempt': None,
             'state': attempts[-1]['state'] if attempts else 'validation_failed',

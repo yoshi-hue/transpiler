@@ -6,7 +6,7 @@ from .legacy import legacy_transpile, LANGUAGES, SUBSETS
 from .validator import run_javascript, run_python, run_python_isolated, compare
 from .corpus import save_validated_example
 from .llm_fallback import create_fallback_log, fallback_status, translate_construct, repair_existing_candidate
-from .candidate_lifecycle import classify_candidate, candidate_hash
+from .candidate_lifecycle import approval_is_current, classify_candidate, candidate_hash
 from .learned_rules import (
     apply_generalized_rule,
     find_generalized_rule,
@@ -18,6 +18,12 @@ TARGETS = {
     'JavaScript': 'Executable with Node.js',
     'Python': 'Executable with Python 3',
 }
+
+
+def _output_matches_expected(actual, expected):
+    if expected is None or actual is None:
+        return None
+    return str(actual).replace('\r\n', '\n').strip() == str(expected).replace('\r\n', '\n').strip()
 
 def _extract_api_hints(source):
     lowered = source.lower()
@@ -409,7 +415,10 @@ def _is_unsupported_candidate(candidate):
     return False
 
 
-def transpile(source, source_language='Python-like', target_language='JavaScript', *, input_data=None, enable_llm=None, enable_learned_rules=True, store_validated_example=True, enable_repair=False, development_examples=None):
+def transpile(source, source_language='Python-like', target_language='JavaScript', *, input_data=None,
+              enable_llm=None, enable_learned_rules=True, store_validated_example=True,
+              enable_repair=False, development_examples=None, expected_output=None,
+              approved_candidate=None, candidate_review=None):
     if source_language != 'Python-like':
         if target_language not in TARGETS:
             raise ValueError('Unsupported target language. Choose JavaScript or Python.')
@@ -473,6 +482,9 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
         else:
             trace.append({'stage':'llm_fallback', 'status':'not_needed', 'detail':'All constructs covered by deterministic rules.'})
 
+        if approved_candidate and candidate_review:
+            fallback_suggestions = [{'candidate': approved_candidate.strip(),
+                                     'candidate_status': 'approved_candidate_replay'}]
         llm_candidate = fallback_suggestions[0].get('candidate', '').strip() if fallback_suggestions else ''
         has_llm_candidate = bool(llm_candidate) and not _is_unsupported_candidate(llm_candidate)
         deterministic_code = result.javascript
@@ -541,9 +553,15 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
                     'output': '',
                     'error': 'Incomplete translation was not executed.',
                 }
+            initial_oracle_match = _output_matches_expected(target_run.get('output'), expected_output)
+            if fallback_suggestions:
+                fallback_suggestions[0]['target_oracle_match'] = initial_oracle_match
+            if initial_oracle_match is False:
+                candidate_validation_status = 'rejected_output_mismatch'
             if enable_repair and has_llm_candidate and (
                 fallback_suggestions[0].get('target_syntax_valid') is False or
-                fallback_suggestions[0].get('target_runtime_valid') is False
+                fallback_suggestions[0].get('target_runtime_valid') is False or
+                fallback_suggestions[0].get('target_oracle_match') is False
             ):
                 from .validator import check_javascript_syntax, check_python_syntax
 
@@ -555,10 +573,14 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
                                 'diagnostic': syntax.get('error', 'syntax check failed')}
                     run = (run_javascript(candidate, restricted=True) if target_language == 'JavaScript'
                            else run_python_isolated(candidate))
-                    return {'status': 'passed' if run.get('available') and run.get('ok') else 'failed',
+                    oracle_match = _output_matches_expected(run.get('output'), expected_output)
+                    return {'status': 'passed' if run.get('available') and run.get('ok') and oracle_match is not False else 'failed',
                             'syntax_valid': True,
                             'runtime_valid': bool(run.get('available') and run.get('ok')),
-                            'diagnostic': run.get('error', ''), 'runtime': run}
+                            'oracle_match': oracle_match,
+                            'diagnostic': (run.get('error', '') if oracle_match is not False
+                                           else f'output mismatch: expected {expected_output!r}, observed {run.get("output")!r}'),
+                            'runtime': run}
 
                 repair_result = repair_existing_candidate(
                     source_language, target_language, source, llm_candidate,
@@ -577,6 +599,7 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
                     target_run = repaired_validation.get('runtime', target_run)
                     fallback_suggestions[0]['target_syntax_valid'] = repaired_validation.get('syntax_valid')
                     fallback_suggestions[0]['target_runtime_valid'] = repaired_validation.get('runtime_valid')
+                    fallback_suggestions[0]['target_oracle_match'] = repaired_validation.get('oracle_match')
                     candidate_validation_status = 'repaired_and_runtime_valid' if repaired_validation.get('status') == 'passed' else 'repaired_validation_failed'
             if fallback_suggestions:
                 fallback_suggestions[0]['target_runtime_error'] = target_run.get('error', '')
@@ -586,6 +609,19 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
                     source_sha256=hashlib.sha256(source.encode('utf-8')).hexdigest(),
                 ) if has_llm_candidate else None
                 fallback_suggestions[0]['accepted'] = False
+                approval_current = bool(
+                    candidate_review and approved_candidate and
+                    approval_is_current(
+                        candidate_review,
+                        source=source,
+                        candidate=llm_candidate,
+                        validation_evidence=candidate_review.get('validation_evidence', {}),
+                    )
+                )
+                if approval_current and candidate_validation_status in ('runtime_valid_unverified', 'repaired_and_runtime_valid'):
+                    fallback_suggestions[0]['accepted'] = True
+                    candidate_acceptance['accepted'] = True
+                    candidate_acceptance['status'] = 'approved'
                 fallback_suggestions[0]['validation_status'] = candidate_validation_status
                 candidate_state = classify_candidate(
                     syntax_valid=fallback_suggestions[0].get('target_syntax_valid'),
@@ -593,7 +629,7 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
                     validation_status='not_run',
                     review_required=True,
                 )
-                fallback_suggestions[0]['candidate_state'] = candidate_state
+                fallback_suggestions[0]['candidate_state'] = 'approved' if fallback_suggestions[0]['accepted'] else candidate_state
                 fallback_suggestions[0]['candidate_sha256'] = candidate_hash(llm_candidate)
                 fallback_suggestions[0]['acceptance_record'] = candidate_acceptance
                 trace.append({
@@ -674,7 +710,7 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
                 'state': candidate_state,
                 'candidate_sha256': candidate_hash(llm_candidate) if has_llm_candidate else None,
                 'review_required': bool(has_llm_candidate),
-                'approval_is_current': False,
+                'approval_is_current': bool(fallback_suggestions and fallback_suggestions[0].get('accepted')),
             },
             'repair': repair_result,
             'risk_assessment': risk_assessment,
