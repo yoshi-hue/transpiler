@@ -1,5 +1,19 @@
 {
-  "schema_version": "2.0",
+  "schema_version": "2.1",
+  "amendments": [
+    {
+      "amendment_id": "audit-20261102-001",
+      "previous_schema_version": "2.0",
+      "previous_file_sha256": "99AF43DB39ECC6412A2DED42337B0F885B09F8682495A2472121A1ED676EA1D0",
+      "reason": "Correct reviewer-facing oracle notes without changing frozen source text, fixture inputs, or expected outputs.",
+      "changes": [
+        "Renamed the p03997 derived-small note from triangle area to trapezoid area and documented the even-height constraint.",
+        "Corrected the p02724 derived-large note from two thousand to two million 500-coin exchanges."
+      ],
+      "frozen_values_unchanged": true,
+      "independent_review_required": true
+    }
+  ],
   "title": "Independent second-review queue for frozen expanded held-out pilot",
   "dataset_id": "pilot-task-derived-codenet-v1",
   "split": {
@@ -9,7 +23,7 @@
     "expected_unsupported": 4
   },
   "reviewer": "project owner (user); awaiting independent review",
-  "review_instruction": "Independently inspect the task statement and source (and CodeNet terms where applicable), then check expected outcomes and every fixture without using prototype output as the oracle. Record a real decision, reviewer name, elapsed review minutes, and notes. No entries are pre-approved.",
+  "review_instruction": "Independently inspect the task statement and source (and CodeNet terms where applicable), then check expected outcomes and every fixture without using prototype output as the oracle. Record a real decision, reviewer name, elapsed review minutes, notes, source_and_task_semantics, fixture_expected_outputs, and reuse_terms_and_attribution. No entries are pre-approved; status alone never constitutes a complete review.",
   "cases": [
     {
       "case_id": "rosetta-maximum-cobol",
@@ -896,7 +910,7 @@
         {
           "expected_output": "5000",
           "fixture_id": "atcoder-p03997-derived-small",
-          "oracle_note": "Triangle area from (a+b)*h/2.",
+          "oracle_note": "Trapezoid area from (a+b)*h/2; h is even under the task constraints.",
           "oracle_status": "independently_derived_from_problem_definition",
           "source_sha256": "da9e516bc4c2aec8e66cb0fe59e9aecbf541a82c431ef887e1681406f7f72d55",
           "stdin": "1 99 100"
@@ -981,7 +995,7 @@
         {
           "expected_output": "2000000000",
           "fixture_id": "atcoder-p02724-derived-large",
-          "oracle_note": "Two thousand 500-coin exchanges, worth 2,000,000,000.",
+          "oracle_note": "Two million 500-coin exchanges, worth 2,000,000,000.",
           "oracle_status": "independently_derived_from_problem_definition",
           "source_sha256": "9d008988fda3400c2b9160943fa58fee9a14aa950b192cb351b4ac810a434f15",
           "stdin": "1000000000"

@@ -65,6 +65,13 @@ claim that the LLM improves over rule-only translation. The current queue has
 minutes; the evidence runner reports this rather than counting pending cases
 as approved.
 
+The audit packet also identified a COBOL presentation-format distinction: native
+`PIC 999` DISPLAY can emit zero-padded values such as `025`, while the benchmark
+oracle uses numeric equivalence for `25`. This is not byte-for-byte stdout
+equivalence and remains documented for sign-off. Queue amendment
+`audit-20261102-001` corrected two reviewer-facing fixture notes without changing
+source text, inputs, or expected outputs.
+
 ## Blocked
 
 Native-source validation is available through Docker for GNU Fortran, GnuCOBOL,

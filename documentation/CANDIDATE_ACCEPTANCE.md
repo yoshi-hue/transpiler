@@ -41,6 +41,15 @@ API path automatically changes `accepted` to true.
    fixtures and oracle source, toolchain/runtime versions, test results, reviewer
    identities, date, and accept/reject decision.
 
+## Scope and execution caveats
+
+An output-matching candidate is evidence for the reviewed source and fixtures only.
+If the candidate is unrolled for a singleton input, the review must not generalize
+it to a loop transformation; a new source variant requires its own candidate and
+hash. JavaScript candidates that call `process.exit(0)` are reviewed as standalone
+command-line programs. They are not approved for embedding in a server or process,
+and reviewers must check that output is flushed before termination.
+
 ## Safe execution
 
 JavaScript candidates are syntax-checked and run with Node's permission mode, a short

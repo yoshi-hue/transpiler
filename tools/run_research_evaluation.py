@@ -40,11 +40,29 @@ def review_queue_metrics():
         return {'status': 'not_available', 'total': 0}
     payload = json.loads(queue_path.read_text(encoding='utf-8'))
     cases = payload.get('cases', [])
-    reviewed = [case for case in cases if case.get('review', {}).get('status') in {'approved', 'rejected'}]
+    def complete(case):
+        review = case.get('review', {})
+        if review.get('status') not in {'approved', 'rejected'}:
+            return False
+        if not isinstance(review.get('reviewer_name'), str) or not review['reviewer_name'].strip():
+            return False
+        if not isinstance(review.get('review_minutes'), (int, float)) or review['review_minutes'] <= 0:
+            return False
+        if not isinstance(review.get('notes'), str) or not review['notes'].strip():
+            return False
+        allowed = {'approved', 'rejected', 'verified', 'not_applicable',
+                   'not_applicable_project_authored'}
+        return all(str(review.get(field, '')).strip().lower() in allowed for field in (
+            'source_and_task_semantics', 'fixture_expected_outputs',
+            'reuse_terms_and_attribution'))
+
+    reviewed = [case for case in cases if complete(case)]
+    status_decided = [case for case in cases if case.get('review', {}).get('status') in {'approved', 'rejected'}]
     return {
         'status': 'complete' if cases and len(reviewed) == len(cases) else 'pending',
         'total': len(cases),
         'reviewed': len(reviewed),
+        'decided_but_incomplete': len(status_decided) - len(reviewed),
         'pending': len(cases) - len(reviewed),
         'decisions': {decision: sum(case.get('review', {}).get('status') == decision for case in cases)
                       for decision in ('approved', 'rejected')},

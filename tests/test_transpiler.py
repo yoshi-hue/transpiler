@@ -768,3 +768,12 @@ def test_llm_fallback_sends_configured_key_as_bearer_token(monkeypatch):
     from backend.llm_fallback import _headers
 
     assert _headers()['Authorization'] == 'Bearer gemini-test-key'
+
+
+def test_review_queue_does_not_count_decided_records_without_complete_attestation():
+    from tools.run_research_evaluation import review_queue_metrics
+
+    metrics = review_queue_metrics()
+    assert metrics['status'] == 'pending'
+    assert metrics['pending'] == 26
+    assert metrics['reviewed'] == 0
