@@ -113,7 +113,7 @@ def _transpile_benchmark_case(language, case_name, source, target, *, enable_llm
             enable_learned_rules=enable_learned_rules,
             store_validated_example=False,
             enable_repair=enable_repair,
-            expected_output=metadata.get('expected_output'),
+            expected_output=None if enable_repair else metadata.get('expected_output'),
         )
 
     fixture_results = []
@@ -126,7 +126,7 @@ def _transpile_benchmark_case(language, case_name, source, target, *, enable_llm
             enable_learned_rules=enable_learned_rules,
             store_validated_example=False,
             enable_repair=enable_repair,
-            expected_output=fixture.get('expected_output'),
+            expected_output=None if enable_repair else fixture.get('expected_output'),
         )
         runs.append(run)
         runtime = run.get('target_runtime', {})
@@ -773,7 +773,7 @@ def run_experiment(target='JavaScript', cases=None, repeats=1, enable_llm=False,
         'hybrid_repair': hybrid_repair,
         'contracts_risk_learned_rules': safeguards,
         'ablation_scope': {
-            'compared_component': 'four arms: rule-only; LLM-only (separate live runner); rule-first plus LLM; rule-first plus LLM with bounded repair',
+            'compared_component': 'four arms: rule-only; LLM fallback / LLM-only (separate live runner); rule-first plus LLM; rule-first plus LLM with bounded repair',
             'candidate_acceptance': 'Model candidates remain unaccepted. Executable validity and expected-output matches are separate metrics. human reviewer effort is not collected and is reported as null.',
             'learned_rule_protocol': 'The safeguards arm seeds its local learned-rule store from development cases only. The development-seeded store is restored before every held-out case and repeat; held-out cases cannot teach later cases.',
             'shared_mechanisms': ['Risk-aware finite validation and contract reporting are common to all arms and cannot be disabled safely; their individual effects are not estimated.'],

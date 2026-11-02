@@ -6,7 +6,7 @@ from .legacy import legacy_transpile, LANGUAGES, SUBSETS
 from .validator import run_javascript, run_python, run_python_isolated, compare
 from .corpus import save_validated_example
 from .llm_fallback import create_fallback_log, fallback_status, translate_construct, repair_existing_candidate
-from .candidate_lifecycle import approval_is_current, classify_candidate, candidate_hash
+from .candidate_lifecycle import approval_is_current, classify_candidate, candidate_hash, evidence_hash
 from .learned_rules import (
     apply_generalized_rule,
     find_generalized_rule,
@@ -364,13 +364,27 @@ def _acceptance_policy(contract, risk, validation, *, unsupported=False, llm_can
     }
 
 
-def _candidate_acceptance_record(candidate, target_language, suggestion, *, source_sha256):
+def _candidate_acceptance_record(candidate, target_language, suggestion, *, source_sha256,
+                                 review=None):
     """Build a fail-closed candidate acceptance record; runtime checks alone never accept."""
     syntax_ok = suggestion.get('target_syntax_valid') is True
     runtime_ok = suggestion.get('target_runtime_valid') is True
     toolchain_ok = syntax_ok and runtime_ok
+    review_evidence = (review or {}).get('validation_evidence', {}) if review else {}
+    human_review_passed = bool(
+        review and review.get('status') == 'approved'
+        and review.get('reviewer')
+        and review.get('target_reviewer')
+        and review.get('reviewer', '').strip().lower() != review.get('target_reviewer', '').strip().lower()
+    )
+    independent = review_evidence.get('independent_fixtures', {})
+    security = review_evidence.get('security_review', {})
+    regression = review_evidence.get('regression_checks', {})
     requirements = {
-        'source_review': {'status': 'pending', 'evidence': None},
+        'source_review': {
+            'status': 'passed' if human_review_passed else 'pending',
+            'evidence': review_evidence.get('source_review') if review else None,
+        },
         'target_toolchain': {
             'status': 'passed' if toolchain_ok else 'failed' if suggestion.get('target_syntax_valid') is False or suggestion.get('target_runtime_valid') is False else 'pending',
             'target': target_language,
@@ -379,14 +393,27 @@ def _candidate_acceptance_record(candidate, target_language, suggestion, *, sour
             'isolated_runtime_check': suggestion.get('target_runtime_valid') if target_language == 'Python' else 'not_applicable',
             'sandbox': suggestion.get('target_runtime_sandbox'),
         },
-        'independent_fixtures': {'status': 'pending', 'fixture_set_id': None, 'cases_passed': 0, 'cases_total': 0},
-        'security_review': {'status': 'pending', 'reviewer': None, 'evidence': None},
-        'regression_checks': {'status': 'pending', 'suite_id': None, 'passed': None},
+        'independent_fixtures': {
+            'status': independent.get('status', 'pending'),
+            'fixture_set_id': independent.get('fixture_set_id'),
+            'cases_passed': independent.get('cases_passed', 0),
+            'cases_total': independent.get('cases_total', 0),
+        },
+        'security_review': {
+            'status': security.get('status', 'pending'),
+            'reviewer': security.get('reviewer'),
+            'evidence': security.get('evidence'),
+        },
+        'regression_checks': {
+            'status': regression.get('status', 'pending'),
+            'suite_id': regression.get('suite_id'),
+            'passed': regression.get('passed'),
+        },
         'human_review': {
-            'status': 'pending',
-            'source_reviewer': None,
-            'target_reviewer': None,
-            'decision': None,
+            'status': 'passed' if human_review_passed else 'pending',
+            'source_reviewer': review.get('source_reviewer') if review else None,
+            'target_reviewer': review.get('target_reviewer') if review else None,
+            'decision': review.get('status') if review else None,
         },
     }
     ready = all(item.get('status') == 'passed' for item in requirements.values())
@@ -553,7 +580,13 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
                     'output': '',
                     'error': 'Incomplete translation was not executed.',
                 }
-            initial_oracle_match = _output_matches_expected(target_run.get('output'), expected_output)
+            repair_oracle_expected = expected_output
+            if enable_repair and repair_oracle_expected is None:
+                try:
+                    repair_oracle_expected = '\n'.join(_run_normalized(result.source_program, input_data))
+                except Exception:
+                    repair_oracle_expected = None
+            initial_oracle_match = _output_matches_expected(target_run.get('output'), repair_oracle_expected)
             if fallback_suggestions:
                 fallback_suggestions[0]['target_oracle_match'] = initial_oracle_match
             if initial_oracle_match is False:
@@ -573,13 +606,13 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
                                 'diagnostic': syntax.get('error', 'syntax check failed')}
                     run = (run_javascript(candidate, restricted=True) if target_language == 'JavaScript'
                            else run_python_isolated(candidate))
-                    oracle_match = _output_matches_expected(run.get('output'), expected_output)
+                    oracle_match = _output_matches_expected(run.get('output'), repair_oracle_expected)
                     return {'status': 'passed' if run.get('available') and run.get('ok') and oracle_match is not False else 'failed',
                             'syntax_valid': True,
                             'runtime_valid': bool(run.get('available') and run.get('ok')),
                             'oracle_match': oracle_match,
-                            'diagnostic': (run.get('error', '') if oracle_match is not False
-                                           else f'output mismatch: expected {expected_output!r}, observed {run.get("output")!r}'),
+                             'diagnostic': (run.get('error', '') if oracle_match is not False
+                                            else 'output mismatch against the source-derived validation oracle'),
                             'runtime': run}
 
                 repair_result = repair_existing_candidate(
@@ -604,21 +637,50 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
             if fallback_suggestions:
                 fallback_suggestions[0]['target_runtime_error'] = target_run.get('error', '')
                 fallback_suggestions[0]['target_runtime_sandbox'] = target_run.get('sandbox')
-                candidate_acceptance = _candidate_acceptance_record(
-                    llm_candidate, target_language, fallback_suggestions[0],
-                    source_sha256=hashlib.sha256(source.encode('utf-8')).hexdigest(),
-                ) if has_llm_candidate else None
                 fallback_suggestions[0]['accepted'] = False
+                current_candidate_evidence = {
+                    'schema_version': 'candidate-validation-v2',
+                    'source_sha256': hashlib.sha256(source.encode('utf-8')).hexdigest(),
+                    'candidate_sha256': candidate_hash(llm_candidate),
+                    'target_language': target_language,
+                    'input_data': input_data,
+                    'syntax_valid': fallback_suggestions[0].get('target_syntax_valid'),
+                    'runtime_valid': fallback_suggestions[0].get('target_runtime_valid'),
+                    'oracle_match': fallback_suggestions[0].get('target_oracle_match'),
+                    'runtime': {
+                        'available': target_run.get('available'),
+                        'ok': target_run.get('ok'),
+                        'output': target_run.get('output'),
+                        'error': target_run.get('error'),
+                        'sandbox': target_run.get('sandbox'),
+                    },
+                }
+                fallback_suggestions[0]['current_validation_evidence'] = current_candidate_evidence
+                fallback_suggestions[0]['current_validation_evidence_sha256'] = evidence_hash(current_candidate_evidence)
                 approval_current = bool(
                     candidate_review and approved_candidate and
                     approval_is_current(
                         candidate_review,
                         source=source,
                         candidate=llm_candidate,
-                        validation_evidence=candidate_review.get('validation_evidence', {}),
+                        validation_evidence=current_candidate_evidence,
                     )
                 )
-                if approval_current and candidate_validation_status in ('runtime_valid_unverified', 'repaired_and_runtime_valid'):
+                candidate_acceptance = _candidate_acceptance_record(
+                    llm_candidate, target_language, fallback_suggestions[0],
+                    source_sha256=hashlib.sha256(source.encode('utf-8')).hexdigest(),
+                    review=candidate_review if approval_current else None,
+                ) if has_llm_candidate else None
+                acceptance_gates_passed = bool(
+                    candidate_acceptance
+                    and not candidate_acceptance.get('blockers')
+                )
+                accepted = bool(
+                    approval_current
+                    and acceptance_gates_passed
+                    and candidate_validation_status in ('runtime_valid_unverified', 'repaired_and_runtime_valid')
+                )
+                if accepted:
                     fallback_suggestions[0]['accepted'] = True
                     candidate_acceptance['accepted'] = True
                     candidate_acceptance['status'] = 'approved'
@@ -626,16 +688,19 @@ def transpile(source, source_language='Python-like', target_language='JavaScript
                 candidate_state = classify_candidate(
                     syntax_valid=fallback_suggestions[0].get('target_syntax_valid'),
                     runtime_valid=fallback_suggestions[0].get('target_runtime_valid'),
-                    validation_status='not_run',
+                    validation_status=('passed' if fallback_suggestions[0].get('target_oracle_match') is True else
+                                      'failed' if fallback_suggestions[0].get('target_oracle_match') is False else
+                                      'not_run'),
                     review_required=True,
                 )
-                fallback_suggestions[0]['candidate_state'] = 'approved' if fallback_suggestions[0]['accepted'] else candidate_state
+                candidate_state = 'approved' if accepted else candidate_state
+                fallback_suggestions[0]['candidate_state'] = candidate_state
                 fallback_suggestions[0]['candidate_sha256'] = candidate_hash(llm_candidate)
                 fallback_suggestions[0]['acceptance_record'] = candidate_acceptance
                 trace.append({
                     'stage': 'candidate_validation',
                     'status': candidate_validation_status,
-                    'detail': 'Candidate checks are reported separately; no LLM candidate is automatically accepted.',
+                    'detail': 'Candidate acceptance requires fresh validation evidence, complete gates, and human approval.',
                 })
         elif needs_input and input_data is None:
             target_run = {'available': False, 'ok': None, 'output': '', 'error': 'Provide program input to run validation.'}

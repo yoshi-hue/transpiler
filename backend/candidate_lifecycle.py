@@ -24,6 +24,17 @@ def evidence_hash(evidence: dict) -> str:
     return hashlib.sha256(material.encode('utf-8')).hexdigest()
 
 
+def bound_validation_evidence(evidence: dict) -> dict:
+    """Return the fresh execution evidence used for approval binding.
+
+    Human review records may contain additional fixture, security, and
+    regression attestations.  Only the machine-produced current execution
+    evidence is bound to the candidate approval; replay recomputes it.
+    """
+    nested = evidence.get('current_validation_evidence') if isinstance(evidence, dict) else None
+    return nested if isinstance(nested, dict) else (evidence or {})
+
+
 def classify_candidate(*, syntax_valid=None, runtime_valid=None, validation_status='not_run',
                        review_required=False, generated=True) -> str:
     if not generated:
@@ -71,7 +82,7 @@ def review_candidate(*, source: str, candidate: str, validation_evidence: dict,
         raise ValueError('replace placeholder review evidence with actual evidence.')
     source_sha = hashlib.sha256(source.encode('utf-8')).hexdigest()
     candidate_sha = candidate_hash(candidate)
-    validation_sha = evidence_hash(validation_evidence)
+    validation_sha = evidence_hash(bound_validation_evidence(validation_evidence))
     prior_valid = bool(prior and prior.get('candidate_sha256') == candidate_sha
                        and prior.get('validation_evidence_sha256') == validation_sha
                        and prior.get('source_sha256') == source_sha)
@@ -110,4 +121,4 @@ def approval_is_current(review: dict | None, *, source: str, candidate: str,
         return False
     return (review.get('source_sha256') == hashlib.sha256(source.encode('utf-8')).hexdigest()
             and review.get('candidate_sha256') == candidate_hash(candidate)
-            and review.get('validation_evidence_sha256') == evidence_hash(validation_evidence))
+            and review.get('validation_evidence_sha256') == evidence_hash(bound_validation_evidence(validation_evidence)))

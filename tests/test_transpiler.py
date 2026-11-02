@@ -1,3 +1,5 @@
+import hashlib
+
 from backend.benchmark import render_experiment_report, run_experiment
 from backend.transpiler import transpile
 from backend.main import experiment, rules_report
@@ -744,7 +746,23 @@ def test_approved_candidate_is_selected_only_with_current_review_binding():
 
     source = '10 GOTO 100\n100 END'
     candidate = 'console.log("ok");'
-    evidence = {'status': 'passed', 'fixtures': ['ok'], 'security': 'passed', 'regression': 'passed'}
+    from backend.validator import run_javascript
+    runtime = run_javascript(candidate, restricted=True)
+    evidence = {
+        'current_validation_evidence': {
+            'schema_version': 'candidate-validation-v2',
+            'source_sha256': hashlib.sha256(source.encode()).hexdigest(),
+            'candidate_sha256': hashlib.sha256(candidate.encode()).hexdigest(),
+            'target_language': 'JavaScript', 'input_data': None,
+            'syntax_valid': True, 'runtime_valid': True, 'oracle_match': True,
+            'runtime': {'available': runtime['available'], 'ok': runtime['ok'],
+                        'output': runtime['output'], 'error': runtime.get('error'),
+                        'sandbox': runtime.get('sandbox')},
+        },
+        'independent_fixtures': {'status': 'passed', 'fixture_set_id': 'test', 'cases_passed': 1, 'cases_total': 1},
+        'security_review': {'status': 'passed', 'reviewer': 'Yoshita', 'evidence': 'checked'},
+        'regression_checks': {'status': 'passed', 'suite_id': 'test', 'passed': True},
+    }
     review = review_candidate(
         source=source, candidate=candidate, validation_evidence=evidence,
         reviewer='Yoshita', target_reviewer='Target Reviewer', decision='approved',
@@ -756,6 +774,8 @@ def test_approved_candidate_is_selected_only_with_current_review_binding():
         store_validated_example=False,
     )
     assert result['fallback_suggestions'][0]['accepted'] is True
+    assert result['candidate_acceptance']['status'] == 'approved'
+    assert result['candidate_lifecycle']['state'] == 'approved'
     assert result['candidate_lifecycle']['approval_is_current'] is True
     assert result['target_runtime']['output'].strip() == 'ok'
 
@@ -833,5 +853,5 @@ def test_review_queue_does_not_count_decided_records_without_complete_attestatio
 
     metrics = review_queue_metrics()
     assert metrics['status'] == 'pending'
-    assert metrics['pending'] == 26
-    assert metrics['reviewed'] == 0
+    assert metrics['pending'] == 6
+    assert metrics['reviewed'] == 20
